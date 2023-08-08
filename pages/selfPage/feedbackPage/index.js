@@ -7,8 +7,6 @@ Page({
     article: {},
   },
   onFeedbackMsgChange(e) {
-    // console.log(e);
-    // console.log(this.data)
     let obj = app.towxml(this.data.rawText, "markdown");
     this.setData({ article: obj });
   }

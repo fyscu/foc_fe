@@ -1,6 +1,8 @@
 <!--index.wxml-->
 <van-cell-group>
-  <van-field model:value="{{ rawText }}" label="反馈" type="textarea" placeholder="请输入您的反馈" autosize border="{{ false }}" bind:change="onFeedbackMsgChange" />
+  <van-field model:value="{{ rawText }}" label="反馈" type="textarea" placeholder="请输入您的反馈" autosize border="{{ false }}" bind:change="onFeedbackMsgChange">
+    <!-- <view class="material-icons" slot="left-icon"> message </view> -->
+  </van-field>
 </van-cell-group>
 <!--使用towxml-->
 <towxml nodes="{{article}}" />

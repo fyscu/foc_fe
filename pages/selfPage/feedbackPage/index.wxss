@@ -1,1 +1,10 @@
 /**index.wxss**/
+page, body {
+  background-color: white;
+}
+
+/* material icons */
+.van-cell-group .material-icons {
+  margin-right: 10px;
+  vertical-align: top;
+}
