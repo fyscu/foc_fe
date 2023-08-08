@@ -1,0 +1,45 @@
+/* *index.wxss* */
+
+.button-container {
+  padding-top: 100rpx;
+  text-align: center;
+}
+
+/* material icons */
+.van-cell-group .material-icons {
+  margin-right: 10px;
+}
+
+/* 圆角头像遮罩 */
+.avatar-wrapper {
+  padding: 0;
+  width: 56px !important;
+  border-radius: 8px;
+  margin-top: 40px;
+  margin-bottom: 40px;
+}
+
+.avatar {
+  display: block;
+  width: 56px;
+  height: 56px;
+}
+
+/* 欢迎 headline */
+.headline-container {
+  vertical-align: middle;
+}
+
+.headline-msg {
+  font-size: xx-large;
+  font-weight: bold;
+  float: left;
+  /* line-height: 120rpx; */
+  padding-left: 50rpx;
+  padding-top: 20rpx;
+}
+
+.headline-avatar {
+  float: right;
+  padding-right: 40rpx;
+}

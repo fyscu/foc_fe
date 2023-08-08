@@ -1,0 +1,46 @@
+<!--index.wxml-->
+<scroll-view class="scrollview" scroll-y type="list">
+  <view class="container">
+    <!-- 登陆成功，获取到用户头像昵称 -->
+    <view wx:if="{{isloggedin}}" class="headline-container">
+      <text class="headline-msg">欢迎！{{userInfo.nickname}}</text>
+      <van-image class="headline-avatar" width="5rem" round height="5rem" fit="cover" src="{{userInfo.avatarUrl}}" />
+    </view>
+    <view wx:else class="headline-container" bind:tap="userLogin">
+      <text class="headline-msg">您还未登陆哦</text>
+      <van-image class="headline-avatar" width="5rem" round height="5rem" fit="cover" src="{{userInfo.avatarUrl}}" />
+    </view>
+    <van-cell-group class="linklist" inset>
+      <van-cell is-link size="large" title="历史记录" link-type="navigateTo" url="./historyPage/index">
+        <view class="material-icons" slot="icon"> history </view>
+      </van-cell>
+      <van-cell is-link size="large" title="个人设置" link-type="navigateTo" url="./settingsPage/index">
+        <view class="material-icons" slot="icon"> settings </view>
+      </van-cell>
+      <van-cell is-link size="large" title="问题反馈" link-type="navigateTo" url="./feedbackPage/index">
+        <view class="material-icons" slot="icon"> chat </view>
+      </van-cell>
+      <van-cell is-link size="large" title="关于我们" link-type="navigateTo" url="./aboutUsPage/index">
+        <view class="material-icons" slot="icon"> info </view>
+      </van-cell>
+    </van-cell-group>
+    <!-- 如果没有登录显示登录按钮 -->
+    <!-- <view wx:if="{{!isloggedin}}" class="button-container">
+      <van-button hairline plain round type="primary" bind:tap="userLogin">登录</van-button>
+    </view> -->
+    <!-- 登陆了但是没有获取到昵称 -->
+    <!-- <block wx:else> -->
+    <van-popup show="{{ showPopup }}" round position="bottom" custom-style="height: 95%" bind:close="onClosePopup" closeable>
+      <button class="avatar-wrapper" open-type="chooseAvatar" bind:chooseavatar="onChooseAvatar">
+        <image class="avatar" src="{{ userInfo.avatarUrl }}"></image>
+      </button>
+      <van-cell-group inset>
+        <van-field required center type="nickname" name="nickname" label="用户名" placeholder="请输入昵称" clearable value="{{ userInfo.nickname }}" border="{{ false }} " bind:blur="onNicknameBlur">
+          <view class="material-icons" slot="right-icon"> face </view>
+        </van-field>
+      </van-cell-group>
+    </van-popup>
+    <!-- </block> -->
+    <van-toast id="van-toast" />
+  </view>
+</scroll-view>

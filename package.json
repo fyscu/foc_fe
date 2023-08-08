@@ -1,0 +1,19 @@
+{
+  "name": "fyminiprogram",
+  "version": "1.0.0",
+  "description": "川大电脑维修服务",
+  "main": ".eslintrc.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "lint": "eslint ."
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/nanguaguag"
+  },
+  "author": "nanguagua",
+  "license": "ISC",
+  "dependencies": {
+    "@vant/weapp": "^1.10.23"
+  }
+}

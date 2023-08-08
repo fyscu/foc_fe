@@ -1,0 +1,15 @@
+<!--index.wxml-->
+<scroll-view class="scrollview" scroll-y type="list">
+  <view class="container">
+    <view class="userinfo">
+      <block wx:if="{{!hasUserInfo}}">
+        <button wx:if="{{canIUseGetUserProfile}}" bind:tap="getUserProfile"> 获取头像昵称 </button>
+        <button wx:else open-type="getUserInfo" bind:getuserinfo="getUserInfo"> 获取头像昵称 </button>
+      </block>
+      <block wx:else>
+        <image bind:tap="bindViewTap" class="userinfo-avatar" src="{{userInfo.avatarUrl}}" mode="cover"></image>
+        <text class="userinfo-nickname">{{userInfo.nickName}}</text>
+      </block>
+    </view>
+  </view>
+</scroll-view>

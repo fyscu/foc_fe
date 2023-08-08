@@ -1,0 +1,21 @@
+/**app.wxss**/
+/* 全局css设置 */
+
+/* 因为vant自带的icons太少了，所以引入material design icons */
+@import '/utils/MD_Wxss/index.wxss';
+
+/* 设置全局背景颜色 */
+page, body {
+  background-color: #f7f8fa;
+}
+
+.container {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  /* 不要居中对齐 */
+  /* align-items: center; */
+  justify-content: space-between;
+  padding: 20rpx 0;
+  box-sizing: border-box;
+}

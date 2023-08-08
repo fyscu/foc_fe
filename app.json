@@ -1,0 +1,66 @@
+{
+  "pages": [
+    "pages/selfPage/index",
+    "pages/selfPage/aboutUsPage/index",
+    "pages/selfPage/feedbackPage/index",
+    "pages/selfPage/historyPage/index",
+    "pages/selfPage/settingsPage/index",
+    "pages/searchPage/index",
+    "pages/homePage/index"
+  ],
+  "window": {
+    "backgroundTextStyle": "light",
+    "navigationBarBackgroundColor": "#fff",
+    "navigationBarTitleText": "小川电脑管家",
+    "navigationBarTextStyle": "black"
+  },
+  "tabBar": {
+    "color": "@tabBarColor",
+    "selectedColor": "@tabBarSelectedColor",
+    "borderStyle": "black",
+    "backgroundColor": "@tabBarBackgroundColor",
+    "list": [
+      {
+        "pagePath": "pages/homePage/index",
+        "iconPath": "@iconPathHome",
+        "selectedIconPath": "@selectedIconPathHome",
+        "text": "首页"
+      },
+      {
+        "pagePath": "pages/searchPage/index",
+        "iconPath": "@iconPathSearch",
+        "selectedIconPath": "@selectedIconPathSearch",
+        "text": "搜索"
+      },
+      {
+        "pagePath": "pages/selfPage/index",
+        "iconPath": "@iconPathSelf",
+        "selectedIconPath": "@selectedIconPathSelf",
+        "text": "我的"
+      }
+    ]
+  },
+  "renderer": "webview",
+  "rendererOptions": {
+    "skyline": {
+      "defaultDisplayBlock": true,
+      "disableABTest": true,
+      "sdkVersionBegin": "3.0.0",
+      "sdkVersionEnd": "15.255.255"
+    }
+  },
+  "componentFramework": "glass-easel",
+  "sitemapLocation": "sitemap.json",
+  "lazyCodeLoading": "requiredComponents",
+  "themeLocation": "theme.json",
+  "usingComponents": {
+    "van-button": "@vant/weapp/button/index",
+    "van-cell": "@vant/weapp/cell/index",
+    "van-cell-group": "@vant/weapp/cell-group/index",
+    "van-icon": "@vant/weapp/icon/index",
+    "van-toast": "@vant/weapp/toast/index",
+    "van-popup": "@vant/weapp/popup/index",
+    "van-image": "@vant/weapp/image/index",
+    "van-field": "@vant/weapp/field/index"
+  }
+}

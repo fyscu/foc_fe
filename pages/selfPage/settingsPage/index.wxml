@@ -1,0 +1,20 @@
+<!--index.wxml-->
+<scroll-view class="scrollview" scroll-y type="list">
+  <view class="container">
+    <button class="avatar-wrapper" open-type="chooseAvatar" bind:chooseavatar="onChooseAvatar">
+      <image class="avatar" src="{{ userInfo.avatarUrl }}"></image>
+    </button>
+    <van-cell-group inset>
+      <van-field required center type="nickname" name="nickname" label="用户名" placeholder="请输入昵称" clearable value="{{ userInfo.nickname }}" border="{{ false }} " bind:blur="onNicknameBlur">
+        <view class="material-icons" slot="right-icon"> face </view>
+      </van-field>
+      <van-field center type="phone" name="phone" label="联系方式" placeholder="请输入联系方式" clearable value="{{ userInfo.phone }}" border="{{ false }} " bind:blur="onPhoneBlur">
+        <view class="material-icons" slot="right-icon"> phone </view>
+      </van-field>
+      <van-field center type="mail" name="mail" label="邮箱" placeholder="请输入邮箱" clearable value="{{ userInfo.mail }}" border="{{ false }} " bind:blur="onMailBlur">
+        <view class="material-icons" slot="right-icon"> mail </view>
+      </van-field>
+    </van-cell-group>
+    <van-toast id="van-toast" />
+  </view>
+</scroll-view>

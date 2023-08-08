@@ -1,0 +1,26 @@
+/**index.wxss**/
+
+/* .scrollview {
+  height: 200vh;
+} 
+
+.container {
+  --button-border-radius: 10px;
+  --button-default-color: #f2f3f5;
+  --toast-max-width: 100px;
+  --toast-background-color: pink;
+} */
+
+.avatar-wrapper {
+  padding: 0;
+  width: 56px !important;
+  border-radius: 8px;
+  margin-top: 40px;
+  margin-bottom: 40px;
+}
+
+.avatar {
+  display: block;
+  width: 56px;
+  height: 56px;
+}

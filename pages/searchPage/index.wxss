@@ -1,0 +1,18 @@
+/**index.wxss**/
+/* 
+.scrollview {
+  height: 200vh;
+}
+
+.container {
+  --button-border-radius: 10px;
+  --button-default-color: #f2f3f5;
+  --toast-max-width: 100px;
+  --toast-background-color: pink;
+}
+
+.van-button {
+  font-size: 20px;
+  background-color: pink !important;
+  color: green !important;
+} */
