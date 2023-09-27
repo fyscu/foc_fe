@@ -1,0 +1,3 @@
+<!--index.wxml-->
+<scroll-view class="scrollview" scroll-y type="list">
+</scroll-view>

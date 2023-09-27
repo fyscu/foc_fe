@@ -6,7 +6,12 @@
     "pages/selfPage/historyPage/index",
     "pages/selfPage/settingsPage/index",
     "pages/searchPage/index",
-    "pages/homePage/index"
+    "pages/searchPage/discussionDetail/index",
+    "pages/chatPage/index",
+    "pages/homePage/index",
+    "pages/homePage/orderDetail/index",
+    "pages/homePage/submitOrder/index",
+    "pages/homePage/needToKnow/index"
   ],
   "window": {
     "backgroundTextStyle": "light",
@@ -53,14 +58,5 @@
   "sitemapLocation": "sitemap.json",
   "lazyCodeLoading": "requiredComponents",
   "themeLocation": "theme.json",
-  "usingComponents": {
-    "van-button": "@vant/weapp/button/index",
-    "van-cell": "@vant/weapp/cell/index",
-    "van-cell-group": "@vant/weapp/cell-group/index",
-    "van-icon": "@vant/weapp/icon/index",
-    "van-toast": "@vant/weapp/toast/index",
-    "van-popup": "@vant/weapp/popup/index",
-    "van-image": "@vant/weapp/image/index",
-    "van-field": "@vant/weapp/field/index"
-  }
+  "usingComponents": {}
 }

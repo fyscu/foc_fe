@@ -1,0 +1,58 @@
+<view class="container">
+  <view class="wechat-content">
+    <view wx:for="{{ messages }}" wx:key="index">
+      <view class="wechat-dialog" wx:if="{{ item.role === 'assistant' }}">
+        <view class="wechat-dialog-face">
+          <image src="/image/fyAvatar.jpg"/>
+        </view>
+        <view class="wechat-dialog-text">
+          {{ item.content }}
+        </view>
+      </view>
+      <view class="wechat-dialog wechat-dialog-right" wx:if="{{ item.role === 'user' }}">
+        <view class="wechat-dialog-face">
+          <image src="{{ userInfo.avatarUrl }}"/>
+        </view>
+        <view class="wechat-dialog-text">
+          {{item.content}}
+        </view>
+      </view>
+    </view>
+    <view wx:if="{{ isLoading }}">
+      <view class="wechat-dialog">
+        <view class="wechat-dialog-face">
+          <image src="/image/fyAvatar.jpg"/>
+        </view>
+        <view class="wechat-dialog-text">
+          <view wx:if="{{ isResponding }}">
+            {{ respondingText }}
+          </view>
+          <view wx:else>
+            <van-loading color="#1989fa" size="15"/> 
+          </view>
+        </view>
+      </view>
+    </view>
+  </view>
+  <view class="fixed-bottom">
+    <van-field
+      model:value="{{ rawText }}"
+      type="textarea"
+      placeholder="请输入问题"
+      bind:change="onMsgChange"
+      autosize
+      border="{{ false }}"
+    >
+    <van-icon 
+      class-prefix="material-icons"
+      name="send" 
+      class="clickable-icon"
+      bind:click="onSendMsg" 
+      slot="right-icon"
+      size="1.2em"
+      color="{{ iconDisabled ? '#969799' : '#5ea3ef' }}"
+    />
+    <!-- <view class="material-icons" bind:click="onSendMsg" slot="right-icon"> send </view> -->
+    </van-field>
+  </view>
+</view>

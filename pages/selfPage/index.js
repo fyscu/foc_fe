@@ -6,18 +6,24 @@ var app = getApp();
 Page({
   data: {
     isloggedin: app.globalData.isloggedin,
-    hasUserInfo: app.globalData.hasUserInfo,
     userInfo: app.globalData.userInfo,
     showPopup: false,
   },
-  // 显示页面时更新数据
-  onShow: function () {
+  // 显示页面时更新数据 
+  onShow() {
+    // console.log(app.globalData);
     this.reloadData();
   },
   // 在输入框不为focused时更新数据
   onNicknameBlur(e) {
     // console.log(e.detail);
     this.setData({ ["userInfo.nickname"]: e.detail.value });
+  },
+  onPhoneBlur(e) {
+    this.setData({ ["userInfo.phone"]: e.detail.value });
+  },
+  onQQBlur(e) {
+    this.setData({ ["userInfo.qq"]: e.detail.value });
   },
   // 选择头像
   onChooseAvatar(e) {
@@ -28,18 +34,10 @@ Page({
   // 关闭popup弹窗 并更新数据
   onClosePopup() {
     let nickname_trim = this.data.userInfo.nickname.trim();
-    // 用户没有填写昵称 >> 使用默认昵称momo
-    if (nickname_trim == "") {
-      nickname_trim = "momo";
-    }
     // TODO: Save Data
     this.setData({
       showPopup: false,
-      ['userInfo.nickname']: nickname_trim,
-      // 用户填写了昵称 >> 获取到了用户昵称
-      hasUserInfo: nickname_trim != "momo",
     });
-    app.globalData.hasUserInfo = this.data.hasUserInfo;
     app.globalData.userInfo = this.data.userInfo;
   },
   onShowPopup() {
@@ -50,7 +48,7 @@ Page({
       app
         .userLogin()
         .then((returnCode) => {
-          if (!this.data.hasUserInfo) {
+          if (this.data.userInfo.nickname === "") {
             // 如果没有设置userInfo
             Toast("登录成功！请完善昵称");
             // 弹出个人信息填写页
@@ -70,8 +68,18 @@ Page({
   reloadData() {
     this.setData({
       isloggedin: app.globalData.isloggedin,
-      hasUserInfo: app.globalData.hasUserInfo,
       userInfo: app.globalData.userInfo,
     });
   },
+  techCertify() {
+    if (this.data.userInfo.phone.trim() == "") {
+      Toast("请先填写手机号！");
+    } else {
+      // TODO: 进行认证逻辑
+      Toast(`认证成功！已将您与技术员「${"南瓜瓜"}」绑定`);
+      this.setData({
+        ["userInfo.is_tech"]: true
+      });
+    }
+  }
 });

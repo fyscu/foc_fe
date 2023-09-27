@@ -1,0 +1,33 @@
+var bbsUserInfo = {};
+var discussionsData = {};
+var usersData = {};
+var tagsData = {};
+var postsData = {};
+
+var getAllDiscussions = function() {
+  console.log("aaaaa");
+  // wx.request({
+  //   url: 'https://bbs.fyscu.com/api/discussions',
+  //   header: {
+  //     "Content-Type": "application/json"
+  //   },
+  //   dataType: String,
+  //   success (res) {
+  //     const resDict = JSON.parse(res.data); 
+  //     const included = resDict.included;
+  //     discussionsData =  resDict.data;
+  //     users =  included.filter(obj => obj.type === "users");
+  //     tags =  included.filter(obj => obj.type === "tags");
+  //     posts =  included.filter(obj => obj.type === "posts");
+  //   }
+  // })
+}
+
+var convertDate = function (date) {
+  return date.slice(0,10);
+}
+
+module.exports = {
+  convertDate: convertDate,
+  getAllDiscussions: getAllDiscussions,
+}

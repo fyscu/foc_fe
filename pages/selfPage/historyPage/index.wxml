@@ -1,2 +1,35 @@
 <!--index.wxml-->
-
+<scroll-view class="scrollview" scroll-y type="list">
+  <view class="container">
+    <block wx:if="{{ orderList.length == 0 }}">
+      <van-empty description="您还没有已完成的订单哦" />
+    </block>
+    <block wx:else>
+      <view wx:for="{{ orderList }}" wx:key="id">
+        <block wx:if="{{ item.status == 2}}">
+          <!-- 筛选出已经完成的订单 -->
+          <navigator url="/pages/homePage/orderDetail/index?id={{ item.id }}" open-type="navigate">
+            <van-card
+              class="class-status-{{ item.status }}"
+              tag="{{ statusMap[item.status] }}"
+              desc="{{ item.desc }}"
+              title="{{ item.title }}"
+              thumb="/image/computer.png"
+            >
+              <view slot="bottom">
+                <text>{{ item.created }}</text>
+              </view>
+              <view slot="tags">
+                <van-tag plain type="primary">{{ campusMap[item.campus] }}</van-tag>
+              </view>
+            </van-card>
+          </navigator>
+          <van-divider />
+        </block>
+      </view>
+    </block>
+    <view class="btn-container">
+      <van-button round icon="build" class-prefix="material-icons" type="info" bind:click="onFix">我要报修</van-button>
+    </view>
+  </view>
+</scroll-view>

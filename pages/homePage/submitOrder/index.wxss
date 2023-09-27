@@ -1,0 +1,36 @@
+/**index.wxss**/
+
+.btn-container {
+  margin-top: 40rpx;
+  margin-bottom: 100rpx;
+  width: 100%;
+  text-align: center;
+}
+
+.van-image {
+  margin-left: 20rpx;
+}
+
+
+/* 添加图片 */
+.van-image .material-icons {
+  font-size: 60rpx;
+}
+
+/* 图像关闭按钮 */
+.image-container {
+  position: relative;
+  display: inline-block;
+}
+
+.close-button {
+  position: absolute;
+  top: 0;
+  right: 0;
+  padding: 5px;
+  font-size: 20px;
+  color: #000;
+  cursor: pointer;
+  background: transparent;
+  border: none;
+}

@@ -1,70 +1,24 @@
 /**index.wxss**/
 
-.scrollview {
-  height: 200vh;
-} 
-
-.container {
-  --button-border-radius: 10px;
-  --button-default-color: #f2f3f5;
-  --toast-max-width: 100px;
-  --toast-background-color: pink;
+page, body {
+  background-color: #ffffff;
 }
 
-.van-button {
-  font-size: 20px;
-  background-color: pink !important;
-  color: green !important;
+.class-status-0 .van-tag--mark{
+  background-color: #4187f2;
 }
 
-.userinfo {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  color: #aaa;
-  width: 80%;
+.class-status-2 .van-tag--mark{
+  background-color: #57be6a;
 }
 
-.userinfo-avatar {
+.btn-container {
+  z-index: 99;
   overflow: hidden;
-  width: 128rpx;
-  height: 128rpx;
-  margin: 20rpx;
-  border-radius: 50%;
-}
-
-.usermotto {
-  margin-top: 200px;
-}
-
-.avatar-wrapper {
-  padding: 0;
-  width: 56px !important;
-  border-radius: 8px;
-  margin-top: 40px;
-  margin-bottom: 40px;
-}
-
-.avatar {
-  display: block;
-  width: 56px;
-  height: 56px;
-}
-
-.nickname-wrapper {
-  display: flex;
+  margin-bottom: 10%;
   width: 100%;
-  padding: 16px;
-  box-sizing: border-box;
-  border-top: .5px solid rgba(0, 0, 0, 0.1);
-  border-bottom: .5px solid rgba(0, 0, 0, 0.1);
-  color: black;
-}
-
-.nickname-label {
-  width: 105px;
-}
-
-.nickname-input {
-  flex: 1;
+  position: fixed;
+  bottom: 0px;
+  display: flex;
+  justify-content: center;
 }

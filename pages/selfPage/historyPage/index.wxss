@@ -1,26 +1,24 @@
-/* *index.wxss* */
+/**index.wxss**/
 
-.button-container {
-  padding-top: 100rpx;
-  text-align: center;
+page, body {
+  background-color: #ffffff;
 }
 
-/* material icons */
-.van-cell-group .material-icons {
-  margin-right: 10px;
+.class-status-0 .van-tag--mark{
+  background-color: #4187f2;
 }
 
-/* 圆角头像遮罩 */
-.avatar-wrapper {
-  padding: 0;
-  width: 56px !important;
-  border-radius: 8px;
-  margin-top: 40px;
-  margin-bottom: 40px;
+.class-status-2 .van-tag--mark{
+  background-color: #57be6a;
 }
 
-.avatar {
-  display: block;
-  width: 56px;
-  height: 56px;
+.btn-container {
+  z-index: 99;
+  overflow: hidden;
+  margin-bottom: 30%;
+  width: 100%;
+  position: fixed;
+  bottom: 0px;
+  display: flex;
+  justify-content: center;
 }

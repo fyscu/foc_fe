@@ -1,52 +1,26 @@
-//index.js
+import Toast from '@vant/weapp/toast/toast';
+
+var app = getApp();
+
 Page({
   data: {
-    text: "This is page data."
+    statusMap: ["待分配", "维修中", "已完成"],
+    campusMap: {
+      ja: "江安",
+      wj: "望江",
+      hx: "华西"
+    },
+    userInfo: app.globalData.userInfo,
+    orderList: app.globalData.orderList,
   },
-  onLoad: function(options) {
-    // Do some initialize when page load.
+  // 显示页面时更新数据 
+  onShow() {
+    this.reloadData();
   },
-  onShow: function() {
-    // Do something when page show.
-  },
-  onReady: function() {
-    // Do something when page ready.
-  },
-  onHide: function() {
-    // Do something when page hide.
-  },
-  onUnload: function() {
-    // Do something when page close.
-  },
-  onPullDownRefresh: function() {
-    // Do something when pull down.
-  },
-  onReachBottom: function() {
-    // Do something when page reach bottom.
-  },
-  onShareAppMessage: function () {
-    // return custom share data when user share.
-  },
-  onPageScroll: function() {
-    // Do something when page scroll
-  },
-  onResize: function() {
-    // Do something when page resize
-  },
-  onTabItemTap(item) {
-    console.log(item.index)
-    console.log(item.pagePath)
-    console.log(item.text)
-  },
-  // Event handler.
-  viewTap: function() {
+  reloadData() {
     this.setData({
-      text: 'Set some data for updating view.'
-    }, function() {
-      // this is setData callback
-    })
+      userInfo: app.globalData.userInfo,
+      orderList: app.globalData.orderList,
+    });
   },
-  customData: {
-    hi: 'MINA'
-  }
 })

@@ -1,15 +1,25 @@
 <!--index.wxml-->
 <scroll-view class="scrollview" scroll-y type="list">
-  <view class="container">
-    <view class="userinfo">
-      <block wx:if="{{!hasUserInfo}}">
-        <button wx:if="{{canIUseGetUserProfile}}" bind:tap="getUserProfile"> 获取头像昵称 </button>
-        <button wx:else open-type="getUserInfo" bind:getuserinfo="getUserInfo"> 获取头像昵称 </button>
-      </block>
-      <block wx:else>
-        <image bind:tap="bindViewTap" class="userinfo-avatar" src="{{userInfo.avatarUrl}}" mode="cover"></image>
-        <text class="userinfo-nickname">{{userInfo.nickName}}</text>
-      </block>
-    </view>
+  <van-search value="{{ searchValue }}" placeholder="请输入搜索关键词" />
+  <!-- 搜索提示 -->
+  <!-- <van-empty image="search" description="当前无内容" /> -->
+  <view wx:for="{{ discussionsData }}" wx:for-item="discussion" wx:key="id">
+    <navigator url="/pages/searchPage/discussionDetail/index?id={{ item.id }}" open-type="navigate">
+      <van-card
+        title="{{ discussion.attributes.title }}"
+        thumb="{{  }}"
+      > 
+        <view slot="bottom">
+          <text>{{ api.convertDate(discussion.attributes.createdAt) }}</text>
+        </view>
+        <view slot="tags">
+          <block wx:for="{{ discussion.relationships.tags.data }}" wx:for-item="tag" wx:key="id">
+            <van-tag plain type="primary">{{ tag.id }}</van-tag>
+          </block>
+        </view>
+      </van-card>
+    </navigator>
+    <van-divider />
   </view>
+  <wxs src="./includeAPI.wxs" module="api"></wxs>
 </scroll-view>

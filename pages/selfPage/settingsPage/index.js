@@ -5,38 +5,27 @@ var app = getApp();
 
 Page({
   data: {
-    isloggedin: app.globalData.isloggedin,
-    hasUserInfo: app.globalData.hasUserInfo,
     userInfo: app.globalData.userInfo,
   },
   // 显示页面时更新数据
-  onShow: function () {
+  onShow() {
     this.reloadData();
   },
   // Do something when page ready.
-  onReady: function () {
+  onReady() {
     // login if havn't
     if (!app.globalData.isloggedin) {
       this.userLogin();
     }
   },
   // 页面卸载时触发。如wx.redirectTo或wx.navigateBack到其他页面时。
-  onUnload: function () {
+  onUnload() {
     // 关闭页面时更新数据
-    let nickname_trim = this.data.userInfo.nickname.trim();
-    // 用户没有填写昵称 >> 使用默认昵称momo
-    if (nickname_trim == "") {
-      nickname_trim = "momo";
-    }
-    // TODO: Save Data
-    this.setData({
-      showPopup: false,
-      ["userInfo.nickname"]: nickname_trim,
-      // 用户填写了昵称 >> 获取到了用户昵称
-      hasUserInfo: nickname_trim != "momo",
-    });
-    app.globalData.hasUserInfo = this.data.hasUserInfo;
     app.globalData.userInfo = this.data.userInfo;
+    // TODO: Save Data
+    wx.request({
+      url: 'url',
+    })
   },
   // 在输入框不为focused时更新数据
   onNicknameBlur(e) {
@@ -45,8 +34,8 @@ Page({
   onPhoneBlur(e) {
     this.setData({ ["userInfo.phone"]: e.detail.value });
   },
-  onMailBlur(e) {
-    this.setData({ ["userInfo.mail"]: e.detail.value });
+  onQQBlur(e) {
+    this.setData({ ["userInfo.qq"]: e.detail.value });
   },
   // 选择头像
   onChooseAvatar(e) {
@@ -72,9 +61,36 @@ Page({
   },
   reloadData() {
     this.setData({
-      isloggedin: app.globalData.isloggedin,
-      hasUserInfo: app.globalData.hasUserInfo,
       userInfo: app.globalData.userInfo,
     });
   },
+  onLogout() {
+    const emptyUserInfo = {
+      is_tech: false,
+      qq: "",
+      phone: "",
+      nickname: "",
+      avatarUrl: "/image/momo.png",
+    };
+    this.setData({
+      userInfo: emptyUserInfo,
+    })
+    app.globalData.orderList = [];
+    app.globalData.isloggedin = false;
+    app.globalData.code = null;
+    app.globalData.openid = null;
+    // console.log(app.globalData);
+    wx.navigateBack();
+  },
+  techCertify() {
+    if (this.data.userInfo.phone.trim() == "") {
+      Toast("请先填写手机号！");
+    } else {
+      // TODO: 进行认证逻辑
+      Toast(`认证成功！已将您与技术员「${"南瓜瓜"}」绑定`);
+      this.setData({
+        ["userInfo.is_tech"]: true
+      });
+    }
+  }
 });

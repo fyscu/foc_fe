@@ -1,14 +1,7 @@
 /**index.wxss**/
 
-/* .scrollview {
-  height: 200vh;
-} 
-
-.container {
-  --button-border-radius: 10px;
-  --button-default-color: #f2f3f5;
-  --toast-max-width: 100px;
-  --toast-background-color: pink;
+/* page, body {
+  background-color: #e5e5e5;
 } */
 
 .avatar-wrapper {
@@ -23,4 +16,14 @@
   display: block;
   width: 56px;
   height: 56px;
+}
+
+.btn-container {
+  overflow: hidden;
+  margin-bottom: 30%;
+  width: 100%;
+  position: fixed;
+  bottom: 0px;
+  display: flex;
+  justify-content: center;
 }

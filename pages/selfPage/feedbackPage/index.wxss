@@ -1,10 +1,21 @@
 /**index.wxss**/
-page, body {
-  background-color: white;
+
+.btn-container {
+  z-index: 99;
+  overflow: hidden;
+  margin-bottom: 30%;
+  width: 100%;
+  position: fixed;
+  bottom: 0px;
+  display: flex;
+  justify-content: center;
 }
 
-/* material icons */
-.van-cell-group .material-icons {
-  margin-right: 10px;
-  vertical-align: top;
+.van-popup {
+  padding-top: 40rpx;
+}
+
+.clickable-icon {
+  float: right;
+  margin-right: 40rpx;
 }
