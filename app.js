@@ -1,22 +1,4 @@
 // app.js
-// API参考
-// 获取APP的access Token
-// curl "https://api.weixin.qq.com/cgi-bin/token?grant_type=client_credential&appid=wxb5a591e0d3ca8424&secret=51c420e7a08c53678805d4c7576ca25d"
-
-// 七牛云
-// AK：oy4G0esTXRfyaC_2B4wpYoKRnopDGOHX9hBLJTWq
-// SK：okhmMELQySOef8T6WMslKPAvcVO3k3fz8aqTRLfP
-
-// 上传图片
-// curl -F media=@/Users/huzongyao/Downloads/fyAvatar.jpg "https://api.weixin.qq.com/cgi-bin/media/uploadimg?access_token=xxxx-xxxx-xxxx&upload_type=0&resp_type=0&height=108&width=108"
-
-// https://mmbiz.qpic.cn/mmbiz_jpg/pmSwicTp2A07emlgRHWNXICya7vyfGSaAeoS9zE0fUW7Lxvt0F5Xwz3rAtwmazRbib1V8zJsqdxlq3d8iar5SPcQA/0
-
-// curl -d "{\"img_url\":\"https://lab.fyscu.com/favicon.ico\"}" "https://api.weixin.qq.com/product/img/upload?access_token=72_nWKUBJOl7ANbdcKJK6TEgICTUR4Y6AlnCeCzu5_g0MpPGHNKszF8AQKIZBsG9tmv4hfxv2nMP-uLAI6xgB3EQVrGglJuRd-ObRk6UvldA0Sui5rjWuFlxAuJkGUZGIdAHAELN&upload_type=1&resp_type=1"
-
-// 获取登录session_key和openid
-// curl "https://api.weixin.qq.com/sns/jscode2session?appid=wxb5a591e0d3ca8424&secret=51c420e7a08c53678805d4c7576ca25d&js_code=0d3ftx0w3zgCj13aOy2w3Fr98o3ftx0b&grant_type=authorization_code"
-
 App({
   onLaunch() {
     // 展示本地存储能力
@@ -33,22 +15,24 @@ App({
   },
   // 定义全局变量
   globalData: {
-    orderList: [
-    ],
+    orderList: [],
     isloggedin: false,
     userInfo: {
       is_tech: false,
-      qq: "",
-      phone: "",
-      nickname: "",
-      avatarUrl: "/image/momo.png",
+      qq: "", // 用户QQ号
+      uid: "", // 用户id
+      role: "", // 用role替代is_tech
+      email: "", // 用户邮箱
+      phone: "", // 用户手机号
+      nickname: "", // 用户昵称
+      avatarUrl: "/image/momo.jpg", // 用户头像地址
     },
     code: null,
-    openid: null,
+    openid: null, // 唯一用户标识
   },
   // 引入`towxml3.0`解析方法 (解析markdown和html)
   // towxml: require("/towxml/index"),
-  // 微信登陆（待完善）
+  // 微信登陆 https://fyapidocs.wjlo.cc/admin/login
   userLogin() {
     return new Promise((resolve, reject) => {
       wx.login({
@@ -68,7 +52,7 @@ App({
   // 获取accessToken
   getAccessToken() {
     wx.request({
-      url: 'url',
-    })
-  }
+      url: "url",
+    });
+  },
 });

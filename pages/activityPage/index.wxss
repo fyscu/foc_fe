@@ -1,0 +1,9 @@
+/**index.wxss**/
+.van-card__title {
+  font-size: large;
+  padding: 5px;
+}
+
+.van-card__desc {
+  padding: 5px;
+}

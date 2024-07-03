@@ -1,5 +1,4 @@
 // Markdown转WXML页面
-const app = getApp();
 const article = `
 <div class="markdown-body">
   <p class="p"><img class="img" src="https://www.fyscu.com/img/logo-blue.png" alt=""></p>

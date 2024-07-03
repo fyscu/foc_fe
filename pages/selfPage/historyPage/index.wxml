@@ -9,13 +9,7 @@
         <block wx:if="{{ item.status == 2}}">
           <!-- 筛选出已经完成的订单 -->
           <navigator url="/pages/homePage/orderDetail/index?id={{ item.id }}" open-type="navigate">
-            <van-card
-              class="class-status-{{ item.status }}"
-              tag="{{ statusMap[item.status] }}"
-              desc="{{ item.desc }}"
-              title="{{ item.title }}"
-              thumb="/image/computer.png"
-            >
+            <van-card class="class-status-{{ item.status }}" tag="{{ statusMap[item.status] }}" desc="{{ item.desc }}" title="{{ item.title }}" thumb="/image/computer.png">
               <view slot="bottom">
                 <text>{{ item.created }}</text>
               </view>

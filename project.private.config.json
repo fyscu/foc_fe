@@ -3,7 +3,8 @@
   "projectname": "fyminiprogram",
   "setting": {
     "compileHotReLoad": true,
-    "skylineRenderEnable": true
+    "skylineRenderEnable": true,
+    "urlCheck": false
   },
   "libVersion": "2.32.3"
 }

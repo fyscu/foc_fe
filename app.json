@@ -5,13 +5,15 @@
     "pages/selfPage/feedbackPage/index",
     "pages/selfPage/historyPage/index",
     "pages/selfPage/settingsPage/index",
-    "pages/searchPage/index",
-    "pages/searchPage/discussionDetail/index",
+    "pages/selfPage/registerPage/index",
+    "pages/activityPage/index",
     "pages/chatPage/index",
     "pages/homePage/index",
     "pages/homePage/orderDetail/index",
+    "pages/homePage/announcement/index",
     "pages/homePage/submitOrder/index",
-    "pages/homePage/needToKnow/index"
+    "pages/forumPage/index",
+    "pages/forumPage/sharePage/index"
   ],
   "window": {
     "backgroundTextStyle": "light",
@@ -24,18 +26,23 @@
     "selectedColor": "@tabBarSelectedColor",
     "borderStyle": "black",
     "backgroundColor": "@tabBarBackgroundColor",
-    "list": [
-      {
+    "list": [{
         "pagePath": "pages/homePage/index",
         "iconPath": "@iconPathHome",
         "selectedIconPath": "@selectedIconPathHome",
         "text": "首页"
       },
       {
-        "pagePath": "pages/searchPage/index",
-        "iconPath": "@iconPathSearch",
-        "selectedIconPath": "@selectedIconPathSearch",
-        "text": "搜索"
+        "pagePath": "pages/chatPage/index",
+        "iconPath": "@iconPathForum",
+        "selectedIconPath": "@selectedIconPathForum",
+        "text": "AI助手"
+      },
+      {
+        "pagePath": "pages/activityPage/index",
+        "iconPath": "@iconPathActivity",
+        "selectedIconPath": "@selectedIconPathActivity",
+        "text": "活动"
       },
       {
         "pagePath": "pages/selfPage/index",
@@ -54,7 +61,6 @@
       "sdkVersionEnd": "15.255.255"
     }
   },
-  "componentFramework": "glass-easel",
   "sitemapLocation": "sitemap.json",
   "lazyCodeLoading": "requiredComponents",
   "themeLocation": "theme.json",

@@ -1,6 +1,7 @@
 /**index.wxss**/
 
-page, body {
+page,
+body {
   background-color: #ffffff;
 }
 

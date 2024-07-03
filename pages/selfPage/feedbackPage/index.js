@@ -6,7 +6,9 @@ Page({
   data: {
     rawText: "",
     userInfo: app.globalData.userInfo,
-    autosizeData: { minHeight: 150 }, // textfeild最低高度100
+    autosizeData: {
+      minHeight: 150
+    }, // textfeild最低高度100
   },
   onReady() {
     // login if havn't
@@ -19,7 +21,7 @@ Page({
       Toast("请先填写反馈内容!");
     } else if (this.data.rawText.trim() === "chat") {
       wx.navigateTo({
-        url: '/pages/chatPage/index',
+        url: "/pages/chatPage/index",
       });
     } else {
       Toast("感谢您的反馈!");

@@ -9,7 +9,7 @@ Page({
     userInfo: app.globalData.userInfo,
     showPopup: false,
   },
-  // 显示页面时更新数据 
+  // 显示页面时更新数据
   onShow() {
     // console.log(app.globalData);
     this.reloadData();
@@ -17,19 +17,29 @@ Page({
   // 在输入框不为focused时更新数据
   onNicknameBlur(e) {
     // console.log(e.detail);
-    this.setData({ ["userInfo.nickname"]: e.detail.value });
+    this.setData({
+      ["userInfo.nickname"]: e.detail.value
+    });
   },
   onPhoneBlur(e) {
-    this.setData({ ["userInfo.phone"]: e.detail.value });
+    this.setData({
+      ["userInfo.phone"]: e.detail.value
+    });
   },
   onQQBlur(e) {
-    this.setData({ ["userInfo.qq"]: e.detail.value });
+    this.setData({
+      ["userInfo.qq"]: e.detail.value
+    });
   },
   // 选择头像
   onChooseAvatar(e) {
-    const { avatarUrl } = e.detail;
+    const {
+      avatarUrl
+    } = e.detail;
     // console.log("get avatar url:", e.detail);
-    this.setData({ ["userInfo.avatarUrl"]: avatarUrl });
+    this.setData({
+      ["userInfo.avatarUrl"]: avatarUrl
+    });
   },
   // 关闭popup弹窗 并更新数据
   onClosePopup() {
@@ -41,7 +51,14 @@ Page({
     app.globalData.userInfo = this.data.userInfo;
   },
   onShowPopup() {
-    this.setData({ showPopup: true });
+    this.setData({
+      showPopup: true
+    });
+  },
+  navigateToRegister() {
+    wx.navigateTo({
+      url: './registerPage/index',
+    })
   },
   async userLogin() {
     try {
@@ -52,7 +69,9 @@ Page({
             // 如果没有设置userInfo
             Toast("登录成功！请完善昵称");
             // 弹出个人信息填写页
-            this.setData({ showPopup: true });
+            this.setData({
+              showPopup: true
+            });
           } else {
             Toast("登录成功！");
           }
@@ -78,8 +97,8 @@ Page({
       // TODO: 进行认证逻辑
       Toast(`认证成功！已将您与技术员「${"南瓜瓜"}」绑定`);
       this.setData({
-        ["userInfo.is_tech"]: true
+        ["userInfo.is_tech"]: true,
       });
     }
-  }
+  },
 });

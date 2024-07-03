@@ -11,7 +11,6 @@
   margin-left: 20rpx;
 }
 
-
 /* 添加图片 */
 .van-image .material-icons {
   font-size: 60rpx;

@@ -1,0 +1,15 @@
+<!--活动报名页面-->
+<scroll-view class="scrollview" scroll-y type="list">
+  <van-search value="{{ searchValue }}" placeholder="请输入活动关键词" />
+  <!-- 搜索提示 -->
+  <!-- <van-empty image="search" description="当前无活动" /> -->
+  <view wx:for="{{ activities }}" wx:key="index">
+    <van-card tag="{{ item.tag_text }}" title="{{ item.name }}" desc="{{ item.description }}" thumb="{{ item.type === 1 ? '/image/momo.jpg' : '/image/momo.jpg' }}">
+      <view slot="footer">
+        <van-button round size="small" type="primary" disabled="{{ !item.can_signup }}" bindtap="handleSignup" data-activity="{{ item }}">
+          立即报名
+        </van-button>
+      </view>
+    </van-card>
+  </view>
+</scroll-view>

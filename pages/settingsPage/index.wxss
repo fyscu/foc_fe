@@ -1,0 +1,29 @@
+/**index.wxss**/
+
+/* page, body {
+  background-color: #e5e5e5;
+} */
+
+.avatar-wrapper {
+  padding: 0;
+  width: 56px !important;
+  border-radius: 8px;
+  margin-top: 40px;
+  margin-bottom: 40px;
+}
+
+.avatar {
+  display: block;
+  width: 56px;
+  height: 56px;
+}
+
+.btn-container {
+  overflow: hidden;
+  margin-bottom: 30%;
+  width: 100%;
+  position: fixed;
+  bottom: 0px;
+  display: flex;
+  justify-content: center;
+}

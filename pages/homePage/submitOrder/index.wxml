@@ -1,7 +1,9 @@
 <!--index.wxml-->
 <scroll-view class="scrollview" scroll-y type="list">
   <!-- link 模式，在右侧显示链接箭头 -->
-  <van-notice-bar color="#1989fa" bind:click="navigateToNotice" background="#ecf9ff" left-icon="info-o" mode="link" text="请务必认真阅读「维修须知」" />
+  <navigator url="/pages/homePage/announcement/index" open-type="navigate">
+    <van-notice-bar color="#1989fa" background="#ecf9ff" left-icon="info-o" mode="link" text="请务必认真阅读「维修须知」" />
+  </navigator>
   <van-cell-group inset title="个人联系信息">
     <van-field required center name="qq" label="QQ号" placeholder="请填写QQ号" clearable model:value="{{ qq }}" border="{{ false }}">
       <view class="material-icons" slot="right-icon"> mail </view>
@@ -54,16 +56,7 @@
       <van-picker title="选择设备问题" show-toolbar="true" columns="{{ problemList }}" bind:confirm="onConfirmDeviceProblem" bind:cancel="onClose" />
     </block>
     <block wx:elif="{{ showPopup === 6 }}">
-      <van-datetime-picker
-        show="{{ showPopup === 6 }}"
-        type="date"
-        value="{{ currentDate }}"
-        min-date="{{ minDate }}"
-        max-date="{{ maxDate }}"
-        formatter="{{ formatter }}"
-        bind:confirm="onConfirmPurchaseDate"
-        bind:close="onClose" 
-      />
+      <van-datetime-picker show="{{ showPopup === 6 }}" type="date" value="{{ currentDate }}" min-date="{{ minDate }}" max-date="{{ maxDate }}" formatter="{{ formatter }}" bind:confirm="onConfirmPurchaseDate" bind:close="onClose" />
     </block>
   </van-popup>
   <van-dialog id="van-dialog" />

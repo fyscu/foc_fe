@@ -1,5 +1,3 @@
-import Toast from '@vant/weapp/toast/toast';
-
 var app = getApp();
 
 Page({
@@ -8,12 +6,12 @@ Page({
     campusMap: {
       ja: "江安",
       wj: "望江",
-      hx: "华西"
+      hx: "华西",
     },
     userInfo: app.globalData.userInfo,
     orderList: app.globalData.orderList,
   },
-  // 显示页面时更新数据 
+  // 显示页面时更新数据
   onShow() {
     this.reloadData();
   },
@@ -23,4 +21,4 @@ Page({
       orderList: app.globalData.orderList,
     });
   },
-})
+});

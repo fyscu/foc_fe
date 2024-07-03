@@ -6,7 +6,7 @@
       </van-field>
     </van-cell-group>
     <view class="btn-container">
-      <van-button round type="primary" icon="publish" class-prefix="material-icons"  bind:click="onShowPopup">提交</van-button>
+      <van-button round type="primary" icon="publish" class-prefix="material-icons" bind:click="onShowPopup">提交</van-button>
     </view>
   </view>
   <van-toast id="van-toast" />

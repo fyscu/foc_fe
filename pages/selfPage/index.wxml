@@ -12,7 +12,7 @@
         <van-tag type="primary" size="medium">用户</van-tag>
       </block>
     </view>
-    <view wx:else class="headline-container" bind:tap="userLogin">
+    <view wx:else class="headline-container" bind:tap="navigateToRegister">
       <text class="headline-msg">您还未登陆哦</text>
       <van-image class="headline-avatar" width="5rem" round height="5rem" fit="cover" src="{{ userInfo.avatarUrl }}" />
     </view>

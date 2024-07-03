@@ -1,5 +1,5 @@
 /**index.wxss**/
-@import '/utils/MD_Wxss/github_css.wxss';
+@import "/utils/MD_Wxss/github_css.wxss";
 
 .markdown-body {
   padding: 40rpx;

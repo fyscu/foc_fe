@@ -2,10 +2,11 @@
 /* 全局css设置 */
 
 /* 因为vant自带的icons太少了，所以引入material design icons */
-@import '/utils/MD_Wxss/index.wxss';
+@import "/utils/MD_Wxss/index.wxss";
 
 /* 设置全局背景颜色 */
-page, body {
+page,
+body {
   background-color: #f7f8fa;
 }
 

@@ -10,11 +10,13 @@
     "tabBarBackgroundColor": "#F7F7F7",
 
     "iconPathHome": "image/icon_home.png",
-    "selectedIconPathHome": "image/icon_home_HL.png",
-    "iconPathSearch": "image/icon_search.png",
-    "selectedIconPathSearch": "image/icon_search_HL.png",
+    "selectedIconPathHome": "image/icon_home_filled.png",
+    "iconPathActivity": "image/icon_activity.png",
+    "selectedIconPathActivity": "image/icon_activity_filled.png",
     "iconPathSelf": "image/icon_self.png",
-    "selectedIconPathSelf": "image/icon_self_HL.png",
+    "selectedIconPathSelf": "image/icon_self_filled.png",
+    "iconPathForum": "image/icon_forum.png",
+    "selectedIconPathForum": "image/icon_forum_filled.png",
 
     "backgroundTextStyle": "dark"
   },
@@ -29,12 +31,14 @@
     "tabBarBackgroundColor": "#1F1F1F",
 
     "iconPathHome": "image/icon_home.png",
-    "selectedIconPathHome": "image/icon_home_HL.png",
-    "iconPathSearch": "image/icon_search.png",
-    "selectedIconPathSearch": "image/icon_search_HL.png",
+    "selectedIconPathHome": "image/icon_home_filled.png",
+    "iconPathActivity": "image/icon_activity.png",
+    "selectedIconPathActivity": "image/icon_search_filled.png",
     "iconPathSelf": "image/icon_self.png",
-    "selectedIconPathSelf": "image/icon_self_HL.png",
+    "selectedIconPathSelf": "image/icon_self_filled.png",
+    "iconPathForum": "image/icon_forum.png",
+    "selectedIconPathForum": "image/icon_forum_filled.png",
 
     "backgroundTextStyle": "light"
   }
-} 
+}
