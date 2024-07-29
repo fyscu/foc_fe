@@ -7,3 +7,15 @@
 .van-card__desc {
   padding: 5px;
 }
+
+.status-0 .van-tag--mark {
+  background-color: #f19c73;
+}
+
+.status-1 .van-tag--mark {
+  background-color: #57be6a;
+}
+
+.status-2 .van-tag--mark {
+  background-color: #da3231;
+}

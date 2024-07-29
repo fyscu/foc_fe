@@ -1,31 +1,77 @@
 // index.js
 import Toast from "@vant/weapp/toast/toast";
+import {
+  userLogin,
+  uploadQiniuImg,
+  setUserInfo
+} from "../../../utils/req"
+import {
+  checkUserInfo
+} from "../../../utils/util"
 
 var app = getApp();
+let userInfoOriginal = {};
 
 Page({
   data: {
     userInfo: app.globalData.userInfo,
+    campusList: ["江安", "望江", "华西"],
+    showPopup: 0, // 不弹出选择框
+  },
+  // 页面加载时触发
+  onLoad(options) {
+    // 获取页面参数 // console.log(options);
+    if (options.toast) {
+      Toast(options.toast);
+    }
   },
   // 显示页面时更新数据
   onShow() {
     this.reloadData();
+    // 对 userInfo 使用深拷贝
+    userInfoOriginal = JSON.parse(JSON.stringify(this.data.userInfo));
   },
   // Do something when page ready.
   onReady() {
     // login if havn't
     if (!app.globalData.isloggedin) {
-      this.userLogin();
+      this.onLogin();
     }
   },
-  // 页面卸载时触发。如wx.redirectTo或wx.navigateBack到其他页面时。
+  // 页面卸载时触发
+  // 如 wx.redirectTo 或 wx.navigateBack 到其他页面时
   onUnload() {
     // 关闭页面时更新数据
     app.globalData.userInfo = this.data.userInfo;
-    // TODO: Save Data
-    wx.request({
-      url: "url",
-    });
+    // console.log(app.globalData.userInfo);
+    if (app.globalData.isloggedin) { // 如果已经登录
+      if (!checkUserInfo(this.data.userInfo)) {
+        console.log("信息不完善");
+        wx.navigateTo({
+          url: '/pages/selfPage/settingsPage/index?toast=必须完善所有信息',
+        })
+      } else if (JSON.stringify(this.data.userInfo) ===
+        JSON.stringify(userInfoOriginal)) {
+        // 如果信息不变
+      } else { // 信息填写完全，且发生了变动，可以提交给后端
+        let diff = {};
+        for (const key in userInfoOriginal) {
+          if (this.data.userInfo[key] !== userInfoOriginal[key]) {
+            diff[key] = this.data.userInfo[key];
+          }
+        }
+        console.log("diff:", diff);
+        setUserInfo(diff).then((returnCode) => {
+          if (returnCode === 401) {
+            Toast("鉴权失败，请刷新重试");
+          } else if (returnCode === 200) {
+            Toast("修改成功");
+          } else if (returnCode === 300) {
+            Toast("修改失败");
+          }
+        })
+      }
+    }
   },
   // 在输入框不为focused时更新数据
   onNicknameBlur(e) {
@@ -38,9 +84,9 @@ Page({
       ["userInfo.phone"]: e.detail.value
     });
   },
-  onQQBlur(e) {
+  onEmailBlur(e) {
     this.setData({
-      ["userInfo.qq"]: e.detail.value
+      ["userInfo.email"]: e.detail.value
     });
   },
   // 选择头像
@@ -48,26 +94,65 @@ Page({
     const {
       avatarUrl
     } = e.detail;
-    // console.log("get avatar url:", e.detail);
-    this.setData({
-      ["userInfo.avatarUrl"]: avatarUrl
+    console.log("get avatar url:", avatarUrl);
+    uploadQiniuImg(avatarUrl).then((imgUrl) => {
+      this.setData({
+        ["userInfo.avatarUrl"]: imgUrl,
+      });
+    }).catch((error) => {
+      this.setData({
+        ["userInfo.avatarUrl"]: "/image/icons/image_upload_failed.svg",
+      });
     });
   },
-  // 调用app.userLogin()
-  async userLogin() {
-    try {
-      app
-        .userLogin()
-        .then((returnCode) => {
-          Toast("登录成功！请完善个人信息");
-          this.reloadData();
-        })
-        .catch((error) => {
-          Toast("登录失败！" + error);
+  // 弹出校区选择器
+  showPopup(event) {
+    // console.log(event);
+    this.setData({
+      showPopup: parseInt(event.target.dataset.index),
+    });
+  },
+  closePopup() {
+    this.setData({
+      showPopup: 0,
+    });
+  },
+  // 确认校区
+  onConfirmCampus(event) {
+    // 校区
+    const {
+      value
+    } = event.detail;
+    this.setData({
+      ["userInfo.campus"]: value,
+      showPopup: 0,
+    });
+  },
+  onLogin() {
+    userLogin().then((returnCode) => {
+      console.log("returnCode:", returnCode);
+      if (returnCode === 300) {
+        Toast("您尚未注册");
+        // 跳转到注册页
+        wx.navigateTo({
+          url: './registerPage/index',
         });
-    } catch (error) {
-      console.log(error); // 输出错误信息
-    }
+      } else if (returnCode === 200) {
+        // 成功登录
+        this.reloadData();
+        // 更新 userInfoOriginal
+        userInfoOriginal = JSON.parse(JSON.stringify(this.data.userInfo));
+        if (!checkUserInfo(this.data.userInfo)) {
+          Toast("登录成功！请完善个人信息");
+        } else {
+          Toast("登录成功！");
+        }
+      } else {
+        console.log("未知错误", returnCode);
+      }
+    }).catch((error) => {
+      Toast("登录失败！" + error);
+    });
   },
   reloadData() {
     this.setData({
@@ -75,12 +160,16 @@ Page({
     });
   },
   onLogout() {
+    // 清空所有数据
     const emptyUserInfo = {
-      is_tech: false,
-      qq: "",
-      phone: "",
-      nickname: "",
-      avatarUrl: "/image/momo.jpg",
+      qq: "", // 用户QQ号
+      uid: "", // 用户id
+      role: "", // 用role替代is_tech
+      email: "", // 用户邮箱
+      phone: "", // 用户手机号
+      campus: "", // 所在校区
+      nickname: "", // 用户昵称
+      avatarUrl: "/image/momo.jpg", // 用户头像地址
     };
     this.setData({
       userInfo: emptyUserInfo,
@@ -91,16 +180,5 @@ Page({
     app.globalData.openid = null;
     // console.log(app.globalData);
     wx.navigateBack();
-  },
-  techCertify() {
-    if (this.data.userInfo.phone.trim() == "") {
-      Toast("请先填写手机号！");
-    } else {
-      // TODO: 进行认证逻辑
-      Toast(`认证成功！已将您与技术员「${"南瓜瓜"}」绑定`);
-      this.setData({
-        ["userInfo.is_tech"]: true,
-      });
-    }
   },
 });

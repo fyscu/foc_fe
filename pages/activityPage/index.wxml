@@ -4,9 +4,9 @@
   <!-- 搜索提示 -->
   <!-- <van-empty image="search" description="当前无活动" /> -->
   <view wx:for="{{ activities }}" wx:key="index">
-    <van-card tag="{{ item.tag_text }}" title="{{ item.name }}" desc="{{ item.description }}" thumb="{{ item.type === 1 ? '/image/momo.jpg' : '/image/momo.jpg' }}">
+    <van-card class="status-{{ item.status }}" tag="{{ statusMap[item.status] }}" title="{{ item.name }}" desc="{{ item.description }}" thumb="{{ item.poster }}">
       <view slot="footer">
-        <van-button round size="small" type="primary" disabled="{{ !item.can_signup }}" bindtap="handleSignup" data-activity="{{ item }}">
+        <van-button round size="small" type="info" disabled="{{ item.status !== 1 }}" bindtap="handleSignup" data-activity="{{ item }}">
           立即报名
         </van-button>
       </view>

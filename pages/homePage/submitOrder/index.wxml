@@ -5,7 +5,7 @@
     <van-notice-bar color="#1989fa" background="#ecf9ff" left-icon="info-o" mode="link" text="请务必认真阅读「维修须知」" />
   </navigator>
   <van-cell-group inset title="个人联系信息">
-    <van-field required center name="qq" label="QQ号" placeholder="请填写QQ号" clearable model:value="{{ qq }}" border="{{ false }}">
+    <van-field required center name="email" label="邮箱" placeholder="请填写电子邮箱" clearable model:value="{{ email }}" border="{{ false }}">
       <view class="material-icons" slot="right-icon"> mail </view>
     </van-field>
     <van-field required center name="phone" label="手机号" placeholder="请填写手机号" clearable model:value="{{ phone }}" border="{{ false }}">

@@ -1,19 +1,19 @@
 <!--index.wxml-->
 <scroll-view class="scrollview" scroll-y type="list">
   <view class="container">
-    <!-- 登陆成功，获取到用户头像昵称 -->
+    <!-- 登录成功，获取到用户头像昵称 -->
     <view wx:if="{{isloggedin}}" class="headline-container">
       <text class="headline-msg">{{ userInfo.nickname === "" ? "Anonymous" : userInfo.nickname }}</text>
       <van-image class="headline-avatar" width="5rem" round height="5rem" fit="cover" src="{{ userInfo.avatarUrl }}" />
-      <block wx:if="{{ userInfo.is_tech }}">
+      <block wx:if="{{ userInfo.role === 'technician' }}">
         <van-tag type="success" size="medium">技术员</van-tag>
       </block>
       <block wx:else>
         <van-tag type="primary" size="medium">用户</van-tag>
       </block>
     </view>
-    <view wx:else class="headline-container" bind:tap="navigateToRegister">
-      <text class="headline-msg">您还未登陆哦</text>
+    <view wx:else class="headline-container" bind:tap="onLogin">
+      <text class="headline-msg">您还未登录哦</text>
       <van-image class="headline-avatar" width="5rem" round height="5rem" fit="cover" src="{{ userInfo.avatarUrl }}" />
     </view>
     <van-cell-group class="linklist" inset>
@@ -30,14 +30,10 @@
         <view class="material-icons" slot="icon"> info </view>
       </van-cell>
     </van-cell-group>
-    <!-- 如果没有登录显示登录按钮 -->
-    <!-- <view wx:if="{{!isloggedin}}" class="button-container">
-      <van-button hairline plain round type="primary" bind:tap="userLogin">登录</van-button>
-    </view> -->
-    <!-- 登陆了但是没有获取到昵称 -->
+    <!-- 登录了但是没有获取到昵称 -->
     <van-popup show="{{ showPopup }}" round position="bottom" custom-style="height: 95%" bind:close="onClosePopup" closeable>
       <button class="avatar-wrapper" open-type="chooseAvatar" bind:chooseavatar="onChooseAvatar">
-        <image class="avatar" src="{{ userInfo.avatarUrl }}"></image>
+        <image class="avatar" src="{{ userInfo.avatarUrl === '' ? '/image/icons/image_upload_failed.svg' : userInfo.avatarUrl }}"></image>
       </button>
       <van-cell-group inset>
         <van-field required center name="nickname" label="用户名" placeholder="请输入昵称" clearable value="{{ userInfo.nickname }}" border="{{ false }} " bind:blur="onNicknameBlur">
@@ -46,13 +42,10 @@
         <van-field required center name="phone" label="联系方式" placeholder="请输入联系方式" clearable value="{{ userInfo.phone }}" border="{{ false }} " bind:blur="onPhoneBlur">
           <view class="material-icons" slot="right-icon"> phone </view>
         </van-field>
-        <van-field center name="qq" label="QQ号" placeholder="请输入QQ号" clearable value="{{ userInfo.qq }}" border="{{ false }} " bind:blur="onQQBlur">
+        <van-field center name="email" label="邮箱" placeholder="请输入电子邮箱" clearable value="{{ userInfo.email }}" border="{{ false }} " bind:blur="onEmailBlur">
           <view class="material-icons" slot="right-icon"> mail </view>
         </van-field>
       </van-cell-group>
-      <view wx:if="{{ !userInfo.is_tech }}" class="btn-container">
-        <van-button color="linear-gradient(to right, #4bb0ff, #6149f6)" icon="verified_user" class-prefix="material-icons" round bind:click="techCertify">技术员认证</van-button>
-      </view>
     </van-popup>
     <!-- </block> -->
     <van-toast id="van-toast" />

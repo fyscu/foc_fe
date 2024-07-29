@@ -1,22 +1,42 @@
 <!--index.wxml-->
 <scroll-view class="scrollview" scroll-y type="list">
   <view class="container">
-    <van-cell-group inset>
+    <button class="avatar-wrapper" open-type="chooseAvatar" bind:chooseavatar="onChooseAvatar">
+      <image class="avatar" src="{{ userInfo.avatarUrl === '' ? '/image/icons/image_upload_failed.svg' : userInfo.avatarUrl }}"></image>
+    </button>
+    <van-cell-group inset title="手机号验证">
       <van-field required center name="phone" label="手机号" placeholder="请输入手机号" clearable value="{{ userInfo.phone }}" border="{{ false }} " bind:blur="onPhoneBlur">
         <view class="material-icons" slot="right-icon"> phone </view>
       </van-field>
-      <van-field required center name="phone" label="验证码" placeholder="请输入验证码" clearable value="{{ verifiCode }}" border="{{ false }} " bind:blur="onPhoneBlur">
+      <van-field required center name="phone" label="验证码" placeholder="请输入验证码" clearable value="{{ verifiCode }}" border="{{ false }} " bind:blur="onVerifiCodeBlur">
         <block wx:if="{{ isCountingDown }}">
-          <van-button disabled type="default" slot="button" size="small" round bind:click="sendCode">已发送 {{ countDownNum }}s</van-button>
+          <van-button disabled type="default" slot="button" size="small" round>
+            已发送 {{ countDownNum }}s
+          </van-button>
         </block>
         <block wx:else>
           <van-button slot="button" size="small" type="info" icon="verified_user" class-prefix="material-icons" round bind:click="sendCode">获取</van-button>
         </block>
       </van-field>
     </van-cell-group>
+    <van-cell-group inset title="个人信息" style="margin-top: 20rpx;">
+      <van-field required center name="nickname" label="用户名" placeholder="请输入昵称" clearable value="{{ userInfo.nickname }}" border="{{ false }} " bind:blur="onNicknameBlur">
+        <view class="material-icons" slot="right-icon"> face </view>
+      </van-field>
+      <van-field required center name="email" label="邮箱" placeholder="请输入电子邮箱" clearable value="{{ userInfo.email }}" border="{{ false }} " bind:blur="onEmailBlur">
+        <view class="material-icons" slot="right-icon"> mail </view>
+      </van-field>
+      <van-cell required title="所在校区" bind:click="showPopup" data-index="1" is-link value="{{ userInfo.campus === '' ? '请选择' : userInfo.campus }}" arrow-direction="down">
+      </van-cell>
+    </van-cell-group>
     <view class="btn-container">
       <van-button round type="primary" icon="person_add" class-prefix="material-icons" bind:click="onRegister">注册</van-button>
     </view>
-    <van-toast id="van-toast"/>
+    <van-popup show="{{ showPopup === 1 }}" round position="bottom" custom-style="height: 44" bind:close="closePopup">
+      <block wx:if="{{ showPopup === 1 }}">
+        <van-picker title="选择校区" show-toolbar="true" columns="{{ campusList }}" bind:confirm="onConfirmCampus" bind:cancel="closePopup" />
+      </block>
+    </van-popup>
+    <van-toast id="van-toast" />
   </view>
 </scroll-view>

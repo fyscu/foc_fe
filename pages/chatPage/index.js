@@ -1,5 +1,6 @@
 // pages/avatarPage/index.js
-import * as TextEncoding from "text-encoding-shim";
+// import * as TextEncoding from "text-encoding-shim";
+import TextEncoding from "../../utils/text_encode_shim"
 
 var app = getApp();
 
@@ -37,7 +38,7 @@ Page({
           // "Transfer-Encoding": 'chunked'
         },
         data: {
-          model: "gpt-3.5-turbo",
+          model: "gpt-4o-mini",
           messages: messages,
         },
         success: (res) => {

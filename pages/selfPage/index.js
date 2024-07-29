@@ -1,7 +1,19 @@
 // index.js
 import Toast from "@vant/weapp/toast/toast";
+import {
+  userLogin
+} from "../../utils/req"
+import {
+  checkUserInfo
+} from "../../utils/util";
 
 var app = getApp();
+
+wx.login({
+  success: (res) => {
+    console.log("Here is a test code:", res.code);
+  }
+});
 
 Page({
   data: {
@@ -26,9 +38,9 @@ Page({
       ["userInfo.phone"]: e.detail.value
     });
   },
-  onQQBlur(e) {
+  onEmailBlur(e) {
     this.setData({
-      ["userInfo.qq"]: e.detail.value
+      ["userInfo.email"]: e.detail.value
     });
   },
   // 选择头像
@@ -55,50 +67,41 @@ Page({
       showPopup: true
     });
   },
-  navigateToRegister() {
-    wx.navigateTo({
-      url: './registerPage/index',
-    })
-  },
-  async userLogin() {
-    try {
-      app
-        .userLogin()
-        .then((returnCode) => {
-          if (this.data.userInfo.nickname === "") {
-            // 如果没有设置userInfo
-            Toast("登录成功！请完善昵称");
-            // 弹出个人信息填写页
-            this.setData({
-              showPopup: true
-            });
-          } else {
-            Toast("登录成功！");
-          }
-          this.reloadData();
-        })
-        .catch((error) => {
-          Toast("登录失败！" + error);
+  onLogin() {
+    userLogin().then((returnCode) => {
+      console.log("returnCode:", returnCode);
+      if (returnCode === 300) {
+        Toast("您尚未注册");
+        // 跳转到注册页
+        wx.navigateTo({
+          url: './registerPage/index',
         });
-    } catch (error) {
-      console.log(error); // 输出错误信息
-    }
+      } else if (returnCode === 200) {
+        // 成功登录
+        this.reloadData();
+        if (!checkUserInfo(this.data.userInfo)) {
+          // 如果没有完善 userInfo
+          // 跳转到用户信息设置页面
+          wx.navigateTo({
+            url: './settingsPage/index?toast=登录成功！请完善个人信息',
+          });
+          // 弹出个人信息填写页 (弃用)
+          // this.setData({
+          //   showPopup: true
+          // });
+        }
+      } else {
+        console.log("未知错误", returnCode);
+      }
+    }).catch((error) => {
+      Toast("登录失败！" + error);
+    });
   },
+  // 刷新 this.data 数据
   reloadData() {
     this.setData({
       isloggedin: app.globalData.isloggedin,
       userInfo: app.globalData.userInfo,
     });
-  },
-  techCertify() {
-    if (this.data.userInfo.phone.trim() == "") {
-      Toast("请先填写手机号！");
-    } else {
-      // TODO: 进行认证逻辑
-      Toast(`认证成功！已将您与技术员「${"南瓜瓜"}」绑定`);
-      this.setData({
-        ["userInfo.is_tech"]: true,
-      });
-    }
   },
 });

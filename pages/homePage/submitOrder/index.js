@@ -1,7 +1,7 @@
 import {
   getUUid
 } from "../../../utils/util";
-import Toast from "../../settingsPage/node_modules/@vant/weapp/toast/toast";
+import Toast from "@vant/weapp/toast/toast";
 import Dialog from "@vant/weapp/dialog/dialog";
 
 var app = getApp();
@@ -100,7 +100,7 @@ Page({
     // showPopup = 5:
     problemList: ["设备清灰", "系统重装", "无法开机", "设备进水", "软件问题"],
     // userinfo
-    qq: app.globalData.userInfo.qq,
+    email: app.globalData.userInfo.email,
     phone: app.globalData.userInfo.phone,
   },
   // 显示页面时更新数据
@@ -122,7 +122,7 @@ Page({
   },
   reloadData() {
     this.setData({
-      qq: app.globalData.userInfo.qq,
+      email: app.globalData.userInfo.email,
       phone: app.globalData.userInfo.phone,
     });
   },
@@ -271,7 +271,7 @@ Page({
   },
   submitOrder() {
     if (
-      this.data.qq === "" ||
+      this.data.email === "" ||
       this.data.phone === "" ||
       this.data.campusValue === "请选择" ||
       this.data.problemDesc === ""

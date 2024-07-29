@@ -5,11 +5,11 @@ body {
   background-color: #ffffff;
 }
 
-.class-status-0 .van-tag--mark {
+.status-0 .van-tag--mark {
   background-color: #4187f2;
 }
 
-.class-status-2 .van-tag--mark {
+.status-2 .van-tag--mark {
   background-color: #57be6a;
 }
 
