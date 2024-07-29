@@ -22,7 +22,12 @@
       </view>
     </block>
     <view wx:if="{{ isloggedin }}" class="btn-container">
-      <van-button round icon="build" class-prefix="material-icons" type="info" bind:click="onNavigateToSubmitOrderPage">我要报修</van-button>
+      <view wx:if='{{ userInfo.role === "technician" }}'>
+        <van-button round icon="build" class-prefix="material-icons" type="info" bind:click="onNavigateToSubmitOrderPage">我要报修</van-button>
+      </view>
+      <view wx:elif='{{ userInfo.role === "user" }}'>
+        <van-button round icon="settings" class-prefix="material-icons" type="info" bind:click="onNavigateToTechOptions">设置</van-button>
+      </view>
     </view>
   </view>
   <van-dialog id="van-dialog" />

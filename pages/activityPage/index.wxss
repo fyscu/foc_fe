@@ -1,11 +1,16 @@
 /**index.wxss**/
+.van-card {
+  /* 活动卡片渐变色 */
+  background: linear-gradient(0deg,#FFFFFF 0%,#FAFAFA 50%,#FFFFFF 100%); 
+}
+
 .van-card__title {
   font-size: large;
-  padding: 5px;
+  padding: 10rpx;
 }
 
 .van-card__desc {
-  padding: 5px;
+  padding: 10rpx;
 }
 
 .status-0 .van-tag--mark {

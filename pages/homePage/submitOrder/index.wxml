@@ -41,19 +41,19 @@
   </view>
   <van-popup show="{{ showPopup >= 1 && showPopup <= 6 }}" round position="bottom" custom-style="height: 44" bind:close="onClose">
     <block wx:if="{{ showPopup === 1 }}">
-      <van-picker title="选择校区" show-toolbar="true" columns="{{ campusList }}" bind:confirm="onConfirmCampus" bind:cancel="onClose" />
+      <van-picker title="选择校区" show-toolbar columns="{{ campusList }}" bind:confirm="onConfirmCampus" bind:cancel="onClose" />
     </block>
     <block wx:elif="{{ showPopup === 2 }}">
-      <van-picker title="选择设备类型" show-toolbar="true" columns="{{ deviceTypeList }}" bind:confirm="onConfirmDeviceType" bind:cancel="onClose" />
+      <van-picker title="选择设备类型" show-toolbar columns="{{ deviceTypeList }}" bind:confirm="onConfirmDeviceType" bind:cancel="onClose" />
     </block>
     <block wx:elif="{{ showPopup === 3 }}">
-      <van-picker title="选择设备品牌" show-toolbar="true" columns="{{ brandList }}" bind:confirm="onConfirmBrand" bind:cancel="onClose" />
+      <van-picker title="选择设备品牌" show-toolbar columns="{{ brandList }}" bind:confirm="onConfirmBrand" bind:cancel="onClose" />
     </block>
     <block wx:elif="{{ showPopup === 4 }}">
-      <van-picker title="选择保修状态" show-toolbar="true" columns="{{ warrantStatusList }}" bind:confirm="onConfirmWarrantStatus" bind:cancel="onClose" />
+      <van-picker title="选择保修状态" show-toolbar columns="{{ warrantStatusList }}" bind:confirm="onConfirmWarrantStatus" bind:cancel="onClose" />
     </block>
     <block wx:elif="{{ showPopup === 5 }}">
-      <van-picker title="选择设备问题" show-toolbar="true" columns="{{ problemList }}" bind:confirm="onConfirmDeviceProblem" bind:cancel="onClose" />
+      <van-picker title="选择设备问题" show-toolbar columns="{{ problemList }}" bind:confirm="onConfirmDeviceProblem" bind:cancel="onClose" />
     </block>
     <block wx:elif="{{ showPopup === 6 }}">
       <van-datetime-picker show="{{ showPopup === 6 }}" type="date" value="{{ currentDate }}" min-date="{{ minDate }}" max-date="{{ maxDate }}" formatter="{{ formatter }}" bind:confirm="onConfirmPurchaseDate" bind:close="onClose" />

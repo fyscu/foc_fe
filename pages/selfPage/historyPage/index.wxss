@@ -1,25 +1,9 @@
 /**index.wxss**/
 
-page,
-body {
-  background-color: #ffffff;
-}
-
 .status-0 .van-tag--mark {
   background-color: #4187f2;
 }
 
 .status-2 .van-tag--mark {
   background-color: #57be6a;
-}
-
-.btn-container {
-  z-index: 99;
-  overflow: hidden;
-  margin-bottom: 30%;
-  width: 100%;
-  position: fixed;
-  bottom: 0px;
-  display: flex;
-  justify-content: center;
 }

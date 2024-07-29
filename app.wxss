@@ -21,6 +21,18 @@ body {
   box-sizing: border-box;
 }
 
+/* 悬浮按钮样式 */
+.btn-container {
+  z-index: 99;
+  overflow: hidden;
+  margin-bottom: 30%;
+  width: 100%;
+  position: fixed;
+  bottom: 0px;
+  display: flex;
+  justify-content: center;
+}
+
 .avatar-wrapper {
   padding: 0;
   width: 56px !important;

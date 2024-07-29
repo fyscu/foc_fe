@@ -226,6 +226,31 @@ function uploadQiniuImg(localFilePath) {
   });
 }
 
+function putFeedback() {
+  wx.request({
+    url: 'https://fix.fyscu.com/api/onpage/about/put_feedback.php',
+    data: {
+      "seid": temp_seid,
+      "pnum": temp_pnum,
+      "text": temp_this.data.question,
+    },
+    method: 'GET',
+    header: {
+      'content-type': 'application/json'
+    },
+    success: function (res) {
+      console.log('[获取反馈状态]内容：' + res.data)
+    },
+  })
+  wx.showToast({
+    title: '反馈成功',
+    icon: 'success'
+  })
+  this.setData({
+    isShow: false,
+  })
+}
+
 module.exports = {
   userLogin,
   userRegister,

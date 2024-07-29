@@ -1,14 +1,10 @@
 /* pages/chatPage/index.wxss */
 
-page,
-body {
-  background-color: #ededed;
-}
-
 .container {
   display: flex;
   flex-direction: column;
   height: 100vh;
+  background: linear-gradient(180deg,#FFFFFF 0%,#EDEDED 10%);
 }
 
 .content {

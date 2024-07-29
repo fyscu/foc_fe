@@ -1,16 +1,5 @@
 /**index.wxss**/
 
-.btn-container {
-  z-index: 99;
-  overflow: hidden;
-  margin-bottom: 30%;
-  width: 100%;
-  position: fixed;
-  bottom: 0px;
-  display: flex;
-  justify-content: center;
-}
-
 .van-popup {
   padding-top: 40rpx;
 }

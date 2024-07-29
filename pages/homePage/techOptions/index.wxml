@@ -1,0 +1,21 @@
+<!--index.wxml-->
+<scroll-view class="scrollview" scroll-y type="list">
+  <view class="container">
+    <van-cell-group inset>
+      <van-cell title="启用QQ号" >
+        <van-switch style="height: 24px;" slot="right-icon" checked="{{ hasQQ }}" bind:change="onToggleQQ" size="40rpx" />
+      </van-cell>
+      <van-field center disabled="{{ !hasQQ }}" name="qq" label="QQ号" placeholder="请输入你的QQ号" clearable value="{{ userInfo.qq }}" border="{{ false }}" bind:blur="onQQBlur">
+        <view class="material-icons" slot="right-icon"> mail </view>
+      </van-field>
+      <van-cell title="下次天数" bind:click="showPopup" data-index="1" is-link value="{{ restDays }}" arrow-direction="down">
+      </van-cell>
+    </van-cell-group>
+    <van-popup show="{{ showPopup === 1 }}" round position="bottom" custom-style="height: 44" bind:close="closePopup">
+      <block wx:if="{{ showPopup === 1 }}">
+        <van-picker title="选择天数" show-toolbar columns="{{ daysList }}" bind:confirm="onConfirmCampus" bind:cancel="closePopup" />
+      </block>
+    </van-popup>
+    <van-toast id="van-toast" />
+  </view>
+</scroll-view>

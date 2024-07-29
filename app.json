@@ -12,6 +12,7 @@
     "pages/homePage/orderDetail/index",
     "pages/homePage/announcement/index",
     "pages/homePage/submitOrder/index",
+    "pages/homePage/techOptions/index",
     "pages/forumPage/index",
     "pages/forumPage/sharePage/index"
   ],

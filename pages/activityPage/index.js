@@ -5,7 +5,8 @@ import Toast from "@vant/weapp/toast/toast";
 Page({
   data: {
     statusMap: ["未开始", "进行中", "已结束"],
-    searchValue: "",
+    searchText: "",
+    searchEmpty: true, // 没有搜索结果
     activities: [{
         "name": "江安大修",
         "type": 1,
@@ -51,10 +52,14 @@ Page({
         "signup_end_time": "2024/6/23 12:00:00",
         "poster": "https://cdn.fyscu.com/fyMiniprogam/%E4%BC%9A%E5%91%98%E5%A4%A7%E4%BC%9A.JPG"
       },
-    ]
+    ],
+    activitiesShowing: {},
   },
   onLoad() {
+    // 初始化 activity
+    // TODO：从后端获取 activities
     this.setActivityStatus();
+    this.search("");
   },
   setActivityStatus() {
     const now = new Date().getTime();
@@ -79,5 +84,30 @@ Page({
     const activity = event.currentTarget.dataset.activity;
     // 处理报名逻辑
     console.log(`报名活动: ${activity.name}`);
+  },
+  onSearchChange(event) {
+    this.setData({
+      searchText: event.detail,
+    });
+    this.search(this.data.searchText);
+  },
+  search(text) {
+    // 如果搜索文本为空，显示所有活动。
+    if (text.trim() === ""){
+      this.setData({
+        searchEmpty: this.data.activities.length === 0,
+        activitiesShowing: this.data.activities,
+      });
+      return;
+    };
+    // 不为空，则过滤
+    let matchedActivities = this.data.activities.filter(activity =>
+      activity.name.includes(text) ||
+      activity.description.includes(text)
+    );
+    this.setData({
+      searchEmpty: matchedActivities.length === 0,
+      activitiesShowing: matchedActivities,
+    });
   }
 });
