@@ -9,8 +9,8 @@ var app = getApp();
 
 Page({
   data: {
-    statusMap: ["待分配", "维修中", "已完成"],
-    campusMap: {
+    statusList: ["待分配", "维修中", "已完成"],
+    campusList: {
       ja: "江安",
       wj: "望江",
       hx: "华西",

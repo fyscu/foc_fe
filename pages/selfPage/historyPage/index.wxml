@@ -9,12 +9,12 @@
         <block wx:if="{{ item.status == 2}}">
           <!-- 筛选出已经完成的订单 -->
           <navigator url="/pages/homePage/orderDetail/index?id={{ item.id }}" open-type="navigate">
-            <van-card class="status-{{ item.status }}" tag="{{ statusMap[item.status] }}" desc="{{ item.desc }}" title="{{ item.title }}" thumb="/image/computer.png">
+            <van-card class="status-{{ item.status }}" tag="{{ statusList[item.status] }}" desc="{{ item.desc }}" title="{{ item.title }}" thumb="/image/computer.png">
               <view slot="bottom">
                 <text>{{ item.created }}</text>
               </view>
               <view slot="tags">
-                <van-tag plain type="primary">{{ campusMap[item.campus] }}</van-tag>
+                <van-tag plain type="primary">{{ campusList[item.campus] }}</van-tag>
               </view>
             </van-card>
           </navigator>

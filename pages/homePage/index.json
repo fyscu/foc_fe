@@ -1,4 +1,5 @@
 {
+  "navigationBarTitleText": "首页",
   "usingComponents": {
     "van-card": "@vant/weapp/card/index",
     "van-tag": "@vant/weapp/tag/index",

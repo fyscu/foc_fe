@@ -1,12 +1,11 @@
 import {
-  getUUid
-} from "../../../utils/util";
+  addTicket,
+  uploadQiniuImg
+} from "../../../utils/req"
 import Toast from "@vant/weapp/toast/toast";
 import Dialog from "@vant/weapp/dialog/dialog";
 
 var app = getApp();
-// 七牛云token
-var qiniuToken = "";
 
 // 图片、标题、问题描述、校区、机型、是否在保、故障类型
 
@@ -17,7 +16,7 @@ Page({
     // 设备问题描述
     problemDesc: "",
     // 购买日期
-    purchaseDate: "请选择",
+    purchaseDate: "",
     // 日期区间
     minDate: new Date(2019, 0, 1).getTime(),
     maxDate: new Date().getTime(),
@@ -37,15 +36,15 @@ Page({
     // 设备型号
     model: "",
     // 校区
-    campusValue: "请选择",
+    campusValue: "",
     // 设备类型
-    deviceTypeValue: "请选择",
+    deviceTypeValue: "",
     // 设备品牌
-    brandValue: "请选择",
+    brandValue: "",
     // 保修状态
-    warrantStatusValue: "请选择",
+    warrantStatusValue: "",
     // 设备问题
-    deviceProblemValue: "请选择",
+    deviceProblemValue: "",
     // 不弹出选择框
     showPopup: 0,
     // showPopup = 1:
@@ -106,19 +105,6 @@ Page({
   // 显示页面时更新数据
   onShow() {
     this.reloadData();
-  },
-  onReady() {
-    this.loadToken();
-  },
-  loadToken() {
-    const that = this;
-    wx.request({
-      url: "https://chat.fyscu.com/api/getToken",
-      success(res) {
-        console.log("get token successfully:", res.data);
-        qiniuToken = res.data.token;
-      },
-    });
   },
   reloadData() {
     this.setData({
@@ -210,45 +196,19 @@ Page({
       sourceType: ["album", "camera"], // 来源：相册或相机
       camera: "back",
       success(res) {
-        if (qiniuToken === "") {
-          console.log("could not find token, generating one...");
-          that.loadToken();
-        }
-        console.log(res);
-        let temp_imageUrl = [];
+        // console.log(res);
         res.tempFiles.forEach((item) => {
-          console.log("start uploading...");
-          temp_imageUrl.push(that.uploadQiniu(item.tempFilePath));
+          console.log("start uploading:", item.tempFilePath);
+          uploadQiniuImg(item.tempFilePath).then((res) => {
+            let data = JSON.parse(res.data);
+            console.log("qiniu upload success!", res);
+            let temp_imageUrl = that.data.imageUrl;
+            temp_imageUrl.push("https://cdn.feiyang.ac.cn/" + data.key);
+            that.setData({
+              imageUrl: temp_imageUrl,
+            });
+          });
         });
-      },
-    });
-  },
-  uploadQiniu(localFilePath) {
-    var that = this;
-    wx.uploadFile({
-      // 七牛云华南API
-      url: "https://upload-z2.qiniup.com",
-      name: "file",
-      filePath: localFilePath,
-      header: {
-        "Content-Type": "multipart/form-data",
-      },
-      formData: {
-        token: qiniuToken,
-        key: "fyMiniprogam/" + getUUid(),
-      },
-      success: function (res) {
-        let data = JSON.parse(res.data);
-        console.log("qiniu upload success!");
-        let temp_imageUrl = that.data.imageUrl;
-        console.log(res);
-        temp_imageUrl.push("https://cdn.fyscu.com/" + data.key);
-        that.setData({
-          imageUrl: temp_imageUrl,
-        });
-      },
-      fail: function (res) {
-        console.log("failed to upload image:", res);
       },
     });
   },
@@ -273,24 +233,47 @@ Page({
     if (
       this.data.email === "" ||
       this.data.phone === "" ||
-      this.data.campusValue === "请选择" ||
+      this.data.campusValue === "" ||
       this.data.problemDesc === ""
     ) {
-      Toast("请先填写完整必要的信息。");
+      Toast("请先填写完整必要的信息");
       return;
     }
     Dialog.confirm({
-        title: "确认提交？",
-        confirmButtonText: "确认",
-        message: `提交后不可更改；技术员会通过您提交的信息联系您。`,
-      })
-      .then(() => {
-        // on confirm
-        Toast("提交订单成功");
-      })
-      .catch(() => {
-        // on cancel
-        console.log("用户已取消提交");
+      title: "确认提交？",
+      confirmButtonText: "确认",
+      message: `提交后不可更改；技术员会通过您提交的信息联系您。`,
+    }).then(() => {
+      // on confirm
+      console.log(this.data.purchaseDate);
+      console.log(this.data.deviceTypeValue);
+      console.log(this.data.brandValue);
+      console.log(this.data.problemDesc);
+      console.log(this.data.imageUrl);
+      console.log(this.data.deviceProblemValue);
+      console.log(this.data.email);
+      console.log(this.data.campusValue);
+      addTicket(
+        this.data.purchaseDate, // 机器购买时间
+        this.data.deviceTypeValue, // 设备类型
+        this.data.brandValue, // 设备品牌
+        this.data.problemDesc, // 报修问题描述
+        this.data.imageUrl, // 报修图片地址
+        this.data.deviceProblemValue, // 问题类型
+        this.data.email, // 用户预留qq号
+        this.data.campusValue, // 用户所在校区
+      ).then((returnCode) => {
+        if (returnCode === 401) {
+          Toast("鉴权失败，请刷新重试");
+        } else if (returnCode === 200) {
+          Toast("提交订单成功");
+        } else if (returnCode === 300) {
+          Toast("订单创建失败")
+        }
       });
+    }).catch(() => {
+      // on cancel
+      console.log("用户已取消提交");
+    });
   },
 });

@@ -1,4 +1,5 @@
 {
+  "navigationBarTitleText": "创建报修工单",
   "usingComponents": {
     "van-notice-bar": "@vant/weapp/notice-bar/index",
     "van-field": "@vant/weapp/field/index",

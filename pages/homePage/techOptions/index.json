@@ -1,4 +1,5 @@
 {
+  "navigationBarTitleText": "技术员设置",
   "usingComponents": {
     "van-switch": "@vant/weapp/switch/index",
     "van-field": "@vant/weapp/field/index",

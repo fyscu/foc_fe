@@ -8,12 +8,12 @@
       <view wx:for="{{ orderList }}" wx:key="id">
         <block wx:if="{{ item.status != 2}}">
           <navigator url="/pages/homePage/orderDetail/index?id={{ item.id }}" open-type="navigate">
-            <van-card class="class-status-{{ item.status }}" tag="{{ statusMap[item.status] }}" desc="{{ item.desc }}" title="{{ item.title }}" thumb="/image/computer.png">
+            <van-card class="class-status-{{ item.status }}" tag="{{ statusList[item.status] }}" desc="{{ item.desc }}" title="{{ item.title }}" thumb="/image/computer.png">
               <view slot="bottom">
                 <text>{{ item.created }}</text>
               </view>
               <view slot="tags">
-                <van-tag plain type="primary">{{ campusMap[item.campus] }}</van-tag>
+                <van-tag plain type="primary">{{ campusList[item.campus] }}</van-tag>
               </view>
             </van-card>
           </navigator>
@@ -22,10 +22,10 @@
       </view>
     </block>
     <view wx:if="{{ isloggedin }}" class="btn-container">
-      <view wx:if='{{ userInfo.role === "technician" }}'>
+      <view wx:if='{{ userInfo.role === "user" }}'>
         <van-button round icon="build" class-prefix="material-icons" type="info" bind:click="onNavigateToSubmitOrderPage">我要报修</van-button>
       </view>
-      <view wx:elif='{{ userInfo.role === "user" }}'>
+      <view wx:elif='{{ userInfo.role === "technician" }}'>
         <van-button round icon="settings" class-prefix="material-icons" type="info" bind:click="onNavigateToTechOptions">设置</van-button>
       </view>
     </view>

@@ -62,6 +62,7 @@ Page({
         ["userInfo.avatarUrl"]: imgUrl,
       });
     }).catch((error) => {
+      Toast("图片上传失败");
       this.setData({
         ["userInfo.avatarUrl"]: "/image/icons/image_upload_failed.svg",
       });

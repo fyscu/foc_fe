@@ -13,12 +13,12 @@
     </van-field>
   </van-cell-group>
   <van-cell-group inset title="订单维修信息">
-    <van-cell required title="所在校区" bind:click="showPopup" data-index="1" is-link value="{{ campusValue }}" arrow-direction="down" />
-    <van-cell title="设备类型" bind:click="showPopup" data-index="2" is-link value="{{ deviceTypeValue }}" arrow-direction="down" />
-    <van-cell title="设备品牌" bind:click="showPopup" data-index="3" is-link value="{{ brandValue }}" arrow-direction="down" />
-    <van-cell title="保修状态" bind:click="showPopup" data-index="4" is-link value="{{ warrantStatusValue }}" arrow-direction="down" />
-    <van-cell title="设备问题" bind:click="showPopup" data-index="5" is-link value="{{ deviceProblemValue }}" arrow-direction="down" />
-    <van-cell title="购买日期" value="{{ purchaseDate }}" is-link bind:click="showPopup" data-index="6" arrow-direction="down" />
+    <van-cell required title="所在校区" bind:click="showPopup" data-index="1" is-link value="{{ campusValue === '' ? '请选择' : campusValue }}" arrow-direction="down" />
+    <van-cell title="设备类型" bind:click="showPopup" data-index="2" is-link value="{{ deviceTypeValue  === '' ? '请选择' : deviceTypeValue }}" arrow-direction="down" />
+    <van-cell title="设备品牌" bind:click="showPopup" data-index="3" is-link value="{{ brandValue  === '' ? '请选择' : brandValue }}" arrow-direction="down" />
+    <van-cell title="保修状态" bind:click="showPopup" data-index="4" is-link value="{{ warrantStatusValue  === '' ? '请选择' : warrantStatusValue }}" arrow-direction="down" />
+    <van-cell title="设备问题" bind:click="showPopup" data-index="5" is-link value="{{ deviceProblemValue  === '' ? '请选择' : deviceProblemValue }}" arrow-direction="down" />
+    <van-cell title="购买日期" value="{{ purchaseDate  === '' ? '请选择' : purchaseDate }}" is-link bind:click="showPopup" data-index="6" arrow-direction="down" />
     <van-field center name="model" label="设备型号" placeholder="请填写设备型号" clearable model:value="{{ model }}" border="{{ false }}">
       <view class="material-icons" slot="right-icon"> devices </view>
     </van-field>

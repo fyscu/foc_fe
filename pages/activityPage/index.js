@@ -4,7 +4,7 @@ import Toast from "@vant/weapp/toast/toast";
 
 Page({
   data: {
-    statusMap: ["未开始", "进行中", "已结束"],
+    statusList: ["未开始", "进行中", "已结束"],
     searchText: "",
     searchEmpty: true, // 没有搜索结果
     activities: [{

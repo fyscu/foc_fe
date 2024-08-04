@@ -4,8 +4,8 @@ var app = getApp();
 
 Page({
   data: {
-    statusMap: ["待分配", "维修中", "已完成"],
-    campusMap: {
+    statusList: ["待分配", "维修中", "已完成"],
+    campusList: {
       ja: "江安",
       wj: "望江",
       hx: "华西",
@@ -29,7 +29,7 @@ Page({
     wx.navigateTo({
       url: "/pages/homePage/techOptions/index",
       success(res) {
-        console.log("success:", res);
+        // console.log("success:", res);
       },
     });
   },
@@ -50,9 +50,6 @@ Page({
       // on confirm
       wx.navigateTo({
         url: "/pages/homePage/submitOrder/index",
-        success(res) {
-          console.log("success:", res);
-        },
       });
     }).catch(() => {
       // on cancel
