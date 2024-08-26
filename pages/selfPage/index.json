@@ -1,5 +1,5 @@
 {
-  "navigationBarTitleText": "小川电脑管家",
+  "navigationBarTitleText": "云上飞扬",
   "usingComponents": {
     "van-field": "@vant/weapp/field/index",
     "van-button": "@vant/weapp/button/index",
