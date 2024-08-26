@@ -113,11 +113,23 @@ VantComponent({
             value: 0,
         },
         readonly: Boolean,
+        rootPortal: {
+            type: Boolean,
+            value: false,
+        },
     },
     data: {
         subtitle: '',
         currentDate: null,
         scrollIntoView: '',
+    },
+    watch: {
+        minDate() {
+            this.initRect();
+        },
+        maxDate() {
+            this.initRect();
+        },
     },
     created() {
         this.setData({
@@ -132,7 +144,7 @@ VantComponent({
     },
     methods: {
         reset() {
-            this.setData({ currentDate: this.getInitialDate() });
+            this.setData({ currentDate: this.getInitialDate(this.data.defaultDate) });
             this.scrollIntoView();
         },
         initRect() {

@@ -2,18 +2,20 @@ const app = getApp();
 
 Page({
   data: {
-    url: "https://bbs.fyscu.com/",
+    url: "https://bbs.feiyang.ac.cn/",
     shareData: {},
   },
   onShareAppMessage(options) {
-    return this.shareData;
+    return this.data.shareData;
   },
   message(e) {
-    var that = this;
-    that.shareData = {
+    let temp = {
       title: e.detail.data[e.detail.data.length - 1].title,
       path: "sharePage/index?shareUrl=" +
         e.detail.data[e.detail.data.length - 1].path,
     };
+    this.setData({
+      shareData: temp,
+    });
   },
 });

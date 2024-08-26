@@ -175,7 +175,7 @@ Page({
     this.setData({
       userInfo: emptyUserInfo,
     });
-    app.globalData.orderList = [];
+    app.globalData.ticketList = [];
     app.globalData.isloggedin = false;
     app.globalData.code = null;
     app.globalData.openid = null;

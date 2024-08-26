@@ -9,14 +9,18 @@ var app = getApp();
 
 Page({
   data: {
-    statusList: ["待分配", "维修中", "已完成"],
+    statusList: {
+      Pending: "待分配",
+      Repairing: "维修中",
+      Done: "已完成",
+    },
     campusList: {
       ja: "江安",
       wj: "望江",
       hx: "华西",
     },
     userInfo: app.globalData.userInfo,
-    orderList: app.globalData.orderList,
+    ticketList: app.globalData.ticketList,
   },
   // 显示页面时更新数据
   onShow() {
@@ -53,7 +57,7 @@ Page({
   reloadData() {
     this.setData({
       userInfo: app.globalData.userInfo,
-      orderList: app.globalData.orderList,
+      ticketList: app.globalData.ticketList,
     });
   },
 });

@@ -35,7 +35,7 @@
     </view>
   </view>
   <view class="fixed-bottom">
-    <van-field model:value="{{ rawText }}" type="textarea" placeholder="请输入问题" bind:change="onMsgChange" autosize border="{{ false }}">
+    <van-field value="{{ rawText }}" type="textarea" placeholder="请输入问题" bind:change="onMsgChange" autosize border="{{ false }}">
       <van-icon class-prefix="material-icons" name="send" class="clickable-icon" bind:click="onSendMsg" slot="right-icon" size="1.2em" color="{{ iconDisabled ? '#969799' : '#5ea3ef' }}" />
       <!-- <view class="material-icons" bind:click="onSendMsg" slot="right-icon"> send </view> -->
     </van-field>

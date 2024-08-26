@@ -1,9 +1,0 @@
-{
-  "navigationBarTitleText": "订单详情",
-  "usingComponents": {
-    "van-steps": "@vant/weapp/steps/index",
-    "van-dialog": "@vant/weapp/dialog/index",
-    "van-button": "@vant/weapp/button/index",
-    "van-toast": "@vant/weapp/toast/index"
-  }
-}

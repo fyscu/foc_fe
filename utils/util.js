@@ -14,6 +14,15 @@ function formatTime(date) {
   return [year, month, day].map(formatNumber).join('/') + ' ' + [hour, minute, second].map(formatNumber).join(':');
 }
 
+function formatDate(_date) {
+  const date = new Date(_date);
+  const year = date.getFullYear();
+  const month = (date.getMonth() + 1).toString().padStart(2, "0");
+  const day = date.getDate().toString().padStart(2, "0");
+  // yy-mm-dd
+  return `${year}-${month}-${day}`;
+}
+
 function getUUid() {
   var s = [];
   var hexDigits = "0123456789abcdef";
@@ -53,8 +62,16 @@ function checkUserInfo(userInfo) {
   return true;
 }
 
+// 查找特定 name 的数据
+function findDataByName(config, name) {
+  const foundItem = config.find(item => item.name === name);
+  return foundItem ? foundItem.data : null; // 如果找到，返回 data；否则返回 null
+}
+
 module.exports = {
   formatTime,
+  formatDate,
   getUUid,
   checkUserInfo,
+  findDataByName,
 };

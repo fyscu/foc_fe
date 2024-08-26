@@ -2,6 +2,7 @@ import {
   addTicket,
   uploadQiniuImg
 } from "../../../utils/req"
+import { formatDate } from "../../../utils/util";
 import Toast from "@vant/weapp/toast/toast";
 import Dialog from "@vant/weapp/dialog/dialog";
 
@@ -11,12 +12,6 @@ var app = getApp();
 
 Page({
   data: {
-    // 图像链接
-    imageUrl: [],
-    // 设备问题描述
-    problemDesc: "",
-    // 购买日期
-    purchaseDate: "",
     // 日期区间
     minDate: new Date(2019, 0, 1).getTime(),
     maxDate: new Date().getTime(),
@@ -33,8 +28,13 @@ Page({
       }
       return value;
     },
-    // 设备型号
-    model: "",
+    // model: "", // 设备型号
+    // 图像链接
+    imageUrl: [],
+    // 设备问题描述
+    problemDesc: "",
+    // 购买日期
+    purchaseDate: "",
     // 校区
     campusValue: "",
     // 设备类型
@@ -99,7 +99,7 @@ Page({
     // showPopup = 5:
     problemList: ["设备清灰", "系统重装", "无法开机", "设备进水", "软件问题"],
     // userinfo
-    email: app.globalData.userInfo.email,
+    qq: app.globalData.userInfo.qq,
     phone: app.globalData.userInfo.phone,
   },
   // 显示页面时更新数据
@@ -108,7 +108,7 @@ Page({
   },
   reloadData() {
     this.setData({
-      email: app.globalData.userInfo.email,
+      qq: app.globalData.userInfo.qq,
       phone: app.globalData.userInfo.phone,
     });
   },
@@ -162,18 +162,26 @@ Page({
       showPopup: 0,
     });
   },
-  formatDate(date) {
-    date = new Date(date);
-    const year = date.getFullYear();
-    const month = (date.getMonth() + 1).toString().padStart(2, "0");
-    const day = date.getDate().toString().padStart(2, "0");
-    // yy-mm-dd
-    return `${year}-${month}-${day}`;
+  // 输入框
+  onPhoneBlur(e) {
+    this.setData({
+      phone: e.detail.value
+    });
+  },
+  onQQBlur(e) {
+    this.setData({
+      qq: e.detail.value
+    });
+  },
+  onProblemDescBlur(e) {
+    this.setData({
+      problemDesc: e.detail.value
+    });
   },
   onConfirmPurchaseDate(event) {
     this.setData({
       showPopup: 0,
-      purchaseDate: this.formatDate(event.detail),
+      purchaseDate: formatDate(event.detail),
     });
   },
   onClose() {
@@ -199,11 +207,10 @@ Page({
         // console.log(res);
         res.tempFiles.forEach((item) => {
           console.log("start uploading:", item.tempFilePath);
-          uploadQiniuImg(item.tempFilePath).then((res) => {
-            let data = JSON.parse(res.data);
-            console.log("qiniu upload success!", res);
+          uploadQiniuImg(item.tempFilePath).then((url) => {
+            console.log("qiniu upload success!", url);
             let temp_imageUrl = that.data.imageUrl;
-            temp_imageUrl.push("https://cdn.feiyang.ac.cn/" + data.key);
+            temp_imageUrl.push(url);
             that.setData({
               imageUrl: temp_imageUrl,
             });
@@ -229,15 +236,22 @@ Page({
       imageUrl: temp_imageUrl,
     });
   },
-  submitOrder() {
-    if (
-      this.data.email === "" ||
-      this.data.phone === "" ||
-      this.data.campusValue === "" ||
-      this.data.problemDesc === ""
-    ) {
-      Toast("请先填写完整必要的信息");
-      return;
+  submitTicket() {
+    let fields = {
+      "purchaseDate": "购买时间",
+      "phone": "手机号",
+      "deviceTypeValue": "设备类型",
+      "brandValue": "设备品牌",
+      "problemDesc": "报修问题描述",
+      "deviceProblemValue": "问题类型",
+      "qq": "预留QQ号",
+      "campusValue": "所在校区"
+    }
+    for (const field in fields) {
+      if (this.data[field] === "") {
+        Toast(`请先填写${fields[field]}`);
+        return;
+      }
     }
     Dialog.confirm({
       title: "确认提交？",
@@ -246,29 +260,34 @@ Page({
     }).then(() => {
       // on confirm
       console.log(this.data.purchaseDate);
+      console.log(this.data.phone);
       console.log(this.data.deviceTypeValue);
       console.log(this.data.brandValue);
       console.log(this.data.problemDesc);
       console.log(this.data.imageUrl);
       console.log(this.data.deviceProblemValue);
-      console.log(this.data.email);
+      console.log(this.data.qq);
       console.log(this.data.campusValue);
       addTicket(
         this.data.purchaseDate, // 机器购买时间
+        this.data.phone, // 用于联系的手机号
         this.data.deviceTypeValue, // 设备类型
         this.data.brandValue, // 设备品牌
         this.data.problemDesc, // 报修问题描述
-        this.data.imageUrl, // 报修图片地址
+        this.data.imageUrl[0], // 报修图片地址
         this.data.deviceProblemValue, // 问题类型
-        this.data.email, // 用户预留qq号
+        this.data.qq, // 用户预留qq号
         this.data.campusValue, // 用户所在校区
       ).then((returnCode) => {
         if (returnCode === 401) {
           Toast("鉴权失败，请刷新重试");
         } else if (returnCode === 200) {
-          Toast("提交订单成功");
+          Toast("提交工单成功，请耐心等待技术员接单");
+          setTimeout(() => {
+            wx.navigateBack();
+          }, 1000);
         } else if (returnCode === 300) {
-          Toast("订单创建失败")
+          Toast("工单创建失败");
         }
       });
     }).catch(() => {

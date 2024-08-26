@@ -1,28 +1,93 @@
 import Dialog from "@vant/weapp/dialog/dialog";
+import Toast from "@vant/weapp/toast/toast";
+import {
+  getTicket, getConfig
+} from "../../utils/req"
+import {
+  findDataByName
+} from "../../utils/util"
 
 var app = getApp();
 
 Page({
   data: {
-    statusList: ["待分配", "维修中", "已完成"],
+    // 显示骨架屏
+    loading: true,
+    statusList: {
+      Pending: "待分配",
+      Repairing: "维修中",
+      Done: "已完成",
+    },
     campusList: {
       ja: "江安",
       wj: "望江",
       hx: "华西",
     },
     userInfo: app.globalData.userInfo,
-    orderList: app.globalData.orderList,
+    ticketList: app.globalData.ticketList,
     isloggedin: app.globalData.isloggedin,
+    sysConfig: app.globalData.sysConfig,
+    repairFlag: true, // 全局报修开关（是否可以报修）
   },
   // 显示页面时更新数据
   onShow() {
-    this.reloadData();
+    // 登录 [TODO]
+    // 初始化数据
+    this.initialize();
+    // 加载完成
+    setTimeout(() => {
+      this.setData({
+        loading: false
+      })
+    }, 500);
+  },
+  initialize() {
+    this.reloadData(); // 刷新数据
+    if (this.data.isloggedin) {
+      // 获取全局配置
+      getConfig().then((returnCode) => {
+        if (returnCode === 401) {
+          Toast("鉴权失败，请刷新重试");
+        } else if (returnCode === 200) {
+          // 获取全局配置成功
+          this.reloadData(); // 刷新数据
+          this.setData({
+            repairFlag: findDataByName(
+              app.globalData.sysConfig,
+              'Global_Flag'
+            )
+          })
+        } else if (returnCode === 403) {
+          Toast("获取全局配置失败");
+        } else {
+          Toast("未知错误");
+        }
+      });
+      // 获取用户配置
+      if (this.data.userInfo.role === "user") {
+        getTicket({
+          uid: this.data.userInfo.uid,
+        }).then((returnCode) => {
+          if (returnCode === 401) {
+            Toast("鉴权失败，请刷新重试");
+          } else if (returnCode === 200) {
+            // 成功获取用户的所有工单
+            this.reloadData(); // 刷新数据
+          } else if (returnCode === 403) {
+            Toast("工单获取失败，权限不足");
+          } else {
+            Toast("未知错误");
+          }
+        });
+      }
+    }
   },
   reloadData() {
     this.setData({
       userInfo: app.globalData.userInfo,
-      orderList: app.globalData.orderList,
+      ticketList: app.globalData.ticketList,
       isloggedin: app.globalData.isloggedin,
+      sysConfig: app.globalData.sysConfig,
     });
   },
   onNavigateToTechOptions() {
@@ -33,23 +98,16 @@ Page({
       },
     });
   },
-  onNavigateToSubmitOrderPage() {
+  navigateToSubmitTicketPage() {
     Dialog.confirm({
       title: "维修须知",
       messageAlign: "left",
       confirmButtonText: "我已仔细阅读",
-      message: `
-        1. 登录后请先修改自己的个人信息以方便后续送修、维修处理。
-        2. 送修前请移除电源外其余外设配件，包括鼠标、接收器、U盘、内存卡等。
-        3. 如要更换配件，清提前购买准备好；如需重装系统，请确保电脑电量充足。
-        4. 送修前请备份好数据，我们不对数据丢失负责。
-        5. 请将问题尽量描述清楚或提前与维修人员联系说明清楚情况。
-        6. 我们也不是万能的，不保证一定能修好，还请理解。
-      `,
+      message: findDataByName(this.data.sysConfig, 'Global_Tips'),
     }).then(() => {
       // on confirm
       wx.navigateTo({
-        url: "/pages/homePage/submitOrder/index",
+        url: "/pages/homePage/submitTicket/index",
       });
     }).catch(() => {
       // on cancel

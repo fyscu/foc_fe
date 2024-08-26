@@ -1,9 +1,0 @@
-<!--index.wxml-->
-<scroll-view class="scrollview" scroll-y type="list">
-  <van-steps steps="{{ steps }}" active="{{ active }}" active-icon="success" active-color="#38f" />
-  <view class="btn-container">
-    <van-button round icon="block" class-prefix="material-icons" type="danger" bind:click="closeTheOrder">关闭订单</van-button>
-  </view>
-  <van-dialog id="van-dialog" />
-  <van-toast id="van-toast" />
-</scroll-view>

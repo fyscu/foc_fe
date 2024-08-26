@@ -85,6 +85,7 @@ Page({
           Toast("鉴权失败，请刷新重试");
         } else if (returnCode === 200) {
           Toast("注册成功");
+          wx.navigateBack();
         } else if (returnCode === 300) {
           Toast("验证码核验失败");
         } else {
@@ -103,17 +104,15 @@ Page({
     // 调用发送验证码接口
     userRegister(_phone).then(
       (returnCode) => {
-        if (returnCode === 200) { // 成功发送
+        if (returnCode === 401) {
+          Toast("鉴权失败，请刷新重试");
+        } else if (returnCode === 200) { // 成功发送
           Toast("验证码已发送");
           this.startCountingDown();
         } else if (returnCode === 300) {
-          console.log("该手机号已注册");
           Toast("该手机号已注册");
-        } else if (returnCode === 401) {
-          console.log("鉴权失败");
-          Toast("鉴权失败，请刷新重试");
         } else {
-          console.log("未知错误", returnCode);
+          Toast("未知错误");
         }
       }).catch((error) => {
       Toast("请求失败:" + error);

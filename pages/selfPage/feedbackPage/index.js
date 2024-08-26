@@ -2,6 +2,7 @@
 import Toast from "@vant/weapp/toast/toast";
 import {
   userLogin,
+  putFeedback
 } from "../../../utils/req"
 import {
   checkUserInfo
@@ -15,7 +16,7 @@ Page({
     userInfo: app.globalData.userInfo,
     autosizeData: {
       minHeight: 150
-    }, // textfeild最低高度100
+    }, // textfield最低高度100
   },
   onShow() {
     this.reloadData();
@@ -23,7 +24,7 @@ Page({
     if (!app.globalData.isloggedin) {
       this.onLogin();
     }
-  },  
+  },
   onShowPopup() {
     if (this.data.rawText === "") {
       Toast("请先填写反馈内容!");
@@ -32,7 +33,20 @@ Page({
         url: "/pages/chatPage/index",
       });
     } else {
-      Toast("感谢您的反馈!");
+      putFeedback(this.data.rawText).then((returnCode) => {
+        if (returnCode === 401) {
+          Toast("鉴权失败，请刷新重试");
+        } else if (returnCode === 200) {
+          Toast("反馈成功！");
+          this.setData({
+            rawText: "",
+          });
+        } else {
+          Toast("反馈失败！" + returnCode);
+        }
+      }).catch((error) => {
+        Toast("反馈失败！" + error);
+      });
     }
   },
   onLogin() {

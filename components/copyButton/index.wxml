@@ -1,0 +1,3 @@
+<view class="material-icons" bind:tap="copyText">
+  {{ isCopied ? 'done_all' : 'content_copy' }}
+</view>

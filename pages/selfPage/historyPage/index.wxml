@@ -1,14 +1,14 @@
 <!--index.wxml-->
 <scroll-view class="scrollview" scroll-y type="list">
   <view class="container">
-    <block wx:if="{{ orderList.length == 0 }}">
-      <van-empty description="您还没有已完成的订单哦" />
+    <block wx:if="{{ ticketList.length == 0 }}">
+      <van-empty description="您还没有已完成的工单哦" />
     </block>
     <block wx:else>
-      <view wx:for="{{ orderList }}" wx:key="id">
+      <view wx:for="{{ ticketList }}" wx:key="id">
         <block wx:if="{{ item.status == 2}}">
-          <!-- 筛选出已经完成的订单 -->
-          <navigator url="/pages/homePage/orderDetail/index?id={{ item.id }}" open-type="navigate">
+          <!-- 筛选出已经完成的工单 -->
+          <navigator url="/pages/homePage/ticketDetail/index?id={{ item.id }}" open-type="navigate">
             <van-card class="status-{{ item.status }}" tag="{{ statusList[item.status] }}" desc="{{ item.desc }}" title="{{ item.title }}" thumb="/image/computer.png">
               <view slot="bottom">
                 <text>{{ item.created }}</text>

@@ -1,0 +1,2 @@
+/* 因为vant自带的icons太少了，所以引入material design icons */
+@import "/utils/MD_Wxss/index.wxss";

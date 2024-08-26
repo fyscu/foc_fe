@@ -9,9 +9,10 @@
     "pages/activityPage/index",
     "pages/chatPage/index",
     "pages/homePage/index",
-    "pages/homePage/orderDetail/index",
+    "pages/homePage/ticketDetail/index",
+    "pages/homePage/ticketDetailUser/index",
     "pages/homePage/announcement/index",
-    "pages/homePage/submitOrder/index",
+    "pages/homePage/submitTicket/index",
     "pages/homePage/techOptions/index",
     "pages/forumPage/index",
     "pages/forumPage/sharePage/index"
@@ -27,7 +28,8 @@
     "selectedColor": "@tabBarSelectedColor",
     "borderStyle": "black",
     "backgroundColor": "@tabBarBackgroundColor",
-    "list": [{
+    "list": [
+      {
         "pagePath": "pages/homePage/index",
         "iconPath": "@iconPathHome",
         "selectedIconPath": "@selectedIconPathHome",

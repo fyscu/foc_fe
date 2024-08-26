@@ -1,5 +1,5 @@
 {
-  "navigationBarTitleText": "历史订单",
+  "navigationBarTitleText": "历史工单",
   "usingComponents": {
     "van-card": "@vant/weapp/card/index",
     "van-tag": "@vant/weapp/tag/index",

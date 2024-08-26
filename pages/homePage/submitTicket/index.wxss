@@ -1,12 +1,5 @@
 /**index.wxss**/
 
-.btn-container {
-  margin-top: 40rpx;
-  margin-bottom: 100rpx;
-  width: 100%;
-  text-align: center;
-}
-
 .van-image {
   margin-left: 20rpx;
 }

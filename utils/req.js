@@ -21,7 +21,7 @@ function userRegister(phone) {
       method: 'POST',
       success(res) {
         if (res.statusCode === 401) {
-          console.log("鉴权失败");
+          console.log('鉴权失败:', res);
           resolve(401);
         } else if (res.data.success) {
           if (res.data.status === "verification_code_sent") {
@@ -119,11 +119,10 @@ function verify(phone, verifiCode) {
       url: app.globalData.rootApiUrl + '/v1/user/verify',
       data: {
         phone: phone,
-        verification_code: verifiCode,
+        code: verifiCode,
       },
       header: {
         'content-type': 'application/json',
-        'Authorization': `Bearer ${app.globalData.accessToken}`,
       },
       method: 'POST',
       success(res) {
@@ -133,10 +132,6 @@ function verify(phone, verifiCode) {
         } else if (res.data.status === "verified") {
           // 验证成功，从接口获取数据
           console.log("验证成功");
-          that.setData({
-            ["userInfo.uid"]: res.data.uid,
-            ["userInfo.role"]: res.data.role,
-          });
           resolve(200);
         } else if (res.data.status === "verification_failed") {
           console.log('验证码核验失败:', res);
@@ -209,11 +204,11 @@ function uploadQiniuImg(localFilePath) {
       success: function (res) {
         let data = JSON.parse(res.data);
         if (data.success) {
-          console.log("Upload image success!");
-          resolve("https://cdn.feiyang.ac.cn/" + data.key);
+          console.log("Upload image success!", data);
+          resolve(data.data);
         } else {
           console.log("Error occured:", data.data);
-          reject(data);
+          reject(data.data);
         }
       },
       fail: function (res) {
@@ -224,39 +219,41 @@ function uploadQiniuImg(localFilePath) {
   });
 }
 
-// function putFeedback() {
-//   wx.request({
-//     url: 'https://fix.fyscu.com/api/onpage/about/put_feedback.php',
-//     data: {
-//       "seid": temp_seid,
-//       "pnum": temp_pnum,
-//       "text": temp_this.data.question,
-//     },
-//     method: 'GET',
-//     header: {
-//       'content-type': 'application/json'
-//     },
-//     success: function (res) {
-//       console.log('[获取反馈状态]内容：' + res.data)
-//     },
-//   })
-//   wx.showToast({
-//     title: '反馈成功',
-//     icon: 'success'
-//   })
-//   this.setData({
-//     isShow: false,
-//   })
-// }
+function putFeedback(text) {
+  return new Promise((resolve, reject) => {
+    wx.request({
+      url: app.globalData.rootApiUrl + '/v1/feedback/add',
+      data: { "text": text },
+      method: 'POST',
+      header: {
+        'content-type': 'application/json',
+        'Authorization': `Bearer ${app.globalData.accessToken}`,
+      },
+      success: function (res) {
+        console.log("反馈内容:", text)
+        if (res.statusCode === 401) {
+          console.log("鉴权失败:", res);
+          resolve(401);
+        } else if (res.data.success) {
+          console.log("反馈成功: id =", res.data.qid);
+          resolve(200);
+        } else {
+          console.log("反馈失败:", res.data);
+          resolve(300);
+        }
+      },
+    })
+  });
+}
 
 // https://fyapidocs.wjlo.cc/ticket/add
-function addTicket(purchase_date, device_type, brand, description, image, fault_type, qq, campus) {
+function addTicket(purchase_date, phone, device_type, brand, description, image, fault_type, qq, campus) {
   return new Promise((resolve, reject) => {
     wx.request({
       url: app.globalData.rootApiUrl + "/v1/ticket/create",
       data: {
         uid: app.globalData.userInfo.uid,
-        phone: app.globalData.userInfo.phone,
+        phone: phone,
         purchase_date: purchase_date, // 机器购买时间 date
         device_type: device_type, // 设备类型 string
         brand: brand, // 设备品牌 string
@@ -270,13 +267,13 @@ function addTicket(purchase_date, device_type, brand, description, image, fault_
         'content-type': 'application/json',
         'Authorization': `Bearer ${app.globalData.accessToken}`,
       },
+      method: 'POST',
       success(res) {
-        console.log(`Bearer ${app.globalData.accessToken}`);
         if (res.statusCode === 401) {
           console.log('鉴权失败:', res);
           resolve(401);
         } else if (res.data.success) {
-          console.log("创建工单成功，订单号:", res.data.orderid);
+          console.log("创建工单成功，工单号:", res.data.ticketid);
           resolve(200);
         } else {
           console.log("创建工单失败:", res.data);
@@ -287,6 +284,136 @@ function addTicket(purchase_date, device_type, brand, description, image, fault_
   });
 }
 
+// https://fyapidocs.wjlo.cc/get/getticket
+function getTicket(data) {
+  return new Promise((resolve, reject) => {
+    wx.request({
+      url: app.globalData.rootApiUrl + "/v1/status/getTicket",
+      header: {
+        'content-type': 'application/json',
+        'Authorization': `Bearer ${app.globalData.accessToken}`,
+      },
+      method: 'GET',
+      data: data,
+      success(res) {
+        if (res.statusCode === 401) {
+          console.log('鉴权失败:', res);
+          resolve(401);
+        } else if (res.data.success === false) {
+          console.log('获取失败，权限不足:', res);
+          resolve(403);
+        } else if (res.data.data) {
+          console.log('获取工单成功:', res);
+          // 更新全局工单
+          app.globalData.ticketList = res.data.data;
+          resolve(200);
+        } else {
+          console.log('请求失败:', res);
+          resolve(500);
+        }
+      }
+    })
+  });
+}
+
+// https://fyapidocs.wjlo.cc/ticket/complete
+function completeTicket(orderId) {
+  return new Promise((resolve, reject) => {
+    wx.request({
+      url: app.globalData.rootApiUrl + "/v1/ticket/complete",
+      header: {
+        'content-type': 'application/json',
+        'Authorization': `Bearer ${app.globalData.accessToken}`,
+      },
+      method: 'POST',
+      data: {
+        order_id: orderId
+      },
+      success(res) {
+        if (res.statusCode === 401) {
+          console.log('鉴权失败:', res);
+          resolve(401);
+        } else if (!res.data.success) {
+          if (res.data.status === "ticket not found") {
+            console.log('工单未找到:', res);
+            resolve(404);
+          } else if (res.data.status === "technician does not match the ticket") {
+            console.log('技术员与工单分配不对应:', res);
+            resolve(403);
+          } else {
+            console.log('未知错误:', res);
+            resolve(500);
+          }
+        } else if (res.data.success) {
+          console.log('关闭工单成功:', res);
+          resolve(200);
+        } else {
+          console.log('请求失败:', res);
+          resolve(500);
+        }
+      }
+    })
+  });
+}
+
+// https://fyapidocs.wjlo.cc/ticket/set
+function cancelTicket(orderId) {
+  return new Promise((resolve, reject) => {
+    wx.request({
+      url: app.globalData.rootApiUrl + "/v1/ticket/set",
+      header: {
+        'content-type': 'application/json',
+        'Authorization': `Bearer ${app.globalData.accessToken}`,
+      },
+      method: 'POST',
+      data: {
+        tid: orderId,
+        repair_status: "canceled",
+      },
+      success(res) {
+        if (res.statusCode === 401) {
+          console.log('鉴权失败:', res);
+          resolve(401);
+        } else if (res.data.success) {
+          console.log('取消成功:', res);
+          resolve(200);
+        } else {
+          console.log('取消失败:', res);
+          resolve(500);
+        }
+      }
+    })
+  });
+}
+
+function getConfig() {
+  return new Promise((resolve, reject) => {
+    wx.request({
+      url: app.globalData.rootApiUrl + "/v1/status/getConfig",
+      header: {
+        'content-type': 'application/json',
+        'Authorization': `Bearer ${app.globalData.accessToken}`,
+      },
+      method: 'GET',
+      success(res) {
+        if (res.statusCode === 401) {
+          console.log('鉴权失败:', res);
+          resolve(401);
+        } else if (res.data.success === false) {
+          console.log('获取失败:', res);
+          resolve(403);
+        } else if (res.data.configs) {
+          console.log('获取全局配置成功:', res);
+          app.globalData.sysConfig = res.data.configs;
+          resolve(200);
+        } else {
+          console.log('请求失败:', res);
+          resolve(500);
+        }
+      }
+    })
+  });
+}
 
 module.exports = {
   userLogin,
@@ -295,4 +422,9 @@ module.exports = {
   setUserInfo,
   uploadQiniuImg,
   addTicket,
+  getTicket,
+  putFeedback,
+  getConfig,
+  completeTicket,
+  cancelTicket,
 }

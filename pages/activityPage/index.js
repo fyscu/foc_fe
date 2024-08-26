@@ -14,7 +14,7 @@ Page({
         "start_time": "2024/8/3 8:00:00",
         "signup_start_time": "2024/6/3 12:00:00",
         "signup_end_time": "2024/7/23 12:00:00",
-        "poster": "https://cdn.fyscu.com/fyMiniprogam/%E6%9C%9B%E6%B1%9F%E5%A4%A7%E4%BF%AE.JPG"
+        "poster": "https://cdn.feiyang.ac.cn/fyMiniprogam/%E6%9C%9B%E6%B1%9F%E5%A4%A7%E4%BF%AE.JPG"
       },
       {
         "name": "雷锋月 江安大修",
@@ -23,7 +23,7 @@ Page({
         "start_time": "2024/7/3 8:00:00",
         "signup_start_time": "2024/6/3 12:00:00",
         "signup_end_time": "2024/6/23 12:00:00",
-        "poster": "https://cdn.fyscu.com/fyMiniprogam/%E9%9B%B7%E9%94%8B%E6%9C%88%E5%A4%A7%E4%BF%AE.jpg"
+        "poster": "https://cdn.feiyang.ac.cn/fyMiniprogam/%E9%9B%B7%E9%94%8B%E6%9C%88%E5%A4%A7%E4%BF%AE.jpg"
       },
       {
         "name": "年终晚会",
@@ -32,7 +32,7 @@ Page({
         "start_time": "2024/7/3 8:00:00",
         "signup_start_time": "2024/6/3 12:00:00",
         "signup_end_time": "2024/6/23 12:00:00",
-        "poster": "https://cdn.fyscu.com/fyMiniprogam/%E5%B9%B4%E7%BB%88%E6%99%9A%E4%BC%9A%E5%B1%95%E6%9D%BF.png"
+        "poster": "https://cdn.feiyang.ac.cn/fyMiniprogam/%E5%B9%B4%E7%BB%88%E6%99%9A%E4%BC%9A%E5%B1%95%E6%9D%BF.png"
       },
       {
         "name": "购机讲座",
@@ -41,7 +41,7 @@ Page({
         "start_time": "2024/9/3 8:00:00",
         "signup_start_time": "2024/6/3 12:00:00",
         "signup_end_time": "2024/8/23 12:00:00",
-        "poster": "https://cdn.fyscu.com/fyMiniprogam/%E8%B4%AD%E6%9C%BA%E8%AE%B2%E5%BA%A7%E5%A4%A7.jpeg"
+        "poster": "https://cdn.feiyang.ac.cn/fyMiniprogam/%E8%B4%AD%E6%9C%BA%E8%AE%B2%E5%BA%A7%E5%A4%A7.jpeg"
       },
       {
         "name": "会员大会",
@@ -50,7 +50,7 @@ Page({
         "start_time": "2024/7/3 8:00:00",
         "signup_start_time": "2024/6/3 12:00:00",
         "signup_end_time": "2024/6/23 12:00:00",
-        "poster": "https://cdn.fyscu.com/fyMiniprogam/%E4%BC%9A%E5%91%98%E5%A4%A7%E4%BC%9A.JPG"
+        "poster": "https://cdn.feiyang.ac.cn/fyMiniprogam/%E4%BC%9A%E5%91%98%E5%A4%A7%E4%BC%9A.JPG"
       },
     ],
     activitiesShowing: {},

@@ -1,0 +1,9 @@
+/**index.wxss**/
+
+.van-cell__value {
+  margin-right: 10rpx;
+}
+
+.table-container {
+  margin-top: 100rpx;
+}

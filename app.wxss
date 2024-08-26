@@ -25,7 +25,7 @@ body {
 .btn-container {
   z-index: 99;
   overflow: hidden;
-  margin-bottom: 30%;
+  margin-bottom: 15%;
   width: 100%;
   position: fixed;
   bottom: 0px;
@@ -46,4 +46,16 @@ body {
   display: block;
   width: 56px;
   height: 56px;
+}
+
+.scrollview {
+  padding-bottom: 500px;
+}
+
+.step-container {
+  z-index: 999;
+  display: block;
+  position: fixed;
+  width: 100%;
+  top: 0px;
 }
