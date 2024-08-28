@@ -20,16 +20,16 @@
       <van-image class="headline-avatar" width="5rem" round height="5rem" fit="cover" src="{{ userInfo.avatarUrl }}" />
     </view>
     <van-cell-group class="linklist" inset>
-      <van-cell is-link size="large" title="历史记录" link-type="navigateTo" url="./historyPage/index">
+      <van-cell is-link size="large" title="历史工单" link-type="navigateTo" url="./historyPage/index">
         <view class="material-icons" slot="icon"> history </view>
       </van-cell>
-      <van-cell is-link size="large" title="个人设置" link-type="navigateTo" url="./settingsPage/index">
+      <van-cell is-link size="large" title="个人信息设置" link-type="navigateTo" url="./settingsPage/index">
         <view class="material-icons" slot="icon"> settings </view>
       </van-cell>
       <van-cell is-link size="large" title="问题反馈" link-type="navigateTo" url="./feedbackPage/index">
         <view class="material-icons" slot="icon"> chat </view>
       </van-cell>
-      <van-cell is-link size="large" title="关于我们" link-type="navigateTo" url="./aboutUsPage/index">
+      <van-cell is-link size="large" title="关于云上飞扬" link-type="navigateTo" url="./aboutUsPage/index">
         <view class="material-icons" slot="icon"> info </view>
       </van-cell>
     </van-cell-group>
