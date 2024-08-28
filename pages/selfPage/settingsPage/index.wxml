@@ -2,29 +2,43 @@
 <scroll-view class="scrollview" scroll-y type="list">
   <view class="container">
     <button class="avatar-wrapper" open-type="chooseAvatar" bind:chooseavatar="onChooseAvatar">
-      <image class="avatar" src="{{ userInfo.avatarUrl === '' ? '/image/icons/image_upload_failed.svg' : userInfo.avatarUrl }}"></image>
+      <image class="avatar"
+        src="{{ userInfo.avatarUrl === '' ? '/image/icons/image_upload_failed.svg' : userInfo.avatarUrl }}"></image>
     </button>
     <van-cell-group inset>
-      <van-field disabled center name="phone" label="联系方式" placeholder="请输入联系方式" clearable value="{{ userInfo.phone }}" border="{{ false }}" bind:blur="onPhoneBlur">
+      <van-field disabled center name="phone" label="联系方式" placeholder="请输入联系方式" clearable value="{{ userInfo.phone }}"
+        border="{{ false }}" bind:change="onPhoneChange">
         <view class="material-icons" slot="right-icon"> phone </view>
       </van-field>
-      <van-field required center name="nickname" label="用户名" placeholder="请输入昵称" clearable value="{{ userInfo.nickname }}" border="{{ false }}" bind:blur="onNicknameBlur">
+      <van-field required center name="nickname" label="用户名" placeholder="请输入昵称" clearable
+        value="{{ userInfo.nickname }}" border="{{ false }}" bind:change="onNicknameChange">
         <view class="material-icons" slot="right-icon"> face </view>
       </van-field>
-      <van-field required center name="email" label="邮箱" placeholder="请输入电子邮箱" clearable value="{{ userInfo.email }}" border="{{ false }}" bind:blur="onEmailBlur">
+      <van-field required center name="email" label="邮箱" placeholder="请输入电子邮箱" clearable value="{{ userInfo.email }}"
+        border="{{ false }}" bind:change="onEmailChange">
         <view class="material-icons" slot="right-icon"> mail </view>
       </van-field>
-      <van-cell required title="所在校区" bind:click="showPopup" data-index="1" is-link value="{{ userInfo.campus === '' ? '请选择' : userInfo.campus }}" arrow-direction="down">
+      <van-cell required title="所在校区" bind:click="showPopup" data-index="1" is-link
+        value="{{ userInfo.campus === '' ? '请选择' : userInfo.campus }}" arrow-direction="down">
       </van-cell>
     </van-cell-group>
     <view class="btn-container">
-      <van-button round type="danger" icon="logout" class-prefix="material-icons" bind:click="onLogout">退出登录</van-button>
+      <van-button round class="settings-btn" type="danger" icon="logout" class-prefix="material-icons"
+        bind:click="onLogout">
+        退出登录
+      </van-button>
+      <van-button round class="settings-btn" type="primary" icon="save" class-prefix="material-icons"
+        bind:click="saveChanges">
+        保存设置
+      </van-button>
     </view>
     <van-popup show="{{ showPopup === 1 }}" round position="bottom" custom-style="height: 44" bind:close="closePopup">
       <block wx:if="{{ showPopup === 1 }}">
-        <van-picker title="选择校区" show-toolbar columns="{{ campusList }}" bind:confirm="onConfirmCampus" bind:cancel="closePopup" />
+        <van-picker title="选择校区" show-toolbar columns="{{ campusList }}" bind:confirm="onConfirmCampus"
+          bind:cancel="closePopup" />
       </block>
     </van-popup>
     <van-toast id="van-toast" />
+    <van-dialog id="van-dialog" />
   </view>
 </scroll-view>

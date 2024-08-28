@@ -47,7 +47,7 @@
       </van-cell>
     </van-cell-group>
   </view>
-  <view class="btn-container">
+  <view wx:if="ticket.repair_status !== 'Done'" class="btn-container">
     <van-button round icon="delete_forever" class-prefix="material-icons" type="warning" bind:click="cancelTheTicket">
       取消工单
     </van-button>

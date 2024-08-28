@@ -13,4 +13,5 @@
       </view>
     </van-card>
   </view>
+  <van-toast id="van-toast" />
 </scroll-view>

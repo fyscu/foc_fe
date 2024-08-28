@@ -1,9 +1,18 @@
 /**index.wxss**/
 
-.status-0 .van-tag--mark {
-  background-color: #4187f2;
+.van-card__title {
+  font-size: medium;
 }
 
-.status-2 .van-tag--mark {
-  background-color: #57be6a;
+.van-card__bottom {
+  text-align: right;
+}
+
+.van-card__desc {
+  margin-top: 10rpx;
+  margin-bottom: 10rpx;
+}
+
+.van-tag {
+  margin-right: 10rpx;
 }

@@ -2,9 +2,9 @@
 App({
   onLaunch() {
     // 展示本地存储能力
-    // const logs = wx.getStorageSync("logs") || [];
-    // logs.unshift(Date.now());
-    // wx.setStorageSync("logs", logs);
+    const logs = wx.getStorageSync("logs") || [];
+    logs.unshift(Date.now());
+    wx.setStorageSync("logs", logs);
   },
   // 定义全局变量
   globalData: {
@@ -21,7 +21,7 @@ App({
       phone: "", // 用户手机号
       campus: "", // 所在校区
       nickname: "", // 用户昵称
-      avatarUrl: "/image/momo.jpg", // 用户头像地址
+      avatarUrl: "https://img1.doubanio.com/view/group_topic/l/public/p560183288.webp", // 用户头像地址
     },
     code: null,
     openid: null, // 唯一用户标识

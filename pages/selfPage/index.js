@@ -27,20 +27,19 @@ Page({
     this.reloadData();
   },
   // 在输入框不为focused时更新数据
-  onNicknameBlur(e) {
-    // console.log(e.detail);
+  onNicknameChange(e) {
     this.setData({
-      ["userInfo.nickname"]: e.detail.value
+      ["userInfo.nickname"]: e.detail
     });
   },
-  onPhoneBlur(e) {
+  onPhoneChange(e) {
     this.setData({
-      ["userInfo.phone"]: e.detail.value
+      ["userInfo.phone"]: e.detail
     });
   },
-  onEmailBlur(e) {
+  onEmailChange(e) {
     this.setData({
-      ["userInfo.email"]: e.detail.value
+      ["userInfo.email"]: e.detail
     });
   },
   // 选择头像
@@ -74,7 +73,7 @@ Page({
         Toast("您尚未注册");
         // 跳转到注册页
         wx.navigateTo({
-          url: './registerPage/index',
+          url: '/pages/selfPage/registerPage/index',
         });
       } else if (returnCode === 200) {
         // 成功登录
@@ -83,7 +82,7 @@ Page({
           // 如果没有完善 userInfo
           // 跳转到用户信息设置页面
           wx.navigateTo({
-            url: './settingsPage/index?toast=登录成功！请完善个人信息',
+            url: '/pages/selfPage/settingsPage/index?toast=登录成功！请完善个人信息',
           });
           // 弹出个人信息填写页 (弃用)
           // this.setData({

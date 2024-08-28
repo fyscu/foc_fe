@@ -5,7 +5,7 @@
       <van-cell title="启用QQ号" >
         <van-switch style="height: 24px;" slot="right-icon" checked="{{ hasQQ }}" bind:change="onToggleQQ" size="40rpx" />
       </van-cell>
-      <van-field center disabled="{{ !hasQQ }}" name="qq" label="QQ号" placeholder="请输入你的QQ号" clearable value="{{ userInfo.qq }}" border="{{ false }}" bind:blur="onQQBlur">
+      <van-field center disabled="{{ !hasQQ }}" name="qq" label="QQ号" placeholder="请输入你的QQ号" clearable value="{{ userInfo.qq }}" border="{{ false }}" bind:change="onQQChange">
         <view class="material-icons" slot="right-icon"> mail </view>
       </van-field>
       <van-cell title="下次天数" bind:click="showPopup" data-index="1" is-link value="{{ restDays }}" arrow-direction="down">

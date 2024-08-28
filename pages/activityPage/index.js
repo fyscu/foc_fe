@@ -55,7 +55,7 @@ Page({
     ],
     activitiesShowing: {},
   },
-  onLoad() {
+  onLoad(options) {
     // 初始化 activity
     // TODO：从后端获取 activities
     this.setActivityStatus();
@@ -84,6 +84,7 @@ Page({
     const activity = event.currentTarget.dataset.activity;
     // 处理报名逻辑
     console.log(`报名活动: ${activity.name}`);
+    Toast("该功能仍在开发中，敬请期待");
   },
   onSearchChange(event) {
     this.setData({

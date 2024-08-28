@@ -15,7 +15,7 @@
         </view>
         <view wx:else>
           <view wx:for="{{ ticketList }}" wx:key="id">
-            <view wx:if="{{ item.status != 2}}">
+            <view wx:if="{{ item.status_status !== 'Done' }}">
               <navigator url="/pages/homePage/ticketDetailUser/index?id={{ item.id }}" open-type="navigate">
                 <van-card class="class-status-{{ item.repair_status }}" desc="{{ item.repair_description }}"
                   title="{{ item.device_type }} {{ item.fault_type }}" thumb="{{ item.repair_image_url }}"
@@ -42,7 +42,7 @@
         </view>
         <view wx:else>
           <view wx:for="{{ ticketList }}" wx:key="id">
-            <view wx:if="{{ item.status != 2}}">
+            <view wx:if="{{ item.status_status !== 'Done' }}">
               <navigator url="/pages/homePage/ticketDetail/index?id={{ item.id }}" open-type="navigate">
                 <van-card class="class-status-{{ item.repair_status }}" desc="{{ item.repair_description }}"
                   title="{{ item.device_type }} {{ item.fault_type }}" thumb="{{ item.repair_image_url }}"
@@ -62,6 +62,9 @@
               bind:click="onNavigateToTechOptions">设置</van-button>
           </view>
         </view>
+      </view>
+      <view wx:elif='{{ userInfo.role === "admin" }}'>
+        <view>管理员大人您好~</view>
       </view>
     </view>
     <!-- 尚未登录 -->

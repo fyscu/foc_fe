@@ -53,7 +53,7 @@ Page({
     });
   },
   previewImage(event) {
-    console.log(event);
+    console.log("previewImage:", event);
     wx.previewImage({
       current: event.target.dataset.src,
       urls: [this.data.ticket.repair_image_url],

@@ -28,16 +28,16 @@ Page({
   onShowPopup() {
     if (this.data.rawText === "") {
       Toast("请先填写反馈内容!");
-    } else if (this.data.rawText.trim() === "chat") {
+    } else if (this.data.rawText.trim() === "forum") {
       wx.navigateTo({
-        url: "/pages/chatPage/index",
+        url: "/pages/forumPage/index",
       });
     } else {
       putFeedback(this.data.rawText).then((returnCode) => {
         if (returnCode === 401) {
           Toast("鉴权失败，请刷新重试");
         } else if (returnCode === 200) {
-          Toast("反馈成功！");
+          Toast("反馈成功！谢谢你的反馈");
           this.setData({
             rawText: "",
           });
@@ -56,7 +56,7 @@ Page({
         Toast("您尚未注册");
         // 跳转到注册页
         wx.navigateTo({
-          url: './registerPage/index',
+          url: '/pages/selfPage/registerPage/index',
         });
       } else if (returnCode === 200) {
         // 成功登录
@@ -64,7 +64,7 @@ Page({
           // 如果没有完善 userInfo
           // 跳转到用户信息设置页面
           wx.navigateTo({
-            url: './settingsPage/index?toast=登录成功！请完善个人信息',
+            url: '/pages/selfPage/settingsPage/index?toast=登录成功！请完善个人信息',
           });
         }
       } else {

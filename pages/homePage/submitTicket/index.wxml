@@ -6,11 +6,11 @@
   </navigator>
   <van-cell-group inset title="个人联系信息">
     <van-field required center name="qq" label="QQ" placeholder="请填写你的QQ号" clearable value="{{ qq }}"
-      bind:blur="onQQBlur" border="{{ false }}">
+      bind:change="onQQChange" border="{{ false }}">
       <view class="material-icons" slot="right-icon"> mail </view>
     </van-field>
     <van-field required center name="phone" label="手机号" placeholder="请填写手机号" clearable value="{{ phone }}"
-      bind:blur="onPhoneBlur" border="{{ false }}">
+      bind:change="onPhoneChange" border="{{ false }}">
       <view class="material-icons" slot="right-icon"> phone </view>
     </van-field>
   </van-cell-group>
@@ -34,7 +34,7 @@
       <view class="material-icons" slot="right-icon"> devices </view>
     </van-field>
     -->
-    <van-field required center autosize type="textarea" name="problem" label="问题描述" placeholder="请详细描述设备问题" clearable bind:blur="onProblemDescBlur"
+    <van-field required center autosize type="textarea" name="problem" label="问题描述" placeholder="请详细描述设备问题" clearable bind:change="onProblemDescChange"
       value="{{ problemDesc }}" border="{{ false }}">
       <view class="material-icons" slot="right-icon"> bug_report </view>
     </van-field>

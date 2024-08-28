@@ -7,6 +7,7 @@
     "van-toast": "@vant/weapp/toast/index",
     "van-cell": "@vant/weapp/cell/index",
     "van-picker": "@vant/weapp/picker/index",
+    "van-dialog": "@vant/weapp/dialog/index",
     "van-popup": "@vant/weapp/popup/index"
   }
 }

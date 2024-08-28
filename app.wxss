@@ -29,8 +29,9 @@ body {
   width: 100%;
   position: fixed;
   bottom: 0px;
-  display: flex;
+  display: block;
   justify-content: center;
+  text-align: center;
 }
 
 .avatar-wrapper {
@@ -58,4 +59,17 @@ body {
   position: fixed;
   width: 100%;
   top: 0px;
+}
+
+/* 已完成、维修中、分配中的 tag 颜色 */
+.class-status-Pending .van-tag--mark {
+  background-color: #4187f2;
+}
+
+.class-status-Repairing .van-tag--mark {
+  background-color: #f27f41;
+}
+
+.class-status-Done .van-tag--mark {
+  background-color: #57be6a;
 }

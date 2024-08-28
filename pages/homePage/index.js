@@ -1,7 +1,8 @@
 import Dialog from "@vant/weapp/dialog/dialog";
 import Toast from "@vant/weapp/toast/toast";
 import {
-  getTicket, getConfig
+  getTicket,
+  getConfig
 } from "../../utils/req"
 import {
   findDataByName
@@ -63,10 +64,27 @@ Page({
           Toast("未知错误");
         }
       });
-      // 获取用户配置
+      // 获取用户的工单
       if (this.data.userInfo.role === "user") {
         getTicket({
           uid: this.data.userInfo.uid,
+        }).then((returnCode) => {
+          if (returnCode === 401) {
+            Toast("鉴权失败，请刷新重试");
+          } else if (returnCode === 200) {
+            // 成功获取用户的所有工单
+            this.reloadData(); // 刷新数据
+          } else if (returnCode === 403) {
+            Toast("工单获取失败，权限不足");
+          } else {
+            Toast("未知错误");
+          }
+        });
+      }
+      // 获取技术员的工单
+      if (this.data.userInfo.role === "technician") {
+        getTicket({
+          tid: this.data.userInfo.tid,
         }).then((returnCode) => {
           if (returnCode === 401) {
             Toast("鉴权失败，请刷新重试");

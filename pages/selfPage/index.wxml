@@ -5,11 +5,14 @@
     <view wx:if="{{isloggedin}}" class="headline-container">
       <text class="headline-msg">{{ userInfo.nickname === "" ? "Anonymous" : userInfo.nickname }}</text>
       <van-image class="headline-avatar" width="5rem" round height="5rem" fit="cover" src="{{ userInfo.avatarUrl }}" />
-      <block wx:if="{{ userInfo.role === 'technician' }}">
+      <block wx:if="{{ userInfo.role === 'user' }}">
+        <van-tag type="primary" size="medium">用户</van-tag>
+      </block>
+      <block wx:elif="{{ userInfo.role === 'technician' }}">
         <van-tag type="success" size="medium">技术员</van-tag>
       </block>
-      <block wx:else>
-        <van-tag type="primary" size="medium">用户</van-tag>
+      <block wx:elif="{{ userInfo.role === 'admin' }}">
+        <van-tag type="danger" size="medium">管理员</van-tag>
       </block>
     </view>
     <view wx:else class="headline-container" bind:tap="onLogin">
@@ -31,18 +34,23 @@
       </van-cell>
     </van-cell-group>
     <!-- 登录了但是没有获取到昵称 -->
-    <van-popup show="{{ showPopup }}" round position="bottom" custom-style="height: 95%" bind:close="onClosePopup" closeable>
+    <van-popup show="{{ showPopup }}" round position="bottom" custom-style="height: 95%" bind:close="onClosePopup"
+      closeable>
       <button class="avatar-wrapper" open-type="chooseAvatar" bind:chooseavatar="onChooseAvatar">
-        <image class="avatar" src="{{ userInfo.avatarUrl === '' ? '/image/icons/image_upload_failed.svg' : userInfo.avatarUrl }}"></image>
+        <image class="avatar"
+          src="{{ userInfo.avatarUrl === '' ? '/image/icons/image_upload_failed.svg' : userInfo.avatarUrl }}"></image>
       </button>
       <van-cell-group inset>
-        <van-field required center name="nickname" label="用户名" placeholder="请输入昵称" clearable value="{{ userInfo.nickname }}" border="{{ false }}" bind:blur="onNicknameBlur">
+        <van-field required center name="nickname" label="用户名" placeholder="请输入昵称" clearable
+          value="{{ userInfo.nickname }}" border="{{ false }}" bind:change="onNicknameChange">
           <view class="material-icons" slot="right-icon"> face </view>
         </van-field>
-        <van-field required center name="phone" label="联系方式" placeholder="请输入联系方式" clearable value="{{ userInfo.phone }}" border="{{ false }}" bind:blur="onPhoneBlur">
+        <van-field required center name="phone" label="联系方式" placeholder="请输入联系方式" clearable
+          value="{{ userInfo.phone }}" border="{{ false }}" bind:change="onPhoneChange">
           <view class="material-icons" slot="right-icon"> phone </view>
         </van-field>
-        <van-field center name="email" label="邮箱" placeholder="请输入电子邮箱" clearable value="{{ userInfo.email }}" border="{{ false }}" bind:blur="onEmailBlur">
+        <van-field center name="email" label="邮箱" placeholder="请输入电子邮箱" clearable value="{{ userInfo.email }}"
+          border="{{ false }}" bind:change="onEmailChange">
           <view class="material-icons" slot="right-icon"> mail </view>
         </van-field>
       </van-cell-group>

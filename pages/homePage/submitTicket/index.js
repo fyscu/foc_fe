@@ -163,19 +163,19 @@ Page({
     });
   },
   // 输入框
-  onPhoneBlur(e) {
+  onPhoneChange(e) {
     this.setData({
-      phone: e.detail.value
+      phone: e.detail
     });
   },
-  onQQBlur(e) {
+  onQQChange(e) {
     this.setData({
-      qq: e.detail.value
+      qq: e.detail
     });
   },
-  onProblemDescBlur(e) {
+  onProblemDescChange(e) {
     this.setData({
-      problemDesc: e.detail.value
+      problemDesc: e.detail
     });
   },
   onConfirmPurchaseDate(event) {
@@ -190,7 +190,6 @@ Page({
     });
   },
   showPopup(event) {
-    // console.log(event);
     this.setData({
       showPopup: parseInt(event.target.dataset.index),
     });

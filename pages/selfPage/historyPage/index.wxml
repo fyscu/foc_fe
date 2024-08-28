@@ -1,29 +1,66 @@
 <!--index.wxml-->
 <scroll-view class="scrollview" scroll-y type="list">
   <view class="container">
-    <block wx:if="{{ ticketList.length == 0 }}">
-      <van-empty description="您还没有已完成的工单哦" />
-    </block>
-    <block wx:else>
-      <view wx:for="{{ ticketList }}" wx:key="id">
-        <block wx:if="{{ item.status == 2}}">
-          <!-- 筛选出已经完成的工单 -->
-          <navigator url="/pages/homePage/ticketDetail/index?id={{ item.id }}" open-type="navigate">
-            <van-card class="status-{{ item.status }}" tag="{{ statusList[item.status] }}" desc="{{ item.desc }}" title="{{ item.title }}" thumb="/image/computer.png">
-              <view slot="bottom">
-                <text>{{ item.created }}</text>
-              </view>
-              <view slot="tags">
-                <van-tag plain type="primary">{{ campusList[item.campus] }}</van-tag>
-              </view>
-            </van-card>
-          </navigator>
-          <van-divider />
-        </block>
+    <view wx:if='{{ userInfo.role === "user" }}'>
+      <view wx:if="{{ ticketList.length === 0 }}">
+        <van-empty description="您还没有已结束的工单哦" />
       </view>
-    </block>
+      <view wx:else>
+        <view wx:for="{{ ticketList }}" wx:key="id">
+          <view wx:if="{{ item.repair_status === 'Done'}}">
+            <navigator url="/pages/homePage/ticketDetailUser/index?id={{ item.id }}" open-type="navigate">
+              <van-card class="class-status-{{ item.repair_status }}" desc="{{ item.repair_description }}"
+                title="{{ item.device_type }} {{ item.fault_type }}" thumb="{{ item.repair_image_url }}"
+                tag="{{ statusList[item.repair_status] }}">
+                <view slot="bottom">购买日期：{{ item.machine_purchase_date }}</view>
+                <view slot="tags">
+                  <van-tag plain type="primary">{{ item.campus }}</van-tag>
+                  <van-tag plain type="warning">{{ item.computer_brand }}</van-tag>
+                </view>
+              </van-card>
+            </navigator>
+            <van-divider />
+          </view>
+        </view>
+      </view>
+      <view class="btn-container">
+        <van-button round icon="build" class-prefix="material-icons" type="info"
+          bind:click="navigateToSubmitTicketPage">我要报修</van-button>
+      </view>
+    </view>
+    <view wx:elif='{{ userInfo.role === "technician" }}'>
+      <view wx:if="{{ ticketList.length === 0 }}">
+        <van-empty description="您还没有已完成的工单哦" />
+      </view>
+      <view wx:else>
+        <view wx:for="{{ ticketList }}" wx:key="id">
+          <view wx:if="{{ item.repair_status === 'Done'}}">
+            <navigator url="/pages/homePage/ticketDetail/index?id={{ item.id }}" open-type="navigate">
+              <van-card class="class-status-{{ item.repair_status }}" desc="{{ item.repair_description }}"
+                title="{{ item.device_type }} {{ item.fault_type }}" thumb="{{ item.repair_image_url }}"
+                tag="{{ statusList[item.repair_status] }}">
+                <view slot="bottom">购买日期：{{ item.machine_purchase_date }}</view>
+                <view slot="tags">
+                  <van-tag plain type="primary">{{ item.campus }}</van-tag>
+                  <van-tag plain type="warning">{{ item.computer_brand }}</van-tag>
+                </view>
+              </van-card>
+            </navigator>
+            <van-divider />
+          </view>
+        </view>
+        <view class="btn-container">
+          <van-button round icon="settings" class-prefix="material-icons" type="info"
+            bind:click="onNavigateToTechOptions">设置</van-button>
+        </view>
+      </view>
+    </view>
+    <view wx:elif='{{ userInfo.role === "admin" }}'>
+      <view>管理员大人您好~</view>
+    </view>
     <view class="btn-container">
       <van-button round icon="build" class-prefix="material-icons" type="info" bind:click="onFix">我要报修</van-button>
     </view>
   </view>
+  <van-toast id="van-toast" />
 </scroll-view>

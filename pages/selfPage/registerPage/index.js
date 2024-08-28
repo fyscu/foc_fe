@@ -3,6 +3,8 @@ import Toast from "@vant/weapp/toast/toast";
 import {
   userRegister,
   uploadQiniuImg,
+  setUserInfo,
+  userLogin,
   verify
 } from "../../../utils/req"
 import {
@@ -21,7 +23,7 @@ Page({
     showPopup: 0, // 不弹出选择框
   },
   // 显示页面时更新数据
-  onShow() {
+  onLoad(options) {
     this.reloadData();
     Toast("您尚未注册，请使用手机号注册");
   },
@@ -31,25 +33,17 @@ Page({
     // app.globalData.userInfo = this.data.userInfo;
   },
   // 在输入框不为focused时更新数据
-  onPhoneBlur(e) {
-    this.setData({
-      ["userInfo.phone"]: e.detail.value
-    });
+  onVerifiCodeChange(e) {
+    this.setData({ verifiCode: e.detail });
   },
-  onVerifiCodeBlur(e) {
-    this.setData({
-      verifiCode: e.detail.value
-    });
+  onPhoneChange(e) {
+    this.setData({ ["userInfo.phone"]: e.detail });
   },
-  onEmailBlur(e) {
-    this.setData({
-      ["userInfo.email"]: e.detail.value
-    });
+  onEmailChange(e) {
+    this.setData({ ["userInfo.email"]: e.detail });
   },
-  onNicknameBlur(e) {
-    this.setData({
-      ["userInfo.nickname"]: e.detail.value
-    });
+  onNicknameChange(e) {
+    this.setData({ ["userInfo.nickname"]: e.detail });
   },
   // 选择头像
   onChooseAvatar(e) {
@@ -69,31 +63,42 @@ Page({
     });
   },
   onRegister(e) {
+    let thisUerInfo = this.data.userInfo;
     if (this.data.verifiCode === "") {
       Toast("请填写验证码");
       return;
     }
-    if (!checkUserInfo(this.data.userInfo)) {
+    if (!checkUserInfo(thisUerInfo)) {
       Toast("请完善个人信息");
       return;
     }
-    console.log(app.globalData.accessToken);
     // 验证码校验
-    verify(this.data.userInfo.phone, this.data.verifiCode).then(
-      (returnCode) => {
-        if (returnCode === 401) {
-          Toast("鉴权失败，请刷新重试");
-        } else if (returnCode === 200) {
-          Toast("注册成功");
-          wx.navigateBack();
-        } else if (returnCode === 300) {
-          Toast("验证码核验失败");
-        } else {
-          console.log(returnCode);
-          Toast("未知错误");
-        }
+    verify(thisUerInfo.phone, this.data.verifiCode).then((code1) => {
+      if (code1 === 401) {
+        Toast("鉴权失败，请刷新重试");
+      } else if (code1 === 200) {
+        userLogin().then((code2) => {
+          if (code2 === 200) {
+            console.log(thisUerInfo);
+            setUserInfo(thisUerInfo).then((code3) => {
+              if (code3 === 200) {
+                Toast("注册成功");
+                setTimeout(() => {
+                  wx.navigateBack();
+                }, 500);
+              }
+            })
+          }
+        });
+      } else if (code1 === 300) {
+        Toast("验证码核验失败");
+      } else if (code1 === 404) {
+        Toast("验证码核验失败");
+      } else {
+        console.log(code1);
+        Toast("未知错误");
       }
-    );
+    });
   },
   sendCode(e) {
     let _phone = this.data.userInfo.phone.trim();
@@ -102,19 +107,18 @@ Page({
       return;
     }
     // 调用发送验证码接口
-    userRegister(_phone).then(
-      (returnCode) => {
-        if (returnCode === 401) {
-          Toast("鉴权失败，请刷新重试");
-        } else if (returnCode === 200) { // 成功发送
-          Toast("验证码已发送");
-          this.startCountingDown();
-        } else if (returnCode === 300) {
-          Toast("该手机号已注册");
-        } else {
-          Toast("未知错误");
-        }
-      }).catch((error) => {
+    userRegister(_phone).then((returnCode) => {
+      if (returnCode === 401) {
+        Toast("鉴权失败，请刷新重试");
+      } else if (returnCode === 200) { // 成功发送
+        Toast("验证码已发送");
+        this.startCountingDown();
+      } else if (returnCode === 300) {
+        Toast("该手机号已注册");
+      } else {
+        Toast("未知错误");
+      }
+    }).catch((error) => {
       Toast("请求失败:" + error);
     });
   },
@@ -141,7 +145,6 @@ Page({
   },
   // 弹出校区选择器
   showPopup(event) {
-    // console.log(event);
     this.setData({
       showPopup: parseInt(event.target.dataset.index),
     });

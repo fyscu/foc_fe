@@ -1,5 +1,6 @@
 // index.js
 import Toast from "@vant/weapp/toast/toast";
+import Dialog from "@vant/weapp/dialog/dialog";
 import {
   userLogin,
   uploadQiniuImg,
@@ -50,43 +51,25 @@ Page({
         wx.navigateTo({
           url: '/pages/selfPage/settingsPage/index?toast=必须完善所有信息',
         })
-      } else if (JSON.stringify(this.data.userInfo) ===
-        JSON.stringify(userInfoOriginal)) {
-        // 如果信息不变
-      } else { // 信息填写完全，且发生了变动，可以提交给后端
-        let diff = {};
-        for (const key in userInfoOriginal) {
-          if (this.data.userInfo[key] !== userInfoOriginal[key]) {
-            diff[key] = this.data.userInfo[key];
-          }
-        }
-        console.log("diff:", diff);
-        setUserInfo(diff).then((returnCode) => {
-          if (returnCode === 401) {
-            Toast("鉴权失败，请刷新重试");
-          } else if (returnCode === 200) {
-            Toast("修改成功");
-          } else if (returnCode === 300) {
-            Toast("修改失败");
-          }
-        })
+      } else {
+        this.saveChanges();
       }
     }
   },
   // 在输入框不为focused时更新数据
-  onNicknameBlur(e) {
+  onNicknameChange(e) {
     this.setData({
-      ["userInfo.nickname"]: e.detail.value
+      ["userInfo.nickname"]: e.detail
     });
   },
-  onPhoneBlur(e) {
+  onPhoneChange(e) {
     this.setData({
-      ["userInfo.phone"]: e.detail.value
+      ["userInfo.phone"]: e.detail
     });
   },
-  onEmailBlur(e) {
+  onEmailChange(e) {
     this.setData({
-      ["userInfo.email"]: e.detail.value
+      ["userInfo.email"]: e.detail
     });
   },
   // 选择头像
@@ -108,7 +91,6 @@ Page({
   },
   // 弹出校区选择器
   showPopup(event) {
-    // console.log(event);
     this.setData({
       showPopup: parseInt(event.target.dataset.index),
     });
@@ -136,7 +118,7 @@ Page({
         Toast("您尚未注册");
         // 跳转到注册页
         wx.navigateTo({
-          url: './registerPage/index',
+          url: '/pages/selfPage/registerPage/index',
         });
       } else if (returnCode === 200) {
         // 成功登录
@@ -155,31 +137,66 @@ Page({
       Toast("登录失败！" + error);
     });
   },
+  saveChanges() {
+    if (JSON.stringify(this.data.userInfo) ===
+      JSON.stringify(userInfoOriginal)) {
+      // 如果信息不变
+      Toast("保存成功");
+    } else { // 信息填写完全，且发生了变动，可以提交给后端
+      // let diff = {};
+      // for (const key in userInfoOriginal) {
+      //   if (this.data.userInfo[key] !== userInfoOriginal[key]) {
+      //     diff[key] = this.data.userInfo[key];
+      //   }
+      // }
+      // console.log("diff:", diff);
+      setUserInfo(this.data.userInfo).then((returnCode) => {
+        if (returnCode === 401) {
+          Toast("鉴权失败，请刷新重试");
+        } else if (returnCode === 200) {
+          Toast("设置成功");
+          // 更新 userInfoOriginal
+          userInfoOriginal = JSON.parse(JSON.stringify(this.data.userInfo));
+        } else if (returnCode === 300) {
+          Toast("修改失败");
+        }
+      })
+    }
+  },
   reloadData() {
     this.setData({
       userInfo: app.globalData.userInfo,
     });
   },
   onLogout() {
-    // 清空所有数据
-    const emptyUserInfo = {
-      qq: "", // 用户QQ号
-      uid: "", // 用户id
-      role: "", // 用role替代is_tech
-      email: "", // 用户邮箱
-      phone: "", // 用户手机号
-      campus: "", // 所在校区
-      nickname: "", // 用户昵称
-      avatarUrl: "/image/momo.jpg", // 用户头像地址
-    };
-    this.setData({
-      userInfo: emptyUserInfo,
+    Dialog.confirm({
+      title: "退出登录",
+      message: "确定要退出登录吗？",
+    }).then(() => {
+      // 清空所有数据
+      const emptyUserInfo = {
+        qq: "", // 用户QQ号
+        uid: "", // 用户id
+        role: "", // 用role替代is_tech
+        email: "", // 用户邮箱
+        phone: "", // 用户手机号
+        campus: "", // 所在校区
+        nickname: "", // 用户昵称
+        avatarUrl: "https://img1.doubanio.com/view/group_topic/l/public/p560183288.webp", // 用户头像地址
+      };
+      this.setData({
+        userInfo: emptyUserInfo,
+      });
+      app.globalData.ticketList = [];
+      app.globalData.isloggedin = false;
+      app.globalData.code = null;
+      app.globalData.openid = null;
+      app.globalData.accessToken = null;
+      // console.log(app.globalData);
+      wx.navigateBack();
+    }).catch(() => {
+      // on cancel
+      console.log("用户取消退出登录");
     });
-    app.globalData.ticketList = [];
-    app.globalData.isloggedin = false;
-    app.globalData.code = null;
-    app.globalData.openid = null;
-    // console.log(app.globalData);
-    wx.navigateBack();
   },
 });

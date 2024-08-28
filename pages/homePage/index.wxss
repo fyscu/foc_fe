@@ -4,14 +4,6 @@ body {
   background-color: #fafafa;
 }
 
-.class-status-Pending .van-tag--mark {
-  background-color: #4187f2;
-}
-
-.class-status-Done .van-tag--mark {
-  background-color: #57be6a;
-}
-
 .van-card__title {
   font-size: medium;
 }

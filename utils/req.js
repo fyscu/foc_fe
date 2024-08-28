@@ -27,7 +27,7 @@ function userRegister(phone) {
           if (res.data.status === "verification_code_sent") {
             console.log("成功发送验证码");
             resolve(200);
-          } else if (res.data.status === "user_exists") {
+          } else if (res.data.status === "user_exists_verified") {
             console.log("已有用户");
             resolve(300);
           } else {
@@ -131,11 +131,14 @@ function verify(phone, verifiCode) {
           resolve(401);
         } else if (res.data.status === "verified") {
           // 验证成功，从接口获取数据
-          console.log("验证成功");
+          console.log("验证成功", res);
           resolve(200);
         } else if (res.data.status === "verification_failed") {
           console.log('验证码核验失败:', res);
           resolve(300);
+        } else if (res.data.status === "user_not_exists") {
+          console.log('用户不存在:', res);
+          resolve(404);
         } else {
           console.log('请求失败:', res);
           resolve(500);

@@ -14,7 +14,6 @@ Page({
   onLoad(options) {},
   // 弹出和关闭底部的popups
   showPopup(event) {
-    // console.log(event);
     this.setData({
       showPopup: parseInt(event.target.dataset.index),
     });
