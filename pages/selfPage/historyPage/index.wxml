@@ -1,7 +1,12 @@
 <!--index.wxml-->
 <scroll-view class="scrollview" scroll-y type="list">
   <view class="container">
-    <view wx:if='{{ userInfo.role === "user" }}'>
+    <view wx:if="{{ loading }}">
+      <van-skeleton title avatar row="3" />
+      <van-skeleton title avatar row="3" />
+      <van-skeleton title avatar row="3" />
+    </view>
+    <view wx:elif='{{ userInfo.role === "user" }}'>
       <view wx:if="{{ ticketList.length === 0 }}">
         <van-empty description="您还没有已结束的工单哦" />
       </view>
@@ -57,9 +62,6 @@
     </view>
     <view wx:elif='{{ userInfo.role === "admin" }}'>
       <view>管理员大人您好~</view>
-    </view>
-    <view class="btn-container">
-      <van-button round icon="build" class-prefix="material-icons" type="info" bind:click="onFix">我要报修</van-button>
     </view>
   </view>
   <van-toast id="van-toast" />

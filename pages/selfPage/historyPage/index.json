@@ -6,6 +6,7 @@
     "van-divider": "@vant/weapp/divider/index",
     "van-empty": "@vant/weapp/empty/index",
     "van-toast": "@vant/weapp/toast/index",
+    "van-skeleton": "@vant/weapp/skeleton/index",
     "van-button": "@vant/weapp/button/index"
   }
 }

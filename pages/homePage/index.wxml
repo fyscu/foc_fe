@@ -5,6 +5,8 @@
     <view wx:if="{{ isloggedin }}">
       <view wx:if="{{ loading }}">
         <van-skeleton title avatar row="3" />
+        <van-skeleton title avatar row="3" />
+        <van-skeleton title avatar row="3" />
       </view>
       <view wx:elif="{{ !repairFlag }}">
         <van-empty description="报修通道已关闭，过两天再来看吧~" />

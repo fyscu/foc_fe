@@ -68,10 +68,18 @@ function findDataByName(config, name) {
   return foundItem ? foundItem.data : null; // 如果找到，返回 data；否则返回 null
 }
 
+// 验证邮箱格式
+function isValidEmail(email) {
+  // 正则表达式用于验证邮箱格式
+  const emailPattern = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+  return emailPattern.test(email);
+}
+
 module.exports = {
   formatTime,
   formatDate,
   getUUid,
   checkUserInfo,
   findDataByName,
+  isValidEmail,
 };

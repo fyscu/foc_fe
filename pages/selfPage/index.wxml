@@ -2,7 +2,7 @@
 <scroll-view class="scrollview" scroll-y type="list">
   <view class="container">
     <!-- 登录成功，获取到用户头像昵称 -->
-    <view wx:if="{{isloggedin}}" class="headline-container">
+    <view wx:if="{{ isloggedin }}" class="headline-container">
       <text class="headline-msg">{{ userInfo.nickname === "" ? "Anonymous" : userInfo.nickname }}</text>
       <van-image class="headline-avatar" width="5rem" round height="5rem" fit="cover" src="{{ userInfo.avatarUrl }}" />
       <block wx:if="{{ userInfo.role === 'user' }}">
@@ -15,7 +15,7 @@
         <van-tag type="danger" size="medium">管理员</van-tag>
       </block>
     </view>
-    <view wx:else class="headline-container" bind:tap="onLogin">
+    <view wx:else class="headline-container">
       <text class="headline-msg">您还未登录哦</text>
       <van-image class="headline-avatar" width="5rem" round height="5rem" fit="cover" src="{{ userInfo.avatarUrl }}" />
     </view>
@@ -55,7 +55,9 @@
         </van-field>
       </van-cell-group>
     </van-popup>
-    <!-- </block> -->
+    <view wx:if="{{ !isloggedin }}" class="btn-container">
+      <van-button round icon="input" class-prefix="material-icons" type="info" bind:click="onLogin">登录</van-button>
+    </view>
     <van-toast id="van-toast" />
   </view>
 </scroll-view>

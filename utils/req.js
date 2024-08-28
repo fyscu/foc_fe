@@ -154,12 +154,11 @@ function verify(phone, verifiCode) {
 // 更改用户信息 https://fyapidocs.wjlo.cc/user/setuser
 function setUserInfo(userInfo) {
   return new Promise((resolve, reject) => {
-    console.log("Requesting /user/setuser...");
+    console.log("Requesting /user/setuser...", userInfo);
     wx.request({
       url: app.globalData.rootApiUrl + '/v1/user/setuser',
       data: {
         openid: app.globalData.openid, // 必填
-        role: userInfo.role,
         email: userInfo.email,
         campus: userInfo.campus,
         avatar: userInfo.avatarUrl,

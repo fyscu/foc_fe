@@ -48,7 +48,7 @@ Page({
     // 不弹出选择框
     showPopup: 0,
     // showPopup = 1:
-    campusList: ["江安", "华西", "望江"],
+    campusList: ["江安", "望江", "华西"],
     // showPopup = 2:
     deviceTypeList: [
       "笔记本 (Laptop)",

@@ -19,11 +19,6 @@ Page({
       Repairing: "维修中",
       Done: "已完成",
     },
-    campusList: {
-      ja: "江安",
-      wj: "望江",
-      hx: "华西",
-    },
     userInfo: app.globalData.userInfo,
     ticketList: app.globalData.ticketList,
     isloggedin: app.globalData.isloggedin,
@@ -35,12 +30,6 @@ Page({
     // 登录 [TODO]
     // 初始化数据
     this.initialize();
-    // 加载完成
-    setTimeout(() => {
-      this.setData({
-        loading: false
-      })
-    }, 500);
   },
   initialize() {
     this.reloadData(); // 刷新数据
@@ -64,8 +53,8 @@ Page({
           Toast("未知错误");
         }
       });
-      // 获取用户的工单
       if (this.data.userInfo.role === "user") {
+        // 获取用户的工单
         getTicket({
           uid: this.data.userInfo.uid,
         }).then((returnCode) => {
@@ -74,15 +63,15 @@ Page({
           } else if (returnCode === 200) {
             // 成功获取用户的所有工单
             this.reloadData(); // 刷新数据
+            this.setData({ loading: false });
           } else if (returnCode === 403) {
             Toast("工单获取失败，权限不足");
           } else {
             Toast("未知错误");
           }
         });
-      }
-      // 获取技术员的工单
-      if (this.data.userInfo.role === "technician") {
+      } else if (this.data.userInfo.role === "technician") {
+        // 获取技术员的工单
         getTicket({
           tid: this.data.userInfo.tid,
         }).then((returnCode) => {
@@ -91,6 +80,7 @@ Page({
           } else if (returnCode === 200) {
             // 成功获取用户的所有工单
             this.reloadData(); // 刷新数据
+            this.setData({ loading: false });
           } else if (returnCode === 403) {
             Toast("工单获取失败，权限不足");
           } else {
@@ -98,6 +88,8 @@ Page({
           }
         });
       }
+    } else {
+      this.setData({ loading: false });
     }
   },
   reloadData() {

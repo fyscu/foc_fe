@@ -7,6 +7,7 @@ import {
   setUserInfo
 } from "../../../utils/req"
 import {
+  isValidEmail,
   checkUserInfo
 } from "../../../utils/util"
 
@@ -15,6 +16,12 @@ let userInfoOriginal = {};
 
 Page({
   data: {
+    validEmail: true,
+    hasEmail: true,
+    hasPhone: true,
+    hasCampus: true,
+    hasNickname: true,
+    hasAvatarUrl: true,
     userInfo: app.globalData.userInfo,
     campusList: ["江安", "望江", "华西"],
     showPopup: 0, // 不弹出选择框
@@ -58,19 +65,17 @@ Page({
   },
   // 在输入框不为focused时更新数据
   onNicknameChange(e) {
-    this.setData({
-      ["userInfo.nickname"]: e.detail
-    });
+    this.setData({ ["userInfo.nickname"]: e.detail });
+    this.setData({ hasNickname: true });
   },
   onPhoneChange(e) {
-    this.setData({
-      ["userInfo.phone"]: e.detail
-    });
+    this.setData({ ["userInfo.phone"]: e.detail });
+    this.setData({ hasPhone: true });
   },
   onEmailChange(e) {
-    this.setData({
-      ["userInfo.email"]: e.detail
-    });
+    this.setData({ ["userInfo.email"]: e.detail });
+    this.setData({ hasEmail: true });
+    this.setData({ validEmail: true });
   },
   // 选择头像
   onChooseAvatar(e) {
@@ -113,7 +118,6 @@ Page({
   },
   onLogin() {
     userLogin().then((returnCode) => {
-      console.log("returnCode:", returnCode);
       if (returnCode === 300) {
         Toast("您尚未注册");
         // 跳转到注册页
@@ -138,25 +142,49 @@ Page({
     });
   },
   saveChanges() {
-    if (JSON.stringify(this.data.userInfo) ===
-      JSON.stringify(userInfoOriginal)) {
+    let thisUserInfo = this.data.userInfo;
+    if (JSON.stringify(thisUserInfo) === JSON.stringify(userInfoOriginal)) {
       // 如果信息不变
       Toast("保存成功");
     } else { // 信息填写完全，且发生了变动，可以提交给后端
-      // let diff = {};
-      // for (const key in userInfoOriginal) {
-      //   if (this.data.userInfo[key] !== userInfoOriginal[key]) {
-      //     diff[key] = this.data.userInfo[key];
-      //   }
-      // }
-      // console.log("diff:", diff);
-      setUserInfo(this.data.userInfo).then((returnCode) => {
+      if (thisUserInfo.avatarUrl === "") {
+        this.setData({ hasAvatarUrl: false });
+        Toast("请上传头像");
+        // return; // 上传头像优先级较高
+      }
+      if (thisUserInfo.phone === "") {
+        this.setData({ hasPhone: false });
+        Toast("请填写手机号");
+        // return;
+      }
+      if (thisUserInfo.campus === "") {
+        this.setData({ hasCampus: false });
+        Toast("请填写校区");
+        // return;
+      }
+      if (thisUserInfo.nickname === "") {
+        this.setData({ hasNickname: false });
+        Toast("请填写昵称");
+        // return;
+      }
+      if (thisUserInfo.email === "") {
+        this.setData({ hasEmail: false });
+        Toast("请填写邮箱");
+        // return;
+      } else if (!isValidEmail(thisUserInfo.email)) {
+        this.setData({ validEmail: false });
+        console.log("邮箱格式错误");
+      }
+      if (!checkUserInfo(thisUserInfo)) {
+        return;
+      }
+      setUserInfo(thisUserInfo).then((returnCode) => {
         if (returnCode === 401) {
           Toast("鉴权失败，请刷新重试");
         } else if (returnCode === 200) {
           Toast("设置成功");
           // 更新 userInfoOriginal
-          userInfoOriginal = JSON.parse(JSON.stringify(this.data.userInfo));
+          userInfoOriginal = JSON.parse(JSON.stringify(thisUserInfo));
         } else if (returnCode === 300) {
           Toast("修改失败");
         }

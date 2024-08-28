@@ -61,24 +61,13 @@ Page({
         },
       });
       requestTask.onChunkReceived((res) => {
-        // 方法1
         const arrayBuffer = res.data;
         const uint8Array = new Uint8Array(arrayBuffer);
         const text = new TextEncoding.TextDecoder("utf-8").decode(uint8Array);
-
-        // 方法2
-        // const arrayBuffer = res.data;
-        // const uint8Array = new Uint8Array(arrayBuffer);
-        // let text = String.fromCharCode.apply(null, uint8Array);
-
-        // 方法3
-        // const data16 = that.buf2hex(res.data);
-        // const text = that.hexToStr(data16);
         this.setData({
           isResponding: true,
           respondingText: this.data.respondingText + text,
         });
-        // console.log(this.data.respondingText);
       });
     } catch (error) {
       console.error("Error:", error);
@@ -88,7 +77,6 @@ Page({
     if (this.data.iconDisabled) {
       return;
     }
-    // console.log(this.data.rawText);
     const newMessage = {
       role: "user",
       content: this.data.rawText
@@ -101,9 +89,10 @@ Page({
     });
     this.getRespFromAI(this.data.messages);
   },
-  onMsgChange() {
+  onMsgChange(e) {
     this.setData({
-      iconDisabled: this.data.rawText.trim() === "",
+      rawText: e.detail,
+      iconDisabled: e.detail.trim() === "",
     });
   },
 });
