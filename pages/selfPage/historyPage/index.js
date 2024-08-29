@@ -15,6 +15,8 @@ Page({
       Pending: "待分配",
       Repairing: "维修中",
       Done: "已完成",
+      Closed: "已关闭",
+      Canceled: "已取消",
     },
     userInfo: app.globalData.userInfo,
     ticketList: app.globalData.ticketList,

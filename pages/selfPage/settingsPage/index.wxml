@@ -40,6 +40,7 @@
           bind:cancel="closePopup" />
       </block>
     </van-popup>
+    <view>{{ log }}</view>
     <van-toast id="van-toast" />
     <van-dialog id="van-dialog" />
   </view>

@@ -17,7 +17,8 @@
         </view>
         <view wx:else>
           <view wx:for="{{ ticketList }}" wx:key="id">
-            <view wx:if="{{ item.status_status !== 'Done' }}">
+            <view
+              wx:if="{{ item.status_status !== 'Done' && item.status_status !== 'Canceled' && item.status_status !== 'Closed' }}">
               <navigator url="/pages/homePage/ticketDetailUser/index?id={{ item.id }}" open-type="navigate">
                 <van-card class="class-status-{{ item.repair_status }}" desc="{{ item.repair_description }}"
                   title="{{ item.device_type }} {{ item.fault_type }}" thumb="{{ item.repair_image_url }}"
@@ -44,7 +45,8 @@
         </view>
         <view wx:else>
           <view wx:for="{{ ticketList }}" wx:key="id">
-            <view wx:if="{{ item.status_status !== 'Done' }}">
+            <view
+              wx:if="{{ item.status_status !== 'Done' && item.status_status !== 'Canceled' && item.status_status !== 'Closed' }}">
               <navigator url="/pages/homePage/ticketDetail/index?id={{ item.id }}" open-type="navigate">
                 <van-card class="class-status-{{ item.repair_status }}" desc="{{ item.repair_description }}"
                   title="{{ item.device_type }} {{ item.fault_type }}" thumb="{{ item.repair_image_url }}"

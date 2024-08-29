@@ -73,3 +73,11 @@ body {
 .class-status-Done .van-tag--mark {
   background-color: #57be6a;
 }
+
+.class-status-Canceled .van-tag--mark {
+  background-color: #eae434;
+}
+
+.class-status-Closed .van-tag--mark {
+  background-color: #eae434;
+}

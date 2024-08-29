@@ -19,7 +19,13 @@ Page({
     }],
   },
   onLoad(options) {
-    let map = { Pending: 0, Repairing: 1, Done: 2 };
+    let map = {
+      Pending: 0,
+      Repairing: 1,
+      Done: 2,
+      Closed: 2,
+      Canceled: 2,
+    };
     this.setData({
       ticket: app.globalData.ticketList.find(
         (item) => item.id === options.id

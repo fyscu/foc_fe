@@ -35,8 +35,8 @@ Page({
     problemDesc: "",
     // 购买日期
     purchaseDate: "",
-    // 校区
-    campusValue: "",
+    // 校区（默认为用户所在校区）
+    campusValue: app.globalData.userInfo.campus,
     // 设备类型
     deviceTypeValue: "",
     // 设备品牌
@@ -103,7 +103,8 @@ Page({
     phone: app.globalData.userInfo.phone,
   },
   // 显示页面时更新数据
-  onShow() {
+  onLoad(options) {
+    console.log(options);
     this.reloadData();
   },
   reloadData() {
@@ -247,7 +248,7 @@ Page({
       "campusValue": "所在校区"
     }
     for (const field in fields) {
-      if (this.data[field] === "") {
+      if (this.data[field].trim() === "") {
         Toast(`请先填写${fields[field]}`);
         return;
       }

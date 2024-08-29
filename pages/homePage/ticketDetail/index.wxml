@@ -44,7 +44,9 @@
       </van-cell>
     </van-cell-group>
   </view>
-  <view wx:if="ticket.repair_status !== 'Done'" class="btn-container">
+  <view
+    wx:if="{{ ticket.repair_status !== 'Done' && ticket.repair_status !== 'Canceled' && ticket.repair_status !== 'Closed' }}"
+    class="btn-container">
     <van-button round icon="block" class-prefix="material-icons" type="danger" bind:click="closeTheTicket">
       关闭工单
     </van-button>

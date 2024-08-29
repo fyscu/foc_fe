@@ -93,6 +93,7 @@ Page({
       });
     }).catch((error) => {
       Toast("图片上传失败");
+      console.log("图片上传失败:", error);
       this.setData({
         ["userInfo.avatarUrl"]: "/image/icons/image_upload_failed.svg",
       });
@@ -121,7 +122,9 @@ Page({
     });
   },
   onLogin() {
+    wx.showLoading({ title: '登录中', mask: true });
     userLogin().then((returnCode) => {
+      wx.hideLoading();
       if (returnCode === 300) {
         Toast("您尚未注册");
         // 跳转到注册页
@@ -151,6 +154,10 @@ Page({
     if (JSON.stringify(thisUserInfo) === JSON.stringify(userInfoOriginal)) {
       // 如果信息不变
       Toast("保存成功");
+      // 应要求，保存成功后返回上一页
+      setTimeout(() => {
+        wx.navigateBack();
+      }, 500);
     } else { // 信息填写完全，且发生了变动，可以提交给后端
       if (thisUserInfo.avatarUrl === "") {
         this.setData({ hasAvatarUrl: false });
@@ -190,6 +197,10 @@ Page({
           Toast("设置成功");
           // 更新 userInfoOriginal
           userInfoOriginal = JSON.parse(JSON.stringify(thisUserInfo));
+          // 应要求，保存成功后返回上一页
+          setTimeout(() => {
+            wx.navigateBack();
+          }, 500);
         } else if (returnCode === 300) {
           Toast("修改失败");
         }

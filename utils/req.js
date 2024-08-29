@@ -370,7 +370,7 @@ function cancelTicket(orderId) {
       method: 'POST',
       data: {
         tid: orderId,
-        repair_status: "canceled",
+        repair_status: "Canceled",
       },
       success(res) {
         if (res.statusCode === 401) {

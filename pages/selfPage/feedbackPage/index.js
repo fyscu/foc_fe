@@ -1,5 +1,6 @@
 // index.js
 import Toast from "@vant/weapp/toast/toast";
+import Dialog from "@vant/weapp/dialog/dialog";
 import {
   userLogin,
   putFeedback
@@ -33,25 +34,31 @@ Page({
         url: "/pages/forumPage/index",
       });
     } else {
-      putFeedback(this.data.rawText).then((returnCode) => {
-        if (returnCode === 401) {
-          Toast("鉴权失败，请刷新重试");
-        } else if (returnCode === 200) {
-          Toast("反馈成功！谢谢你的反馈");
-          this.setData({
-            rawText: "",
-          });
-        } else {
-          Toast("反馈失败！" + returnCode);
-        }
+      Dialog.confirm({
+        title: "提交反馈",
+        message: "确认提交吗？",
+      }).then(() => {
+        putFeedback(this.data.rawText).then((returnCode) => {
+          if (returnCode === 401) {
+            Toast("鉴权失败，请刷新重试");
+          } else if (returnCode === 200) {
+            Toast("反馈成功！谢谢你的反馈");
+            this.setData({
+              rawText: "",
+            });
+          } else {
+            Toast("反馈失败！" + returnCode);
+          }
+        });
       }).catch((error) => {
         Toast("反馈失败！" + error);
       });
     }
   },
   onLogin() {
+    wx.showLoading({ title: '登录中', mask: true });
     userLogin().then((returnCode) => {
-      console.log("returnCode:", returnCode);
+      wx.hideLoading();
       if (returnCode === 300) {
         Toast("您尚未注册");
         // 跳转到注册页

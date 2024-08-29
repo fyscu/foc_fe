@@ -2,13 +2,16 @@
 <scroll-view class="scrollview" scroll-y type="list">
   <view class="container">
     <van-cell-group title="反馈" inset>
-      <van-field class="feedback-textfield" model:value="{{ rawText }}" type="textarea" placeholder="请输入您的反馈……" autosize="{{ autosizeData}}" border="{{ false }}">
+      <van-field class="feedback-textfield" model:value="{{ rawText }}" type="textarea" placeholder="请输入您的反馈……"
+        autosize="{{ autosizeData}}" border="{{ false }}">
       </van-field>
     </van-cell-group>
     <view class="btn-container">
-      <van-button round type="primary" icon="publish" class-prefix="material-icons" bind:click="onShowPopup">提交</van-button>
+      <van-button round type="primary" icon="publish" class-prefix="material-icons"
+        bind:click="onShowPopup">提交</van-button>
     </view>
+    <van-dialog id="van-dialog" />
+    <van-toast id="van-toast" />
   </view>
-  <van-toast id="van-toast" />
 </scroll-view>
 <!--Markdown-->
