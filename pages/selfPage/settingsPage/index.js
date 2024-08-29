@@ -66,15 +66,19 @@ Page({
   // 在输入框不为focused时更新数据
   onNicknameChange(e) {
     this.setData({ ["userInfo.nickname"]: e.detail });
-    this.setData({ hasNickname: true });
+    this.setData({ hasNickname: e.detail !== "" });
+  },
+  onNicknameBlur(e) {
+    this.setData({ ["userInfo.nickname"]: e.detail.value });
+    this.setData({ hasNickname: e.detail.value !== "" });
   },
   onPhoneChange(e) {
     this.setData({ ["userInfo.phone"]: e.detail });
-    this.setData({ hasPhone: true });
+    this.setData({ hasPhone: e.detail !== "" });
   },
   onEmailChange(e) {
     this.setData({ ["userInfo.email"]: e.detail });
-    this.setData({ hasEmail: true });
+    this.setData({ hasEmail: e.detail !== "" });
     this.setData({ validEmail: true });
   },
   // 选择头像
@@ -142,6 +146,7 @@ Page({
     });
   },
   saveChanges() {
+    let unfilled = false;
     let thisUserInfo = this.data.userInfo;
     if (JSON.stringify(thisUserInfo) === JSON.stringify(userInfoOriginal)) {
       // 如果信息不变
@@ -150,32 +155,32 @@ Page({
       if (thisUserInfo.avatarUrl === "") {
         this.setData({ hasAvatarUrl: false });
         Toast("请上传头像");
-        // return; // 上传头像优先级较高
+        unfilled = true;
       }
       if (thisUserInfo.phone === "") {
         this.setData({ hasPhone: false });
         Toast("请填写手机号");
-        // return;
+        unfilled = true;
       }
       if (thisUserInfo.campus === "") {
         this.setData({ hasCampus: false });
         Toast("请填写校区");
-        // return;
+        unfilled = true;
       }
       if (thisUserInfo.nickname === "") {
         this.setData({ hasNickname: false });
         Toast("请填写昵称");
-        // return;
+        unfilled = true;
       }
       if (thisUserInfo.email === "") {
         this.setData({ hasEmail: false });
         Toast("请填写邮箱");
-        // return;
+        unfilled = true;
       } else if (!isValidEmail(thisUserInfo.email)) {
         this.setData({ validEmail: false });
-        console.log("邮箱格式错误");
+        unfilled = true;
       }
-      if (!checkUserInfo(thisUserInfo)) {
+      if (unfilled) { // 有未填写的信息
         return;
       }
       setUserInfo(thisUserInfo).then((returnCode) => {

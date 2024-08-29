@@ -32,6 +32,7 @@ Page({
     this.initialize();
   },
   initialize() {
+    this.setData({ loading: true });
     this.reloadData(); // 刷新数据
     if (this.data.isloggedin) {
       // 获取全局配置
@@ -87,6 +88,8 @@ Page({
             Toast("未知错误");
           }
         });
+      } else { // admin
+        this.setData({ loading: false });
       }
     } else {
       this.setData({ loading: false });

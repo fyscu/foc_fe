@@ -67,8 +67,10 @@ Page({
     });
   },
   onLogin() {
+    wx.showLoading({ title: '登录中', mask: true });
     userLogin().then((returnCode) => {
       console.log("returnCode:", returnCode);
+      wx.hideLoading();
       if (returnCode === 300) {
         Toast("您尚未注册");
         // 跳转到注册页

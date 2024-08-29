@@ -209,7 +209,7 @@ function uploadQiniuImg(localFilePath) {
           console.log("Upload image success!", data);
           resolve(data.data);
         } else {
-          console.log("Error occured:", data.data);
+          console.log("Error occured:", data);
           reject(data.data);
         }
       },

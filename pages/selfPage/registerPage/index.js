@@ -45,20 +45,24 @@ Page({
   // 在输入框不为focused时更新数据
   onVerifiCodeChange(e) {
     this.setData({ verifiCode: e.detail });
-    this.setData({ hasVerifiCode: true });
+    this.setData({ hasVerifiCode: e.detail !== "" });
   },
   onPhoneChange(e) {
     this.setData({ ["userInfo.phone"]: e.detail });
-    this.setData({ hasPhone: true });
+    this.setData({ hasPhone: e.detail !== "" });
   },
   onEmailChange(e) {
     this.setData({ ["userInfo.email"]: e.detail });
-    this.setData({ hasEmail: true });
+    this.setData({ hasEmail: e.detail !== "" });
     this.setData({ validEmail: true });
   },
   onNicknameChange(e) {
     this.setData({ ["userInfo.nickname"]: e.detail });
-    this.setData({ hasNickname: true });
+    this.setData({ hasNickname: e.detail !== "" });
+  },
+  onNicknameBlur(e) {
+    this.setData({ ["userInfo.nickname"]: e.detail.value });
+    this.setData({ hasNickname: e.detail.value !== "" });
   },
   // 选择头像
   onChooseAvatar(e) {
@@ -78,53 +82,57 @@ Page({
     });
   },
   onRegister() {
+    let unfilled = false;
     let thisUserInfo = this.data.userInfo;
     if (this.data.verifiCode === "") {
       this.setData({ hasVerifiCode: false });
       Toast("请填写验证码");
-      return; // 验证码优先级最高
+      unfilled = true;
     }
     if (thisUserInfo.avatarUrl === "") {
       this.setData({ hasAvatarUrl: false });
       Toast("请上传头像");
-      // return; // 上传头像优先级较高
+      unfilled = true;
     }
     if (thisUserInfo.phone === "") {
       this.setData({ hasPhone: false });
       Toast("请填写手机号");
-      // return;
+      unfilled = true;
     }
     if (thisUserInfo.campus === "") {
       this.setData({ hasCampus: false });
       Toast("请填写校区");
-      // return;
+      unfilled = true;
     }
     if (thisUserInfo.nickname === "") {
       this.setData({ hasNickname: false });
       Toast("请填写昵称");
-      // return;
+      unfilled = true;
     }
     if (thisUserInfo.email === "") {
       this.setData({ hasEmail: false });
       Toast("请填写邮箱");
-      // return;
+      unfilled = true;
     } else if (!isValidEmail(thisUserInfo.email)) {
       this.setData({ validEmail: false });
-      console.log("邮箱格式错误");
+      unfilled = true;
     }
-    if (!checkUserInfo(thisUserInfo)) {
-      return;
-    }
+    // 有未填写的信息
+    if (unfilled) { return; }
+    wx.showLoading({ title: '注册中', mask: true });
     // 验证码校验
     verify(thisUserInfo.phone, this.data.verifiCode).then((code1) => {
+      wx.hideLoading();
       if (code1 === 401) {
         Toast("鉴权失败，请刷新重试");
       } else if (code1 === 200) {
+        wx.showLoading({ title: '登录中', mask: true });
         userLogin().then((code2) => {
+          wx.hideLoading();
           if (code2 === 200) {
             setUserInfo(thisUserInfo).then((code3) => {
               if (code3 === 200) {
-                Toast("注册成功");
+                Toast("登录成功");
                 // 保存个人信息
                 app.globalData.userInfo = thisUserInfo;
                 setTimeout(() => {

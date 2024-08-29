@@ -6,12 +6,13 @@
         src="{{ userInfo.avatarUrl === '' ? '/image/icons/image_upload_failed.svg' : userInfo.avatarUrl }}"></image>
     </button>
     <van-cell-group inset>
-      <van-field disabled center name="phone" label="联系方式" placeholder="请输入联系方式" clearable value="{{ userInfo.phone }}"
-        border="{{ false }}" bind:change="onPhoneChange" error="{{ !hasPhone }}">
+      <van-field disabled center name="phone" type="digit" label="联系方式" placeholder="请输入联系方式" clearable
+        value="{{ userInfo.phone }}" border="{{ false }}" bind:change="onPhoneChange" error="{{ !hasPhone }}">
         <view class="material-icons" slot="right-icon"> phone </view>
       </van-field>
-      <van-field required center name="nickname" label="用户名" placeholder="请输入昵称" clearable
-        value="{{ userInfo.nickname }}" border="{{ false }}" bind:change="onNicknameChange" error="{{ !hasNickname }}">
+      <van-field required center name="nickname" type="nickname" label="用户名" placeholder="请输入昵称" clearable
+        value="{{ userInfo.nickname }}" border="{{ false }}" bind:change="onNicknameChange" bind:blur="onNicknameBlur"
+        error="{{ !hasNickname }}">
         <view class="material-icons" slot="right-icon"> face </view>
       </van-field>
       <van-field error-message="{{ validEmail ? '' : '邮箱格式错误'}}" required center name="email" label="邮箱"
