@@ -6,6 +6,7 @@
     "pages/selfPage/historyPage/index",
     "pages/selfPage/settingsPage/index",
     "pages/selfPage/registerPage/index",
+    "pages/selfPage/signOutPage/index",
     "pages/activityPage/index",
     "pages/chatPage/index",
     "pages/homePage/index",
@@ -34,12 +35,6 @@
         "iconPath": "@iconPathHome",
         "selectedIconPath": "@selectedIconPathHome",
         "text": "首页"
-      },
-      {
-        "pagePath": "pages/chatPage/index",
-        "iconPath": "@iconPathForum",
-        "selectedIconPath": "@selectedIconPathForum",
-        "text": "AI助手"
       },
       {
         "pagePath": "pages/activityPage/index",

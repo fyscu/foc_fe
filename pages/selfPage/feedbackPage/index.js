@@ -26,12 +26,16 @@ Page({
       this.onLogin();
     }
   },
-  onShowPopup() {
+  onFeedBack() {
     if (this.data.rawText === "") {
       Toast("请先填写反馈内容!");
     } else if (this.data.rawText.trim() === "forum") {
-      wx.navigateTo({
+      wx.redirectTo({
         url: "/pages/forumPage/index",
+      });
+    } else if (this.data.rawText.trim() === "chat") {
+      wx.redirectTo({
+        url: "/pages/chatPage/index",
       });
     } else {
       Dialog.confirm({
@@ -62,7 +66,7 @@ Page({
       if (returnCode === 300) {
         Toast("您尚未注册");
         // 跳转到注册页
-        wx.navigateTo({
+        wx.redirectTo({
           url: '/pages/selfPage/registerPage/index',
         });
       } else if (returnCode === 200) {
@@ -70,7 +74,7 @@ Page({
         if (!checkUserInfo(this.data.userInfo)) {
           // 如果没有完善 userInfo
           // 跳转到用户信息设置页面
-          wx.navigateTo({
+          wx.redirectTo({
             url: '/pages/selfPage/settingsPage/index?toast=登录成功！请完善个人信息',
           });
         }

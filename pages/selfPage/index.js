@@ -92,7 +92,7 @@ Page({
       if (returnCode === 300) {
         Toast("您尚未注册");
         // 跳转到注册页
-        wx.navigateTo({
+        wx.redirectTo({
           url: '/pages/selfPage/registerPage/index',
         });
       } else if (returnCode === 200) {
@@ -101,7 +101,7 @@ Page({
         if (!checkUserInfo(this.data.userInfo)) {
           // 如果没有完善 userInfo
           // 跳转到用户信息设置页面
-          wx.navigateTo({
+          wx.redirectTo({
             url: '/pages/selfPage/settingsPage/index?toast=登录成功！请完善个人信息',
           });
           // 弹出个人信息填写页 (弃用)

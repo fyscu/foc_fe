@@ -1,10 +1,8 @@
 /**index.wxss**/
 
-.van-popup {
-  padding-top: 40rpx;
-}
-
-.clickable-icon {
-  float: right;
-  margin-right: 40rpx;
+.prompt {
+  text-align: center;
+  color: grey;
+  margin-top: 99%;
+  font-size: 10rpx;
 }
