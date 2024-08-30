@@ -2,6 +2,7 @@ import Dialog from "@vant/weapp/dialog/dialog";
 import Toast from "@vant/weapp/toast/toast";
 import {
   getTicket,
+  setConfig,
   getConfig
 } from "../../utils/req"
 import {
@@ -9,6 +10,7 @@ import {
 } from "../../utils/util"
 
 var app = getApp();
+let sysConfigOriginal = null;
 
 Page({
   data: {
@@ -34,6 +36,46 @@ Page({
     this.reloadData(); // 刷新数据
     if (this.data.isloggedin) {
       this.initialize();
+    }
+  },
+  onSysConfigChange(event) {
+    let sysConfigName = event.currentTarget.dataset.name;
+    // find name=name in sysConfig
+    const updatedConfig = this.data.sysConfig.map(item => {
+      if (item.name === sysConfigName) {
+        return { ...item, data: event.detail }; // 更新 item
+      }
+      return item; // 保持其他项不变
+    });
+    this.setData({ sysConfig: updatedConfig });
+    // console.log("sysConfig changed:", this.data.sysConfig);
+  },
+  onSaveSysConfig() {
+    let hasChange = false;
+    this.data.sysConfig.forEach((config, index) => {
+      if (sysConfigOriginal[index].data !== config.data) {
+        console.log("changed fields:", config.name, config.data);
+        hasChange = true;
+        setConfig({
+          name: config.name,
+          data: config.data,
+        }).then((returnCode) => {
+          if (returnCode === 401) {
+            Toast("鉴权失败，请刷新重试");
+          } else if (returnCode === 200) {
+            Toast("保存成功");
+            // 更新 sysConfig
+            sysConfigOriginal = JSON.parse(JSON.stringify(this.data.sysConfig));
+          } else if (returnCode === 403) {
+            Toast("保存失败，权限不足");
+          } else {
+            Toast("保存失败，未知错误");
+          }
+        });
+      }
+    });
+    if (!hasChange) { // 没有修改
+      Toast("保存成功");
     }
   },
   initialize() {
@@ -102,6 +144,8 @@ Page({
       isloggedin: app.globalData.isloggedin,
       sysConfig: app.globalData.sysConfig,
     });
+    // 更新 sysConfig
+    sysConfigOriginal = JSON.parse(JSON.stringify(this.data.sysConfig));
   },
   onNavigateToTechOptions() {
     wx.navigateTo({

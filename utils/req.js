@@ -23,7 +23,7 @@ function userRegister(phone) {
         if (res.statusCode === 401) {
           console.log('鉴权失败:', res);
           resolve(401);
-        } else if (res.data.success) {
+        } else if (res.data.success === true) {
           if (res.data.status === "verification_code_sent") {
             console.log("成功发送验证码");
             resolve(200);
@@ -173,7 +173,7 @@ function setUserInfo(userInfo) {
         if (res.statusCode === 401) {
           console.log('鉴权失败:', res);
           resolve(401);
-        } else if (res.data.success) {
+        } else if (res.data.success === true) {
           // 修改成功
           console.log('修改成功:', res);
           resolve(200);
@@ -236,7 +236,7 @@ function putFeedback(text) {
         if (res.statusCode === 401) {
           console.log("鉴权失败:", res);
           resolve(401);
-        } else if (res.data.success) {
+        } else if (res.data.success === true) {
           console.log("反馈成功: id =", res.data.qid);
           resolve(200);
         } else {
@@ -274,7 +274,7 @@ function addTicket(purchase_date, phone, device_type, brand, description, image,
         if (res.statusCode === 401) {
           console.log('鉴权失败:', res);
           resolve(401);
-        } else if (res.data.success) {
+        } else if (res.data.success === true) {
           console.log("创建工单成功，工单号:", res.data.ticketid);
           resolve(200);
         } else {
@@ -346,7 +346,7 @@ function completeTicket(orderId) {
             console.log('未知错误:', res);
             resolve(500);
           }
-        } else if (res.data.success) {
+        } else if (res.data.success === true) {
           console.log('关闭工单成功:', res);
           resolve(200);
         } else {
@@ -376,7 +376,7 @@ function cancelTicket(orderId) {
         if (res.statusCode === 401) {
           console.log('鉴权失败:', res);
           resolve(401);
-        } else if (res.data.success) {
+        } else if (res.data.success === true) {
           console.log('取消成功:', res);
           resolve(200);
         } else {
@@ -391,7 +391,7 @@ function cancelTicket(orderId) {
 function getConfig() {
   return new Promise((resolve, reject) => {
     wx.request({
-      url: app.globalData.rootApiUrl + "/v1/status/getConfig",
+      url: app.globalData.rootApiUrl + "/v1/conf/get",
       header: {
         'content-type': 'application/json',
         'Authorization': `Bearer ${app.globalData.accessToken}`,
@@ -417,6 +417,38 @@ function getConfig() {
   });
 }
 
+function setConfig(name, data) {
+  return new Promise((resolve, reject) => {
+    wx.request({
+      url: app.globalData.rootApiUrl + "/v1/conf/set",
+      header: {
+        'content-type': 'application/json',
+        'Authorization': `Bearer ${app.globalData.accessToken}`,
+      },
+      data: {
+        name: name,
+        data: data,
+      },
+      method: 'POST',
+      success(res) {
+        if (res.statusCode === 401) {
+          console.log('鉴权失败:', res);
+          resolve(401);
+        } else if (res.data.success === false) {
+          console.log('获取失败:', res);
+          resolve(403);
+        } else if (res.data.success === true) {
+          console.log('修改成功:', res);
+          resolve(200);
+        } else {
+          console.log('请求失败:', res);
+          resolve(500);
+        }
+      }
+    })
+  });
+}
+
 module.exports = {
   userLogin,
   userRegister,
@@ -429,4 +461,5 @@ module.exports = {
   getConfig,
   completeTicket,
   cancelTicket,
+  setConfig,
 }

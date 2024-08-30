@@ -1,6 +1,6 @@
 <!--index.wxml-->
 <scroll-view class="scrollview" scroll-y type="list">
-  <view class="container">
+  <view wx:if="{{ sysConfig.Global_Year !== '0000' }}" class="container">
     <!-- 登录成功，获取到用户头像昵称 -->
     <view wx:if="{{ isloggedin }}" class="headline-container">
       <text class="headline-msg">{{ userInfo.nickname === "" ? "Anonymous" : userInfo.nickname }}</text>

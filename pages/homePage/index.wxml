@@ -68,7 +68,20 @@
         </view>
       </view>
       <view wx:elif='{{ userInfo.role === "admin" }}'>
-        <view>管理员大人您好~</view>
+        <van-cell-group wx:if="{{ sysConfig !== null }}" inset title="全局设置">
+          <view wx:for="{{ sysConfig }}" wx:key="name">
+            <van-field required center autosize name="{{ item.name }}" data-name="{{ item.name }}"
+              type="{{ item.name === 'Global_Tips' ? 'textarea' : 'digit' }}" label="{{ item.info }}"
+              placeholder="请输入{{ item.info }}" value="{{ item.data }}" border="{{ false }}"
+              bind:change="onSysConfigChange">
+              <view class="material-icons" slot="right-icon"> settings </view>
+            </van-field>
+          </view>
+          <view class="btn-container">
+            <van-button round icon="save" class-prefix="material-icons" type="info"
+              bind:click="onSaveSysConfig">保存</van-button>
+          </view>
+        </van-cell-group>
       </view>
     </view>
     <!-- 尚未登录 -->
