@@ -1,7 +1,10 @@
 <!--index.wxml-->
 <scroll-view class="scrollview" scroll-y type="list">
   <view class="container">
-    <view wx:if="{{ loading }}">
+    <view wx:if="{{ !isloggedin }}">
+      <van-empty description="您还未登录哦" />
+    </view>
+    <view wx:elif="{{ loading }}">
       <van-skeleton title avatar row="3" />
       <van-skeleton title avatar row="3" />
       <van-skeleton title avatar row="3" />

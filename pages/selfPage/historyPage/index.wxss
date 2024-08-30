@@ -1,5 +1,10 @@
 /**index.wxss**/
 
+page,
+body {
+  background-color: #fafafa;
+}
+
 .van-card__title {
   font-size: medium;
 }

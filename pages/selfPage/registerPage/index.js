@@ -1,5 +1,6 @@
 // index.js
 import Toast from "@vant/weapp/toast/toast";
+import Dialog from "@vant/weapp/dialog/dialog";
 import {
   userRegister,
   uploadQiniuImg,
@@ -35,7 +36,27 @@ Page({
   // 显示页面时更新数据
   onLoad(options) {
     console.log(options);
-    Toast("请使用手机号注册");
+    // Toast("请使用手机号注册");
+    Dialog.confirm({
+      title: "隐私协议",
+      messageAlign: "left",
+      confirmButtonText: "我同意",
+      cancelButtonText: "不同意",
+      message: `
+      1. 本小程序会收集您的手机号、邮箱地址和昵称。
+        - 手机号用于给您发送维修进度的短信通知；
+        - 邮箱地址用于接收维修进度的邮件通知；
+        - 您的昵称和头像将会显示在工单中，提供给技术员。
+      2. 本小程序不会在未经用户同意的情况下，存储或公开用户的任何隐私信息。
+      3. 本小程序不会向用户发送任何广告、推销或与维修工单无关的信息。
+      4. 本小程序不会向任何无关人员（包括其他用户和技术员）和第三方机构提供您的任何信息。
+      5. 您的个人信息会在您主动注销账号或者撤回同意本隐私协议时被永久删除。
+      6. 您不同意本隐私条例仅仅限制您使用本小程序的报修功能，但不会影响您使用其他功能，例如报名活动和AI助手等。您也可以选择线下维修、参与校区大型维修等其他方式。`
+    }).then(() => {
+
+    }).catch(() => {
+      wx.navigateBack();
+    });
   },
   // 页面卸载时触发。如wx.redirectTo或wx.navigateBack到其他页面时。
   onUnload() {

@@ -13,7 +13,7 @@ var app = getApp();
 Page({
   data: {
     // 显示骨架屏
-    loading: true,
+    loading: false,
     statusList: {
       Pending: "待分配",
       Repairing: "维修中",
@@ -31,69 +31,67 @@ Page({
   onShow() {
     // 登录 [TODO]
     // 初始化数据
-    this.initialize();
+    this.reloadData(); // 刷新数据
+    if (this.data.isloggedin) {
+      this.initialize();
+    }
   },
   initialize() {
     this.setData({ loading: true });
-    this.reloadData(); // 刷新数据
-    if (this.data.isloggedin) {
-      // 获取全局配置
-      getConfig().then((returnCode) => {
+    // 获取全局配置
+    getConfig().then((returnCode) => {
+      if (returnCode === 401) {
+        Toast("鉴权失败，请刷新重试");
+      } else if (returnCode === 200) {
+        // 获取全局配置成功
+        this.reloadData(); // 刷新数据
+        this.setData({
+          repairFlag: findDataByName(
+            app.globalData.sysConfig,
+            'Global_Flag'
+          )
+        })
+      } else if (returnCode === 403) {
+        Toast("获取全局配置失败");
+      } else {
+        Toast("未知错误");
+      }
+    });
+    if (this.data.userInfo.role === "user") {
+      // 获取用户的工单
+      getTicket({
+        uid: this.data.userInfo.uid,
+      }).then((returnCode) => {
+        this.setData({ loading: false });
         if (returnCode === 401) {
           Toast("鉴权失败，请刷新重试");
         } else if (returnCode === 200) {
-          // 获取全局配置成功
+          // 成功获取用户的所有工单
           this.reloadData(); // 刷新数据
-          this.setData({
-            repairFlag: findDataByName(
-              app.globalData.sysConfig,
-              'Global_Flag'
-            )
-          })
         } else if (returnCode === 403) {
-          Toast("获取全局配置失败");
+          Toast("工单获取失败，权限不足");
         } else {
           Toast("未知错误");
         }
       });
-      if (this.data.userInfo.role === "user") {
-        // 获取用户的工单
-        getTicket({
-          uid: this.data.userInfo.uid,
-        }).then((returnCode) => {
-          if (returnCode === 401) {
-            Toast("鉴权失败，请刷新重试");
-          } else if (returnCode === 200) {
-            // 成功获取用户的所有工单
-            this.reloadData(); // 刷新数据
-            this.setData({ loading: false });
-          } else if (returnCode === 403) {
-            Toast("工单获取失败，权限不足");
-          } else {
-            Toast("未知错误");
-          }
-        });
-      } else if (this.data.userInfo.role === "technician") {
-        // 获取技术员的工单
-        getTicket({
-          tid: this.data.userInfo.tid,
-        }).then((returnCode) => {
-          if (returnCode === 401) {
-            Toast("鉴权失败，请刷新重试");
-          } else if (returnCode === 200) {
-            // 成功获取用户的所有工单
-            this.reloadData(); // 刷新数据
-            this.setData({ loading: false });
-          } else if (returnCode === 403) {
-            Toast("工单获取失败，权限不足");
-          } else {
-            Toast("未知错误");
-          }
-        });
-      } else { // admin
+    } else if (this.data.userInfo.role === "technician") {
+      // 获取技术员的工单
+      getTicket({
+        tid: this.data.userInfo.uid,
+      }).then((returnCode) => {
         this.setData({ loading: false });
-      }
-    } else {
+        if (returnCode === 401) {
+          Toast("鉴权失败，请刷新重试");
+        } else if (returnCode === 200) {
+          // 成功获取用户的所有工单
+          this.reloadData(); // 刷新数据
+        } else if (returnCode === 403) {
+          Toast("工单获取失败，权限不足");
+        } else {
+          Toast("未知错误");
+        }
+      });
+    } else { // admin
       this.setData({ loading: false });
     }
   },
