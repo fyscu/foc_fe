@@ -1,9 +1,7 @@
 {
-  "navigationBarTitleText": "反馈",
+  "navigationBarTitleText": "注销",
   "usingComponents": {
-    "van-field": "@vant/weapp/field/index",
     "van-button": "@vant/weapp/button/index",
-    "van-cell-group": "@vant/weapp/cell-group/index",
     "van-dialog": "@vant/weapp/dialog/index",
     "van-toast": "@vant/weapp/toast/index"
   }

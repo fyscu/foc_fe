@@ -23,7 +23,7 @@
         </block>
       </van-field>
     </van-cell-group>
-    <van-cell-group inset title="个人信息设置" style="margin-top: 20rpx;">
+    <van-cell-group wx:if="{{ verified }}" inset title="个人信息设置" style="margin-top: 20rpx;">
       <van-field required center name="nickname" type="nickname" label="用户名" placeholder="请输入昵称"
         value="{{ userInfo.nickname }}" border="{{ false }}" bind:change="onNicknameChange" bind:blur="onNicknameBlur"
         error="{{ !hasNickname }}">
@@ -38,9 +38,13 @@
         value="{{ userInfo.campus === '' ? '请选择' : userInfo.campus }}" arrow-direction="down">
       </van-cell>
     </van-cell-group>
-    <view class="btn-container">
+    <view wx:if="{{ verified }}" class="btn-container">
       <van-button round type="primary" icon="person_add" class-prefix="material-icons"
         bind:click="onRegister">注册</van-button>
+    </view>
+    <view wx:else class="btn-container">
+      <van-button round type="primary" icon="fingerprint" class-prefix="material-icons"
+        bind:click="onVerify">验证</van-button>
     </view>
     <van-popup show="{{ showPopup === 1 }}" round position="bottom" custom-style="height: 44" bind:close="closePopup">
       <block wx:if="{{ showPopup === 1 }}">

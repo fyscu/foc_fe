@@ -132,6 +132,7 @@ function verify(phone, verifiCode) {
         } else if (res.data.status === "verified") {
           // 验证成功，从接口获取数据
           console.log("验证成功", res);
+          app.userInfo.phone = phone; // (暂时) 保存用户手机号
           resolve(200);
         } else if (res.data.status === "verification_failed") {
           console.log('验证码核验失败:', res);
@@ -335,7 +336,7 @@ function completeTicket(orderId) {
         if (res.statusCode === 401) {
           console.log('鉴权失败:', res);
           resolve(401);
-        } else if (!res.data.success) {
+        } else if (res.data.success === false) {
           if (res.data.status === "ticket not found") {
             console.log('工单未找到:', res);
             resolve(404);
@@ -359,7 +360,7 @@ function completeTicket(orderId) {
 }
 
 // https://fyapidocs.wjlo.cc/ticket/set
-function cancelTicket(orderId) {
+function setTicketStatus(orderId, status) {
   return new Promise((resolve, reject) => {
     wx.request({
       url: app.globalData.rootApiUrl + "/v1/ticket/set",
@@ -370,17 +371,17 @@ function cancelTicket(orderId) {
       method: 'POST',
       data: {
         tid: orderId,
-        repair_status: "Canceled",
+        repair_status: status,
       },
       success(res) {
         if (res.statusCode === 401) {
           console.log('鉴权失败:', res);
           resolve(401);
         } else if (res.data.success === true) {
-          console.log('取消成功:', res);
+          console.log('更改成功:', res);
           resolve(200);
         } else {
-          console.log('取消失败:', res);
+          console.log('更改失败:', res);
           resolve(500);
         }
       }
@@ -449,6 +450,42 @@ function setConfig(name, data) {
   });
 }
 
+// https://fyapidocs.wjlo.cc/event/regevent
+// TODO:
+// - 报名活动后，分配唯一的活动号码
+// - 活动开始时微信推送
+function regevent(activity_id, uid = app.globalData.userInfo.uid) {
+  return new Promise((resolve, reject) => {
+    wx.request({
+      url: app.globalData.rootApiUrl + "/v1/event/regevent",
+      header: {
+        'content-type': 'application/json',
+        'Authorization': `Bearer ${app.globalData.accessToken}`,
+      },
+      data: {
+        activity_id: activity_id,
+        uid: uid,
+      },
+      method: 'POST',
+      success(res) {
+        if (res.statusCode === 401) {
+          console.log('鉴权失败:', res);
+          resolve(401);
+        } else if (res.data.success === false) {
+          console.log('报名失败:', res);
+          resolve(403);
+        } else if (res.data.success === true) {
+          console.log('报名成功:', res);
+          resolve(200);
+        } else {
+          console.log('请求失败:', res);
+          resolve(500);
+        }
+      }
+    })
+  });
+}
+
 module.exports = {
   userLogin,
   userRegister,
@@ -460,6 +497,7 @@ module.exports = {
   putFeedback,
   getConfig,
   completeTicket,
-  cancelTicket,
+  setTicketStatus,
   setConfig,
+  regevent,
 }

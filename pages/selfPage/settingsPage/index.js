@@ -128,7 +128,7 @@ Page({
       if (returnCode === 300) {
         Toast("您尚未注册");
         // 跳转到注册页
-        wx.redirectTo({
+        wx.navigateTo({
           url: '/pages/selfPage/registerPage/index',
         });
       } else if (returnCode === 200) {
@@ -218,25 +218,26 @@ Page({
       message: "确定要退出登录吗？",
     }).then(() => {
       // 清空所有数据
-      const emptyUserInfo = {
-        qq: "", // 用户QQ号
-        uid: "", // 用户id
-        role: "", // 用role替代is_tech
-        email: "", // 用户邮箱
-        phone: "", // 用户手机号
-        campus: "", // 所在校区
-        nickname: "", // 用户昵称
-        avatarUrl: "https://img1.doubanio.com/view/group_topic/l/public/p560183288.webp", // 用户头像地址
-      };
-      this.setData({
-        userInfo: emptyUserInfo,
-      });
+      app.globalData.userInfo.qq = ""; // 用户QQ号
+      app.globalData.userInfo.uid = ""; // 用户id
+      app.globalData.userInfo.role = ""; // 用role替代is_tech
+      app.globalData.userInfo.email = ""; // 用户邮箱
+      app.globalData.userInfo.phone = ""; // 用户手机号
+      app.globalData.userInfo.campus = ""; // 所在校区
+      app.globalData.userInfo.nickname = ""; // 用户昵称
+      app.globalData.userInfo.avatarUrl = "https://img1.doubanio.com/view/group_topic/l/public/p560183288.webp"; // 用户头像地址
+      app.globalData.ticketList = [];
+      app.globalData.isloggedin = false;
+      app.globalData.code = null;
+      app.globalData.openid = null;
+      app.globalData.accessToken = null;
       app.globalData.ticketList = [];
       app.globalData.isloggedin = false;
       app.globalData.code = null;
       app.globalData.openid = null;
       app.globalData.accessToken = null;
       // console.log(app.globalData);
+      this.reloadData();
       wx.navigateBack();
     }).catch(() => {
       // on cancel

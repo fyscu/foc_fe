@@ -39,9 +39,11 @@ const article = `
       <td class="td">管理后台开发</td>
     </tr>
   </table>
-  <p class="p">Powered By <a class="a" href="https://lab.fyscu.com/">四川大学飞扬俱乐部研发部</a></p>
-  <p class="p">飞扬俱乐部官网：https://fyscu.com</p>
-  <p class="p">飞扬俱乐部研发部官网：https://lab.fyscu.com</p>
+  <ul>
+    <li class="li">Powered By <a class="a" href="https://lab.fyscu.com/">四川大学飞扬俱乐部研发部</a></li>
+    <li class="li">飞扬俱乐部官网：https://fyscu.com</li>
+    <li class="li">飞扬俱乐部研发部官网：https://lab.fyscu.com</li>
+  </ul>
 </div>
 `;
 

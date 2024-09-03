@@ -3,7 +3,7 @@
   <view class="step-container">
     <van-steps steps="{{ steps }}" active="{{ active }}" active-icon="success" active-color="#38f" />
   </view>
-  <view wx:if="ticket !== null" class="table-container">
+  <view wx:if="{{ ticket !== null }}" class="table-container">
     <van-cell-group inset title="机主联系方式">
       <van-cell center title="QQ" value="{{ ticket.qq_number }}">
         <copy-button text-to-copy="{{ ticket.qq_number }}" slot="right-icon" />
@@ -47,8 +47,13 @@
   <view
     wx:if="{{ ticket.repair_status !== 'Done' && ticket.repair_status !== 'Canceled' && ticket.repair_status !== 'Closed' }}"
     class="btn-container">
-    <van-button round icon="block" class-prefix="material-icons" type="danger" bind:click="closeTheTicket">
+    <van-button round class="close-btn" icon="block" class-prefix="material-icons" type="info"
+      bind:click="completeTheTicket">
       关闭工单
+    </van-button>
+    <van-button round class="close-btn" icon="warning" class-prefix="material-icons" type="danger"
+      bind:click="closeTheTicket">
+      强行关闭
     </van-button>
   </view>
   <van-dialog id="van-dialog" />

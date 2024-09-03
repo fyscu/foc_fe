@@ -34,6 +34,7 @@
       </van-cell>
     </van-cell-group>
     <!-- 登录了但是没有获取到昵称 -->
+    <!--
     <van-popup show="{{ showPopup }}" round position="bottom" custom-style="height: 95%" bind:close="onClosePopup"
       closeable>
       <button class="avatar-wrapper" open-type="chooseAvatar" bind:chooseavatar="onChooseAvatar">
@@ -55,6 +56,7 @@
         </van-field>
       </van-cell-group>
     </van-popup>
+    -->
     <view wx:if="{{ !isloggedin }}" class="btn-container">
       <van-button round icon="input" class-prefix="material-icons" type="info" bind:click="onLogin">登录</van-button>
     </view>

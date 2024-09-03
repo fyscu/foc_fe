@@ -17,6 +17,8 @@ var app = getApp();
 
 Page({
   data: {
+    // 是否已经绑定手机号
+    verified: false,
     // 检查是否完善信息
     validEmail: true,
     hasVerifiCode: true,
@@ -102,7 +104,7 @@ Page({
       });
     });
   },
-  onRegister() {
+  onVerify() {
     let unfilled = false;
     let thisUserInfo = this.data.userInfo;
     if (this.data.verifiCode === "") {
@@ -110,14 +112,38 @@ Page({
       Toast("请填写验证码");
       unfilled = true;
     }
-    if (thisUserInfo.avatarUrl === "") {
-      this.setData({ hasAvatarUrl: false });
-      Toast("请上传头像");
-      unfilled = true;
-    }
     if (thisUserInfo.phone === "") {
       this.setData({ hasPhone: false });
       Toast("请填写手机号");
+      unfilled = true;
+    }
+    // 有未填写的信息
+    if (unfilled) { return; }
+    // 验证码校验
+    wx.showLoading({ title: '核验中', mask: true });
+    verify(thisUserInfo.phone, this.data.verifiCode).then((code1) => {
+      wx.hideLoading();
+      if (code1 === 401) {
+        Toast("鉴权失败，请刷新重试");
+      } else if (code1 === 200) {
+        Toast("验证码核验成功");
+        this.reloadData();
+        this.setData({ verified: true });
+      } else if (code1 === 300) {
+        Toast("验证码核验失败");
+      } else if (code1 === 404) {
+        Toast("验证码核验失败");
+      } else {
+        Toast("未知错误");
+      }
+    });
+  },
+  onRegister() {
+    let unfilled = false;
+    let thisUserInfo = this.data.userInfo;
+    if (thisUserInfo.avatarUrl === "") {
+      this.setData({ hasAvatarUrl: false });
+      Toast("请上传头像");
       unfilled = true;
     }
     if (thisUserInfo.campus === "") {
@@ -141,35 +167,20 @@ Page({
     // 有未填写的信息
     if (unfilled) { return; }
     wx.showLoading({ title: '注册中', mask: true });
-    // 验证码校验
-    verify(thisUserInfo.phone, this.data.verifiCode).then((code1) => {
+    userLogin().then((code2) => {
       wx.hideLoading();
-      if (code1 === 401) {
-        Toast("鉴权失败，请刷新重试");
-      } else if (code1 === 200) {
-        wx.showLoading({ title: '登录中', mask: true });
-        userLogin().then((code2) => {
-          wx.hideLoading();
-          if (code2 === 200) {
-            setUserInfo(thisUserInfo).then((code3) => {
-              if (code3 === 200) {
-                Toast("登录成功");
-                // 保存个人信息
-                app.globalData.userInfo = thisUserInfo;
-                setTimeout(() => {
-                  wx.navigateBack();
-                }, 500);
-              }
-            })
+      if (code2 === 200) {
+        console.log("注册成功");
+        setUserInfo(thisUserInfo).then((code3) => {
+          if (code3 === 200) {
+            Toast("登录成功");
+            // 保存个人信息
+            app.globalData.userInfo = thisUserInfo;
+            setTimeout(() => {
+              wx.navigateBack();
+            }, 500);
           }
-        });
-      } else if (code1 === 300) {
-        Toast("验证码核验失败");
-      } else if (code1 === 404) {
-        Toast("验证码核验失败");
-      } else {
-        console.log(code1);
-        Toast("未知错误");
+        })
       }
     });
   },
@@ -238,4 +249,9 @@ Page({
       showPopup: 0,
     });
   },
+  reloadData() {
+    this.setData({
+      userInfo: app.globalData.userInfo,
+    });
+  }
 });

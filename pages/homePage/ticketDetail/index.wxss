@@ -7,3 +7,8 @@
 .table-container {
   margin-top: 100rpx;
 }
+
+.close-btn {
+  display: block;
+  margin-bottom: 10rpx;
+}

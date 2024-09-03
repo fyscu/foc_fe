@@ -1,6 +1,6 @@
 import Toast from "@vant/weapp/toast/toast";
 import {
-  userLogin,
+  getTicket,
 } from "../../../utils/req"
 import {
   checkUserInfo
@@ -18,6 +18,7 @@ Page({
       Closed: "已关闭",
       Canceled: "已取消",
     },
+    hasCompletedStatus: false,
     isloggedin: app.globalData.isloggedin,
     userInfo: app.globalData.userInfo,
     ticketList: app.globalData.ticketList,
@@ -81,6 +82,11 @@ Page({
       isloggedin: app.globalData.isloggedin,
       userInfo: app.globalData.userInfo,
       ticketList: app.globalData.ticketList,
+      hasCompletedStatus: app.globalData.ticketList.some(ticket =>
+        ticket.repair_status === 'Done' ||
+        ticket.repair_status === 'Canceled' ||
+        ticket.repair_status === 'Closed'
+      )
     });
   },
 });

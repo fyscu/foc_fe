@@ -92,7 +92,7 @@ Page({
       if (returnCode === 300) {
         Toast("您尚未注册");
         // 跳转到注册页
-        wx.redirectTo({
+        wx.navigateTo({
           url: '/pages/selfPage/registerPage/index',
         });
       } else if (returnCode === 200) {

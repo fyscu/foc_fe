@@ -1,6 +1,6 @@
 import Toast from "@vant/weapp/toast/toast";
 import Dialog from "@vant/weapp/dialog/dialog";
-import { cancelTicket } from "../../../utils/req";
+import { setTicketStatus } from "../../../utils/req";
 
 var app = getApp();
 
@@ -41,7 +41,7 @@ Page({
       title: "取消工单",
       message: "确认取消工单吗？",
     }).then(() => {
-      cancelTicket(this.data.ticket.id).then((returnCode) => {
+      setTicketStatus(this.data.ticket.id, "Canceled").then((returnCode) => {
         if (returnCode === 401) {
           Toast("鉴权失败，请刷新重试");
         } else if (returnCode === 200) {

@@ -3,11 +3,8 @@
   <view class="step-container">
     <van-steps steps="{{ steps }}" active="{{ active }}" active-icon="success" active-color="#38f" />
   </view>
-  <view wx:if="ticket !== null" class="table-container">
-    <van-cell-group inset title="技术员联系方式">
-      <van-cell center title="QQ" value="{{ ticket.qq_number }}">
-        <copy-button text-to-copy="{{ ticket.qq_number }}" slot="right-icon" />
-      </van-cell>
+  <view wx:if="{{ ticket !== null }}" class="table-container">
+    <van-cell-group wx:if="{{ ticket.assigned_technician_id !== '' && ticket.assigned_time !== '' }}" inset title="技术员联系方式">
       <van-cell center title="技工号" value="{{ ticket.assigned_technician_id }}">
         <copy-button text-to-copy="{{ ticket.assigned_technician_id }}" slot="right-icon" />
       </van-cell>

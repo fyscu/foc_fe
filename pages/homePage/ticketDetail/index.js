@@ -1,6 +1,6 @@
 import Toast from "@vant/weapp/toast/toast";
 import Dialog from "@vant/weapp/dialog/dialog";
-import { completeTicket } from "../../../utils/req";
+import { completeTicket, setTicketStatus } from "../../../utils/req";
 
 var app = getApp();
 
@@ -36,7 +36,7 @@ Page({
       active: map[this.data.ticket.repair_status],
     });
   },
-  closeTheTicket() {
+  completeTheTicket() {
     Dialog.confirm({
       title: "关闭工单",
       message: "确认关闭工单吗？",
@@ -58,6 +58,28 @@ Page({
       });
     }).catch((err) => {
       console.log("取消关闭工单", err);
+    });
+  },
+  closeTheTicket() {
+    Dialog.confirm({
+      title: "强制关闭工单",
+      message: "确认强制关闭工单吗？该功能仅在异常情况下使用。",
+    }).then(() => {
+      setTicketStatus(this.data.ticket.id, "Closed").then((returnCode) => {
+        if (returnCode === 401) {
+          Toast("鉴权失败，请刷新重试");
+        } else if (returnCode === 200) {
+          Toast("强制关闭成功");
+          this.setData({ active: 0 });
+          setTimeout(() => {
+            wx.navigateBack();
+          }, 1000);
+        } else {
+          Toast("强制关闭失败");
+        }
+      });
+    }).catch((err) => {
+      console.log("取消强制关闭", err);
     });
   },
   previewImage(event) {
