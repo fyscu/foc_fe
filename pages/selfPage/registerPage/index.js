@@ -4,12 +4,12 @@ import Dialog from "@vant/weapp/dialog/dialog";
 import {
   userRegister,
   uploadQiniuImg,
+  userMigration,
   setUserInfo,
   userLogin,
   verify
 } from "../../../utils/req"
 import {
-  checkUserInfo,
   isValidEmail
 } from "../../../utils/util"
 
@@ -17,7 +17,8 @@ var app = getApp();
 
 Page({
   data: {
-    // 是否已经绑定手机号
+    // 账号是否需要迁移
+    migration: true,
     verified: false,
     // 检查是否完善信息
     validEmail: true,
@@ -121,22 +122,40 @@ Page({
     if (unfilled) { return; }
     // 验证码校验
     wx.showLoading({ title: '核验中', mask: true });
-    verify(thisUserInfo.phone, this.data.verifiCode).then((code1) => {
-      wx.hideLoading();
-      if (code1 === 401) {
-        Toast("鉴权失败，请刷新重试");
-      } else if (code1 === 200) {
-        Toast("验证码核验成功");
-        this.reloadData();
-        this.setData({ verified: true });
-      } else if (code1 === 300) {
-        Toast("验证码核验失败");
-      } else if (code1 === 404) {
-        Toast("验证码核验失败");
-      } else {
-        Toast("未知错误");
-      }
-    });
+    if (this.data.migration) {
+      userMigration(thisUserInfo.phone, this.data.verifiCode).then((code0) => {
+        wx.hideLoading();
+        if (code0 === 401) {
+          Toast("鉴权失败，请刷新重试");
+        } else if (code0 === 200) {
+          Toast("成功迁移帐号");
+          setTimeout(() => {
+            wx.navigateBack();
+          }, 500);
+        } else if (code0 === 300) {
+          Toast("验证码核验失败");
+        } else {
+          Toast("未知错误");
+        }
+      });
+    } else {
+      verify(thisUserInfo.phone, this.data.verifiCode).then((code1) => {
+        wx.hideLoading();
+        if (code1 === 401) {
+          Toast("鉴权失败，请刷新重试");
+        } else if (code1 === 200) {
+          Toast("验证码核验成功");
+          this.setData({ verified: true });
+          this.reloadData();
+        } else if (code1 === 300) {
+          Toast("验证码核验失败");
+        } else if (code1 === 404) {
+          Toast("验证码核验失败");
+        } else {
+          Toast("未知错误");
+        }
+      });
+    }
   },
   onRegister() {
     let unfilled = false;
@@ -188,6 +207,7 @@ Page({
     let _phone = this.data.userInfo.phone.trim();
     if (_phone === "") {
       Toast('请先完善手机号');
+      this.setData({ hasPhone: false });
       return;
     }
     // 调用发送验证码接口
@@ -196,9 +216,19 @@ Page({
         Toast("鉴权失败，请刷新重试");
       } else if (returnCode === 200) { // 成功发送
         Toast("验证码已发送");
+        this.setData({ migration: false });
         this.startCountingDown();
       } else if (returnCode === 300) {
         Toast("该手机号已注册");
+      } else if (returnCode === 400) {
+        Dialog.alert({
+          title: "账号迁移",
+          message: "云端线上大数据智能检测到您的帐号有尚未迁移的老数据，即将自动为您迁移。"
+        }).then(() => {
+          Toast("验证码已发送");
+          this.setData({ migration: true });
+          this.startCountingDown();
+        });
       } else {
         Toast("未知错误");
       }

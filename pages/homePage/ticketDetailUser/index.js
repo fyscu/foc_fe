@@ -22,9 +22,9 @@ Page({
     let map = {
       Pending: 0,
       Repairing: 1,
-      Done: 2,
-      Closed: 2,
-      Canceled: 2,
+      Done: 3,
+      Closed: 3,
+      Canceled: 3,
     };
     this.setData({
       ticket: app.globalData.ticketList.find(

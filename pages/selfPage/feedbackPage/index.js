@@ -21,6 +21,8 @@ Page({
   },
   onShow() {
     this.reloadData();
+  },
+  onReady() {
     // login if havn't
     if (!app.globalData.isloggedin) {
       this.onLogin();

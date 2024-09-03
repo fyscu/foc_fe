@@ -22,9 +22,9 @@ Page({
     let map = {
       Pending: 0,
       Repairing: 1,
-      Done: 2,
-      Closed: 2,
-      Canceled: 2,
+      Done: 3,
+      Closed: 3,
+      Canceled: 3,
     };
     this.setData({
       ticket: app.globalData.ticketList.find(
@@ -38,26 +38,26 @@ Page({
   },
   completeTheTicket() {
     Dialog.confirm({
-      title: "关闭工单",
-      message: "确认关闭工单吗？",
+      title: "结束工单",
+      message: "确认结束工单吗？",
     }).then(() => {
       completeTicket(this.data.ticket.id).then((returnCode) => {
         if (returnCode === 401) {
           Toast("鉴权失败，请刷新重试");
         } else if (returnCode === 200) {
-          Toast("关闭工单成功");
+          Toast("结束工单成功");
           this.setData({ active: 3 });
           setTimeout(() => {
             wx.navigateBack();
           }, 1000);
         } else if (returnCode === 404) {
-          Toast("你不可以关闭此工单");
+          Toast("你不可以结束此工单");
         } else {
-          Toast("工单关闭失败");
+          Toast("工单结束失败");
         }
       });
     }).catch((err) => {
-      console.log("取消关闭工单", err);
+      console.log("取消结束工单", err);
     });
   },
   closeTheTicket() {

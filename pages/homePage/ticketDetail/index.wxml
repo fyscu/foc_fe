@@ -49,7 +49,7 @@
     class="btn-container">
     <van-button round class="close-btn" icon="block" class-prefix="material-icons" type="info"
       bind:click="completeTheTicket">
-      关闭工单
+      结束工单
     </van-button>
     <van-button round class="close-btn" icon="warning" class-prefix="material-icons" type="danger"
       bind:click="closeTheTicket">

@@ -30,6 +30,10 @@ function userRegister(phone) {
           } else if (res.data.status === "user_exists_verified") {
             console.log("已有用户");
             resolve(300);
+          } else if (res.data.status === "user_need_migration") {
+            console.log("用户需要迁移");
+            app.globalData.accessToken = res.data.access_token;
+            resolve(400);
           } else {
             console.log('注册失败:', res);
             resolve(500);
@@ -41,6 +45,48 @@ function userRegister(phone) {
       },
       complete() {
         console.log('requesting /user/register complete.');
+      },
+    })
+  });
+}
+
+// https://fyapidocs.wjlo.cc/user/migration
+function userMigration(phone, verifiCode) {
+  return new Promise((resolve, reject) => {
+    console.log("Requesting /user/migration...");
+    wx.request({
+      url: app.globalData.rootApiUrl + '/v1/user/migration',
+      data: {
+        phone: phone,
+        code: verifiCode,
+      },
+      header: {
+        'content-type': 'application/json',
+        'Authorization': `Bearer ${app.globalData.accessToken}`
+      },
+      method: 'POST',
+      success(res) {
+        if (res.statusCode === 401) {
+          console.log('鉴权失败:', res);
+          resolve(401);
+        } else if (res.data.success === true) {
+          if (res.data.status === "user_migrated") {
+            console.log("成功迁移帐号");
+            resolve(200);
+          } else if (res.data.status === "invalid_verification_code") {
+            console.log('验证码核验失败:', res);
+            resolve(300);
+          } else {
+            console.log('迁移失败:', res);
+            resolve(500);
+          }
+        } else {
+          console.log('迁移失败，未知错误', res);
+          resolve(500);
+        }
+      },
+      complete() {
+        console.log('requesting /user/migration complete.');
       },
     })
   });
@@ -348,7 +394,7 @@ function completeTicket(orderId) {
             resolve(500);
           }
         } else if (res.data.success === true) {
-          console.log('关闭工单成功:', res);
+          console.log('结束工单成功:', res);
           resolve(200);
         } else {
           console.log('请求失败:', res);
@@ -389,6 +435,7 @@ function setTicketStatus(orderId, status) {
   });
 }
 
+// https://fyapidocs.wjlo.cc/get/getconfig
 function getConfig() {
   return new Promise((resolve, reject) => {
     wx.request({
@@ -500,4 +547,5 @@ module.exports = {
   setTicketStatus,
   setConfig,
   regevent,
+  userMigration,
 }

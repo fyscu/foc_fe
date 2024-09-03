@@ -8,7 +8,7 @@ App({
   },
   // 定义全局变量
   globalData: {
-    rootApiUrl: 'https://fyapi2.wjlo.cc',
+    rootApiUrl: 'https://focapi.feiyang.ac.cn',
     sysConfig: null, // 全剧配置
     ticketList: [], // 工单列表
     isloggedin: false, // 是否登录
@@ -21,7 +21,7 @@ App({
       phone: "", // 用户手机号
       campus: "", // 所在校区
       nickname: "", // 用户昵称
-      avatarUrl: "https://img1.doubanio.com/view/group_topic/l/public/p560183288.webp", // 用户头像地址
+      avatarUrl: "https://img1.doubanio.com/view/group_topic/l/public/p560183288.webp", // 默认用户头像地址
     },
     code: null,
     openid: null, // 唯一用户标识

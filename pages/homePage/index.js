@@ -23,6 +23,7 @@ Page({
       Closed: "已关闭",
       Canceled: "已取消",
     },
+    hasUnfinishedStatus: false,
     userInfo: app.globalData.userInfo,
     ticketList: app.globalData.ticketList,
     isloggedin: app.globalData.isloggedin,
@@ -143,6 +144,11 @@ Page({
       ticketList: app.globalData.ticketList,
       isloggedin: app.globalData.isloggedin,
       sysConfig: app.globalData.sysConfig,
+      hasUnfinishedStatus: app.globalData.ticketList.some(ticket =>
+        ticket.repair_status !== 'Done' &&
+        ticket.repair_status !== 'Canceled' &&
+        ticket.repair_status !== 'Closed'
+      )
     });
     // 更新 sysConfig
     sysConfigOriginal = JSON.parse(JSON.stringify(this.data.sysConfig));
