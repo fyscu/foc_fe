@@ -1,12 +1,5 @@
 // app.js
 App({
-  onLaunch() {
-    // 展示本地存储能力
-    const logs = wx.getStorageSync("logs") || [];
-    logs.unshift(Date.now());
-    wx.setStorageSync("logs", logs);
-  },
-  // 定义全局变量
   globalData: {
     rootApiUrl: 'https://focapi.feiyang.ac.cn',
     sysConfig: null, // 全剧配置
@@ -26,6 +19,75 @@ App({
     code: null,
     openid: null, // 唯一用户标识
     accessToken: null, // 关于 AT: https://fyapidocs.wjlo.cc/get_started/prepare
+  },
+  // 定义全局变量
+  onLaunch() {
+    // 展示本地存储能力
+    var globalData = this.globalData;
+    return new Promise((resolve, reject) => {
+      console.log("Requesting /user/login...");
+      wx.login({
+        success: (res) => {
+          if (res.code) {
+            globalData.code = res.code;
+            console.log('code:', res.code);
+            wx.request({
+              url: globalData.rootApiUrl + '/v1/user/login',
+              method: "POST",
+              header: {
+                'content-type': 'application/json',
+              },
+              data: {
+                'code': globalData.code,
+              },
+              success(apiRes) {
+                let result = apiRes.data;
+                if (result.success) {
+                  if (result.openid) {
+                    // 成功获取用户OpenId
+                    globalData.openid = result.openid;
+                  }
+                  if (result.registered) {
+                    // 用户已经注册
+                    console.log('用户已注册:', result.access_token);
+                    globalData.accessToken = result.access_token;
+                    // 设置用户信息
+                    globalData.userInfo.uid = result.uid;
+                    globalData.userInfo.role = result.role;
+                    globalData.userInfo.email = result.email;
+                    globalData.userInfo.phone = result.phone;
+                    globalData.userInfo.campus = result.campus;
+                    globalData.userInfo.nickname = result.nickname;
+                    globalData.userInfo.avatarUrl = result.avatar;
+                    // 成功登录
+                    globalData.isloggedin = true;
+                    wx.reLaunch({
+                      url: '/pages/homePage/index', // 假设首页是 /pages/index/index
+                    });
+                    resolve(200); // 返回 200 (成功登录)
+                  } else {
+                    // 用户尚未注册
+                    console.log('用户尚未注册:', result);
+                    globalData.accessToken = result.access_token;
+                    resolve(300); // 返回 300 (未注册)
+                  }
+                } else {
+                  console.log('请求失败:', result);
+                  resolve(500); // 返回 500 (服务器错误)
+                }
+              },
+              complete() {
+                console.log('requesting /user/login complete.');
+              },
+            })
+          } else {
+            // 获取code失败，使用 reject 返回 -1
+            console.log('获取code失败:', res);
+            reject(-1);
+          }
+        },
+      });
+    });
   },
 });
 
