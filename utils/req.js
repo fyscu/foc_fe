@@ -375,6 +375,10 @@ function putFeedback(text) {
 // https://fyapidocs.wjlo.cc/ticket/add
 function addTicket(purchase_date, phone, device_type, brand, description, image, fault_type, qq, campus) {
   return new Promise((resolve, reject) => {
+    if (!image) {
+      image = "https://focapi.feiyang.ac.cn/v1/ticket/default.svg";
+      console.log("use default url:", image);
+    }
     wx.request({
       url: app.globalData.rootApiUrl + "/v1/ticket/create",
       data: {
