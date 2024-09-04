@@ -36,7 +36,9 @@
         </view>
         <view class="btn-container">
           <van-button round icon="build" class-prefix="material-icons" type="info"
-            bind:click="navigateToSubmitTicketPage">我要报修</van-button>
+            bind:click="navigateToSubmitTicketPage">
+            我要报修
+          </van-button>
         </view>
       </view>
       <view wx:elif='{{ userInfo.role === "technician" }}'>
@@ -61,10 +63,12 @@
               <van-divider />
             </view>
           </view>
-          <view class="btn-container">
-            <van-button round icon="settings" class-prefix="material-icons" type="info"
-              bind:click="onNavigateToTechOptions">设置</van-button>
-          </view>
+        </view>
+        <view class="btn-container">
+          <van-button round icon="settings" class-prefix="material-icons" type="info"
+            bind:click="onNavigateToTechOptions">
+            设置
+          </van-button>
         </view>
       </view>
       <view wx:elif='{{ userInfo.role === "admin" }}'>
@@ -78,8 +82,9 @@
             </van-field>
           </view>
           <view class="btn-container">
-            <van-button round icon="save" class-prefix="material-icons" type="info"
-              bind:click="onSaveSysConfig">保存</van-button>
+            <van-button round icon="save" class-prefix="material-icons" type="info" bind:click="onSaveSysConfig">
+              保存
+            </van-button>
           </view>
         </van-cell-group>
       </view>
