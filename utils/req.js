@@ -21,11 +21,13 @@ function userRegister(phone) {
       method: 'POST',
       success(res) {
         if (res.statusCode === 401) {
-          console.log('鉴权失败:', res);
+          console.log('鉴权失败，重新登录中...', res);
+          userLogin();
           resolve(401);
         } else if (res.data.success === true) {
           if (res.data.status === "verification_code_sent") {
             console.log("成功发送验证码");
+            app.globalData.accessToken = res.data.access_token;
             resolve(200);
           } else if (res.data.status === "user_exists_verified") {
             console.log("已有用户");
@@ -50,6 +52,40 @@ function userRegister(phone) {
   });
 }
 
+// https://fyapidocs.wjlo.cc/user/delete
+function unRegister() {
+  return new Promise((resolve, reject) => {
+    console.log("Requesting /user/delete...", app.globalData.openid);
+    wx.request({
+      url: app.globalData.rootApiUrl + '/v1/user/delete',
+      data: {
+        openid: app.globalData.openid,
+      },
+      header: {
+        'content-type': 'application/json',
+        'Authorization': `Bearer ${app.globalData.accessToken}`
+      },
+      method: 'POST',
+      success(res) {
+        if (res.statusCode === 401) {
+          console.log('鉴权失败，重新登录中...', res);
+          userLogin();
+          resolve(401);
+        } else if (res.data.success === true) {
+          console.log('成功删除帐号');
+          resolve(200);
+        } else {
+          console.log('删除失败:', res);
+          resolve(500);
+        }
+      },
+      complete() {
+        console.log('requesting /user/delete complete.');
+      },
+    })
+  });
+}
+
 // https://fyapidocs.wjlo.cc/user/migration
 function userMigration(phone, verifiCode) {
   return new Promise((resolve, reject) => {
@@ -67,7 +103,8 @@ function userMigration(phone, verifiCode) {
       method: 'POST',
       success(res) {
         if (res.statusCode === 401) {
-          console.log('鉴权失败:', res);
+          console.log('鉴权失败，重新登录中...', res);
+          userLogin();
           resolve(401);
         } else if (res.data.success === true) {
           if (res.data.status === "user_migrated") {
@@ -173,11 +210,13 @@ function verify(phone, verifiCode) {
       method: 'POST',
       success(res) {
         if (res.statusCode === 401) {
-          console.log('鉴权失败:', res);
+          console.log('鉴权失败，重新登录中...', res);
+          userLogin();
           resolve(401);
         } else if (res.data.status === "verified") {
           // 验证成功，从接口获取数据
           console.log("验证成功", res);
+          app.globalData.isloggedin = true; // 注册成功≈登录成功
           app.globalData.userInfo.phone = phone; // (暂时) 保存用户手机号
           resolve(200);
         } else if (res.data.status === "verification_failed") {
@@ -218,7 +257,44 @@ function setUserInfo(userInfo) {
       method: 'POST',
       success(res) {
         if (res.statusCode === 401) {
-          console.log('鉴权失败:', res);
+          console.log('鉴权失败，重新登录中...', res);
+          userLogin();
+          resolve(401);
+        } else if (res.data.success === true) {
+          console.log('修改成功:', res);
+          app.globalData.userInfo = userInfo;
+          resolve(200);
+        } else {
+          console.log('修改失败:', res);
+          resolve(300);
+        }
+      },
+      complete() {
+        console.log('requesting /user/setuser complete.');
+      }
+    })
+  });
+}
+
+// 设置技术员是否接单
+function setTechInfo(available = true) {
+  return new Promise((resolve, reject) => {
+    console.log("Requesting /user/setuser...");
+    wx.request({
+      url: app.globalData.rootApiUrl + '/v1/user/setuser',
+      data: {
+        // qq: qq,
+        available: available,
+      },
+      header: {
+        'content-type': 'application/json',
+        'Authorization': `Bearer ${app.globalData.accessToken}`,
+      },
+      method: 'POST',
+      success(res) {
+        if (res.statusCode === 401) {
+          console.log('鉴权失败，重新登录中...', res);
+          userLogin();
           resolve(401);
         } else if (res.data.success === true) {
           // 修改成功
@@ -281,7 +357,8 @@ function putFeedback(text) {
       success: function (res) {
         console.log("反馈内容:", text)
         if (res.statusCode === 401) {
-          console.log("鉴权失败:", res);
+          console.log("鉴权失败，重新登录中...", res);
+          userLogin();
           resolve(401);
         } else if (res.data.success === true) {
           console.log("反馈成功: id =", res.data.qid);
@@ -319,7 +396,8 @@ function addTicket(purchase_date, phone, device_type, brand, description, image,
       method: 'POST',
       success(res) {
         if (res.statusCode === 401) {
-          console.log('鉴权失败:', res);
+          console.log('鉴权失败，重新登录中...', res);
+          userLogin();
           resolve(401);
         } else if (res.data.success === true) {
           console.log("创建工单成功，工单号:", res.data.ticketid);
@@ -346,7 +424,8 @@ function getTicket(data) {
       data: data,
       success(res) {
         if (res.statusCode === 401) {
-          console.log('鉴权失败:', res);
+          console.log('鉴权失败，重新登录中...', res);
+          userLogin();
           resolve(401);
         } else if (res.data.success === false) {
           console.log('获取失败，权限不足:', res);
@@ -380,7 +459,8 @@ function completeTicket(orderId) {
       },
       success(res) {
         if (res.statusCode === 401) {
-          console.log('鉴权失败:', res);
+          console.log('鉴权失败，重新登录中...', res);
+          userLogin();
           resolve(401);
         } else if (res.data.success === false) {
           if (res.data.status === "ticket not found") {
@@ -421,7 +501,8 @@ function setTicketStatus(orderId, status) {
       },
       success(res) {
         if (res.statusCode === 401) {
-          console.log('鉴权失败:', res);
+          console.log('鉴权失败，重新登录中...', res);
+          userLogin();
           resolve(401);
         } else if (res.data.success === true) {
           console.log('更改成功:', res);
@@ -447,7 +528,8 @@ function getConfig() {
       method: 'GET',
       success(res) {
         if (res.statusCode === 401) {
-          console.log('鉴权失败:', res);
+          console.log('鉴权失败，重新登录中...', res);
+          userLogin();
           resolve(401);
         } else if (res.data.success === false) {
           console.log('获取失败:', res);
@@ -480,7 +562,8 @@ function setConfig(name, data) {
       method: 'POST',
       success(res) {
         if (res.statusCode === 401) {
-          console.log('鉴权失败:', res);
+          console.log('鉴权失败，重新登录中...', res);
+          userLogin();
           resolve(401);
         } else if (res.data.success === false) {
           console.log('获取失败:', res);
@@ -516,7 +599,8 @@ function regevent(activity_id, uid = app.globalData.userInfo.uid) {
       method: 'POST',
       success(res) {
         if (res.statusCode === 401) {
-          console.log('鉴权失败:', res);
+          console.log('鉴权失败，重新登录中...', res);
+          userLogin();
           resolve(401);
         } else if (res.data.success === false) {
           console.log('报名失败:', res);
@@ -535,9 +619,11 @@ function regevent(activity_id, uid = app.globalData.userInfo.uid) {
 
 module.exports = {
   userLogin,
+  unRegister,
   userRegister,
   verify,
   setUserInfo,
+  setTechInfo,
   uploadQiniuImg,
   addTicket,
   getTicket,

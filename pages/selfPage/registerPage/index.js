@@ -6,7 +6,6 @@ import {
   uploadQiniuImg,
   userMigration,
   setUserInfo,
-  userLogin,
   verify
 } from "../../../utils/req"
 import {
@@ -61,7 +60,7 @@ Page({
       wx.navigateBack();
     });
   },
-  // 页面卸载时触发。如wx.redirectTo或wx.navigateBack到其他页面时。
+  // 页面卸载时触发
   onUnload() {
     // 关闭页面时更新数据
     // app.globalData.userInfo = this.data.userInfo;
@@ -123,33 +122,33 @@ Page({
     // 验证码校验
     wx.showLoading({ title: '核验中', mask: true });
     if (this.data.migration) {
-      userMigration(thisUserInfo.phone, this.data.verifiCode).then((code0) => {
+      userMigration(thisUserInfo.phone, this.data.verifiCode).then((returnCode) => {
         wx.hideLoading();
-        if (code0 === 401) {
+        if (returnCode === 401) {
           Toast("鉴权失败，请刷新重试");
-        } else if (code0 === 200) {
+        } else if (returnCode === 200) {
           Toast("成功迁移帐号");
           setTimeout(() => {
             wx.navigateBack();
           }, 500);
-        } else if (code0 === 300) {
+        } else if (returnCode === 300) {
           Toast("验证码核验失败");
         } else {
           Toast("未知错误");
         }
       });
     } else {
-      verify(thisUserInfo.phone, this.data.verifiCode).then((code1) => {
+      verify(thisUserInfo.phone, this.data.verifiCode).then((returnCode) => {
         wx.hideLoading();
-        if (code1 === 401) {
+        if (returnCode === 401) {
           Toast("鉴权失败，请刷新重试");
-        } else if (code1 === 200) {
+        } else if (returnCode === 200) {
           Toast("验证码核验成功");
           this.setData({ verified: true });
           this.reloadData();
-        } else if (code1 === 300) {
+        } else if (returnCode === 300) {
           Toast("验证码核验失败");
-        } else if (code1 === 404) {
+        } else if (returnCode === 404) {
           Toast("验证码核验失败");
         } else {
           Toast("未知错误");
@@ -186,20 +185,17 @@ Page({
     // 有未填写的信息
     if (unfilled) { return; }
     wx.showLoading({ title: '注册中', mask: true });
-    userLogin().then((code2) => {
+    setUserInfo(thisUserInfo).then((returnCode) => {
       wx.hideLoading();
-      if (code2 === 200) {
-        console.log("注册成功");
-        setUserInfo(thisUserInfo).then((code3) => {
-          if (code3 === 200) {
-            Toast("登录成功");
-            // 保存个人信息
-            app.globalData.userInfo = thisUserInfo;
-            setTimeout(() => {
-              wx.navigateBack();
-            }, 500);
-          }
-        })
+      if (returnCode === 401) {
+        Toast("鉴权失败，请刷新重试");
+      } else if (returnCode === 200) {
+        Toast("注册成功");
+        setTimeout(() => {
+          wx.navigateBack();
+        }, 500);
+      } else if (returnCode === 300) {
+        Toast("注册失败");
       }
     });
   },

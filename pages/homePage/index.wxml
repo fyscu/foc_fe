@@ -40,7 +40,7 @@
         </view>
       </view>
       <view wx:elif='{{ userInfo.role === "technician" }}'>
-        <view wx:if="{{ ticketList.length === 0 }}">
+        <view wx:if="{{ !hasUnfinishedStatus }}">
           <van-empty description="您还没有接到的工单哦" />
         </view>
         <view wx:else>

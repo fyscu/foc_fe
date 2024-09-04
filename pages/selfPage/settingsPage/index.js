@@ -47,7 +47,6 @@ Page({
     }
   },
   // 页面卸载时触发
-  // 如 wx.redirectTo 或 wx.navigateBack 到其他页面时
   onUnload() {
     // 关闭页面时更新数据
     app.globalData.userInfo = this.data.userInfo;

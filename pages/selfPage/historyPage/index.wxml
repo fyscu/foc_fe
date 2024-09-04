@@ -32,13 +32,9 @@
           </view>
         </view>
       </view>
-      <view class="btn-container">
-        <van-button round icon="build" class-prefix="material-icons" type="info"
-          bind:click="navigateToSubmitTicketPage">我要报修</van-button>
-      </view>
     </view>
     <view wx:elif='{{ userInfo.role === "technician" }}'>
-      <view wx:if="{{ ticketList.length === 0 }}">
+      <view wx:if="{{ !hasCompletedStatus }}">
         <van-empty description="您还没有已完成的工单哦" />
       </view>
       <view wx:else>
@@ -58,10 +54,6 @@
             </navigator>
             <van-divider />
           </view>
-        </view>
-        <view class="btn-container">
-          <van-button round icon="settings" class-prefix="material-icons" type="info"
-            bind:click="onNavigateToTechOptions">设置</van-button>
         </view>
       </view>
     </view>

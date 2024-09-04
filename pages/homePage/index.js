@@ -1,13 +1,11 @@
 import Dialog from "@vant/weapp/dialog/dialog";
 import Toast from "@vant/weapp/toast/toast";
+import { findDataByName } from "../../utils/util"
 import {
   getTicket,
   setConfig,
   getConfig
 } from "../../utils/req"
-import {
-  findDataByName
-} from "../../utils/util"
 
 var app = getApp();
 let sysConfigOriginal = null;

@@ -1,6 +1,7 @@
 // index.js
 import Toast from "@vant/weapp/toast/toast";
 import Dialog from "@vant/weapp/dialog/dialog";
+import { unRegister } from "../../../utils/req";
 
 const app = getApp();
 const article = `
@@ -22,24 +23,34 @@ Page({
       title: "注销",
       message: "确认注销吗？此操作不可逆",
     }).then(() => {
-      // 清空所有数据
-      app.globalData.userInfo.qq = ""; // 用户QQ号
-      app.globalData.userInfo.uid = ""; // 用户id
-      app.globalData.userInfo.role = ""; // 用role替代is_tech
-      app.globalData.userInfo.email = ""; // 用户邮箱
-      app.globalData.userInfo.phone = ""; // 用户手机号
-      app.globalData.userInfo.campus = ""; // 所在校区
-      app.globalData.userInfo.nickname = ""; // 用户昵称
-      app.globalData.userInfo.avatarUrl = "https://img1.doubanio.com/view/group_topic/l/public/p560183288.webp"; // 用户头像地址
-      app.globalData.ticketList = [];
-      app.globalData.isloggedin = false;
-      app.globalData.code = null;
-      app.globalData.openid = null;
-      app.globalData.accessToken = null;
-      Toast("注销成功！");
-      setTimeout(() => {
-        wx.reLaunch({ url: '/pages/selfPage/index' });
-      }, 500);
+      unRegister().then((returnCode) => {
+        if (returnCode === 401) {
+          Toast("鉴权失败，请刷新重试");
+        } else if (returnCode === 200) {
+          // 清空所有数据
+          app.globalData.userInfo.qq = ""; // 用户QQ号
+          app.globalData.userInfo.uid = ""; // 用户id
+          app.globalData.userInfo.role = ""; // 用role替代is_tech
+          app.globalData.userInfo.email = ""; // 用户邮箱
+          app.globalData.userInfo.phone = ""; // 用户手机号
+          app.globalData.userInfo.campus = ""; // 所在校区
+          app.globalData.userInfo.nickname = ""; // 用户昵称
+          app.globalData.userInfo.avatarUrl = "https://img1.doubanio.com/view/group_topic/l/public/p560183288.webp"; // 用户头像地址
+          app.globalData.ticketList = [];
+          app.globalData.isloggedin = false;
+          app.globalData.code = null;
+          app.globalData.openid = null;
+          app.globalData.accessToken = null;
+          Toast("注销成功！");
+          setTimeout(() => {
+            wx.reLaunch({ url: '/pages/selfPage/index' });
+          }, 500);
+        } else {
+          Toast("注销失败！" + returnCode);
+        }
+      });
+    }).catch(() => {
+      console.log("用户取消注销");
     });
   },
   reloadData() {

@@ -1,5 +1,6 @@
 {
   "pages": [
+    "pages/homePage/index",
     "pages/selfPage/index",
     "pages/selfPage/aboutUsPage/index",
     "pages/selfPage/feedbackPage/index",
@@ -9,7 +10,6 @@
     "pages/selfPage/signOutPage/index",
     "pages/activityPage/index",
     "pages/chatPage/index",
-    "pages/homePage/index",
     "pages/homePage/ticketDetail/index",
     "pages/homePage/ticketDetailUser/index",
     "pages/homePage/announcement/index",
