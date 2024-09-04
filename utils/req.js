@@ -178,7 +178,7 @@ function verify(phone, verifiCode) {
         } else if (res.data.status === "verified") {
           // 验证成功，从接口获取数据
           console.log("验证成功", res);
-          app.userInfo.phone = phone; // (暂时) 保存用户手机号
+          app.globalData.userInfo.phone = phone; // (暂时) 保存用户手机号
           resolve(200);
         } else if (res.data.status === "verification_failed") {
           console.log('验证码核验失败:', res);
@@ -205,7 +205,7 @@ function setUserInfo(userInfo) {
     wx.request({
       url: app.globalData.rootApiUrl + '/v1/user/setuser',
       data: {
-        openid: app.globalData.openid, // 必填
+        id: app.globalData.openid, // 必填
         email: userInfo.email,
         campus: userInfo.campus,
         avatar: userInfo.avatarUrl,
