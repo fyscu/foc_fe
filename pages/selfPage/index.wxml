@@ -32,6 +32,12 @@
       <van-cell is-link size="large" title="关于云上飞扬" link-type="navigateTo" url="./aboutUsPage/index">
         <view class="material-icons" slot="icon"> info </view>
       </van-cell>
+      <van-cell size="large" title="联系客服">
+        <view class="material-icons" slot="icon"> call </view>
+        <button slot="right-icon" class="contact-btn" open-type="contact">
+          <view class="material-icons"> contact_mail </view>
+        </button>
+      </van-cell>
     </van-cell-group>
     <!-- 登录了但是没有获取到昵称 -->
     <!--

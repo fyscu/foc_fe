@@ -28,7 +28,7 @@ const article = `
           style="width: 50px;height: 50px;border-radius: 50%;">
       </td>
       <td class="td" style="font-weight:bold;">王嘉麟</td>
-      <td class="td">后端开发</td>
+      <td class="td">后端开发 <br> QQ: 1175671881</td>
     </tr>
     <tr class="tr">
       <td class="td" style="line-height:100%;text-align:center;">

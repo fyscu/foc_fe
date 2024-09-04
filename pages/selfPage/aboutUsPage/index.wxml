@@ -1,5 +1,10 @@
 <!--index.wxml-->
 
-<scroll-view>
+<scroll-view class="scrollview">
   <rich-text nodes="{{ article }}"></rich-text>
+  <view class="btn-container">
+    <van-button round open-type="contact" type="primary" icon="call" class-prefix="material-icons">
+      联系客服
+    </van-button>
+  </view>
 </scroll-view>

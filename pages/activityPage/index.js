@@ -34,7 +34,7 @@ Page({
       "description": "飞扬20周年年终晚会",
       "start_time": "2024/7/3 8:00:00",
       "signup_start_time": "2024/6/3 12:00:00",
-      "signup_end_time": "2024/9/5 12:00:00",
+      "signup_end_time": "2024/9/4 12:00:00",
       "poster": "https://cdn.feiyang.ac.cn/fyMiniprogam/%E5%B9%B4%E7%BB%88%E6%99%9A%E4%BC%9A%E5%B1%95%E6%9D%BF.png"
     },
     {
