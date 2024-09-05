@@ -299,6 +299,7 @@ function setTechInfo(available = true) {
         } else if (res.data.success === true) {
           // 修改成功
           console.log('修改成功:', res);
+          app.globalData.userInfo.available = available;
           resolve(200);
         } else {
           console.log('修改失败:', res);
@@ -376,7 +377,7 @@ function putFeedback(text) {
 function addTicket(purchase_date, phone, device_type, brand, description, image, fault_type, qq, campus) {
   return new Promise((resolve, reject) => {
     if (!image) {
-      image = "https://focapi.feiyang.ac.cn/v1/ticket/default.svg";
+      image = "https://focapp.feiyang.ac.cn/public/ticketdefault.svg";
       console.log("use default url:", image);
     }
     wx.request({

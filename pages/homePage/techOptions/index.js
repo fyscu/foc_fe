@@ -12,8 +12,7 @@ Page({
     restDays: 3, // 默认休息天数是 3
     showPopup: 0,
   },
-  onLoad(options) {
-    console.log(options);
+  onShow() {
     this.reLoadData();
   },
   // 弹出和关闭底部的popups
