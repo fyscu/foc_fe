@@ -35,6 +35,7 @@ Page({
           app.globalData.userInfo.phone = ""; // 用户手机号
           app.globalData.userInfo.campus = ""; // 所在校区
           app.globalData.userInfo.nickname = ""; // 用户昵称
+          app.globalData.userInfo.available = true;
           app.globalData.userInfo.avatarUrl = "https://img1.doubanio.com/view/group_topic/l/public/p560183288.webp"; // 用户头像地址
           app.globalData.ticketList = [];
           app.globalData.isloggedin = false;

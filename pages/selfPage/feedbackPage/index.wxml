@@ -6,7 +6,6 @@
         autosize="{{ autosizeData}}" border="{{ false }}">
       </van-field>
     </van-cell-group>
-    <text class="prompt">千万不要输入chat</text>
     <view class="btn-container">
       <van-button round type="primary" icon="publish" class-prefix="material-icons" bind:click="onFeedBack">
         提交

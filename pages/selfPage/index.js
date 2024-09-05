@@ -18,7 +18,6 @@ wx.login({
 
 Page({
   data: {
-    sysConfig: app.globalData.sysConfig,
     isloggedin: app.globalData.isloggedin,
     userInfo: app.globalData.userInfo,
     showPopup: false,
@@ -27,9 +26,6 @@ Page({
   onShow() {
     // console.log(app.globalData);
     this.reloadData();
-    if (this.data.isloggedin) {
-      this.initialize();
-    }
   },
   // 在输入框不为focused时更新数据
   onNicknameChange(e) {
@@ -71,20 +67,6 @@ Page({
       showPopup: true
     });
   },
-  initialize() {
-    getConfig().then((returnCode) => {
-      if (returnCode === 401) {
-        Toast("鉴权失败，请刷新重试");
-      } else if (returnCode === 200) {
-        // 获取全局配置成功
-        this.reloadData(); // 刷新数据
-      } else if (returnCode === 403) {
-        Toast("获取全局配置失败");
-      } else {
-        Toast("未知错误");
-      }
-    });
-  },
   onLogin() {
     wx.showLoading({ title: '登录中', mask: true });
     userLogin().then((returnCode) => {
@@ -119,7 +101,6 @@ Page({
   // 刷新 this.data 数据
   reloadData() {
     this.setData({
-      sysConfig: app.globalData.sysConfig,
       isloggedin: app.globalData.isloggedin,
       userInfo: app.globalData.userInfo,
     });

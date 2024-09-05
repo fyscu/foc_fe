@@ -40,9 +40,9 @@ const article = `
     </tr>
   </table>
   <ul>
-    <li class="li">Powered By <a class="a" href="https://lab.fyscu.com/">四川大学飞扬俱乐部研发部</a></li>
-    <li class="li">飞扬俱乐部官网：https://fyscu.com</li>
-    <li class="li">飞扬俱乐部研发部官网：https://lab.fyscu.com</li>
+    <li class="li">Powered By <a class="a" href="https://lab.feiyang.ac.cn/">四川大学飞扬俱乐部研发部</a></li>
+    <li class="li">飞扬俱乐部官网：https://feiyang.ac.cn</li>
+    <li class="li">飞扬俱乐部研发部官网：https://lab.feiyang.ac.cn</li>
   </ul>
 </div>
 `;

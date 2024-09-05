@@ -57,7 +57,7 @@ Page({
       userInfo: app.globalData.userInfo,
     });
     // 如果没有设置过是否接单，默认为 true
-    if (!this.data.userInfo.available) {
+    if (this.data.userInfo.available === undefined) {
       this.setData({
         ["userInfo.available"]: true,
       });

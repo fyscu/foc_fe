@@ -1,4 +1,4 @@
-<view class="container">
+<view wx:if="{{ loggedin !== 1 }}" class="container">
   <view class="wechat-content">
     <view wx:for="{{ messages }}" wx:key="index">
       <view class="wechat-dialog" wx:if="{{ item.role === 'assistant' }}">
@@ -35,9 +35,14 @@
     </view>
   </view>
   <view class="fixed-bottom">
-    <van-field value="{{ rawText }}" type="textarea" placeholder="请输入问题" bind:change="onMsgChange" autosize border="{{ false }}">
-      <van-icon class-prefix="material-icons" name="send" class="clickable-icon" bind:click="onSendMsg" slot="right-icon" size="1.2em" color="{{ iconDisabled ? '#969799' : '#5ea3ef' }}" />
+    <van-field value="{{ rawText }}" type="textarea" placeholder="请输入问题" bind:change="onMsgChange" autosize
+      border="{{ false }}">
+      <van-icon class-prefix="material-icons" name="send" class="clickable-icon" bind:click="onSendMsg"
+        slot="right-icon" size="1.2em" color="{{ iconDisabled ? '#969799' : '#5ea3ef' }}" />
       <!-- <view class="material-icons" bind:click="onSendMsg" slot="right-icon"> send </view> -->
     </van-field>
   </view>
+</view>
+<view wx:else>
+  <van-empty description="你似乎来到了知识的荒原~" />
 </view>

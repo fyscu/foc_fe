@@ -165,6 +165,7 @@ function userLogin() {
                   app.globalData.userInfo.phone = result.phone;
                   app.globalData.userInfo.campus = result.campus;
                   app.globalData.userInfo.nickname = result.nickname;
+                  app.globalData.userInfo.available = result.available;
                   app.globalData.userInfo.avatarUrl = result.avatar;
                   // 成功登录
                   app.globalData.isloggedin = true;

@@ -13,6 +13,7 @@ App({
       email: "", // 用户邮箱
       phone: "", // 用户手机号
       campus: "", // 所在校区
+      available: true, // 是否接单
       nickname: "", // 用户昵称
       avatarUrl: "https://img1.doubanio.com/view/group_topic/l/public/p560183288.webp", // 默认用户头像地址
     },
@@ -58,6 +59,7 @@ App({
                     globalData.userInfo.phone = result.phone;
                     globalData.userInfo.campus = result.campus;
                     globalData.userInfo.nickname = result.nickname;
+                    globalData.userInfo.available = result.available;
                     globalData.userInfo.avatarUrl = result.avatar;
                     // 成功登录
                     globalData.isloggedin = true;
