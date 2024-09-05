@@ -60,8 +60,14 @@
         bind:click="onRegister">注册</van-button>
     </view>
     <view wx:else class="btn-container">
-      <van-button round type="primary" icon="fingerprint" class-prefix="material-icons"
-        bind:click="onVerify">验证</van-button>
+      <van-button class="reg-btn" round type="primary" icon="fingerprint" class-prefix="material-icons"
+        bind:click="onVerify">
+        验证
+      </van-button>
+      <van-button wx:if="{{ loggedin === 1 }}" class="reg-btn" round type="info" icon="input"
+        class-prefix="material-icons" bind:click="onTestLogin">
+        测试账号登录
+      </van-button>
     </view>
     <van-popup show="{{ showPopup === 1 }}" round position="bottom" custom-style="height: 44" bind:close="closePopup">
       <block wx:if="{{ showPopup === 1 }}">

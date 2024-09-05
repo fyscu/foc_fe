@@ -73,6 +73,21 @@ function unRegister() {
           resolve(401);
         } else if (res.data.success === true) {
           console.log('成功删除帐号');
+          // 清空所有数据
+          app.globalData.userInfo.qq = ""; // 用户QQ号
+          app.globalData.userInfo.uid = ""; // 用户id
+          app.globalData.userInfo.role = ""; // 用role替代is_tech
+          app.globalData.userInfo.email = ""; // 用户邮箱
+          app.globalData.userInfo.phone = ""; // 用户手机号
+          app.globalData.userInfo.campus = ""; // 所在校区
+          app.globalData.userInfo.nickname = ""; // 用户昵称
+          app.globalData.userInfo.available = true;
+          app.globalData.userInfo.avatarUrl = "https://img1.doubanio.com/view/group_topic/l/public/p560183288.webp"; // 用户头像地址
+          app.globalData.ticketList = [];
+          app.globalData.isloggedin = false;
+          app.globalData.code = null;
+          app.globalData.openid = null;
+          app.globalData.accessToken = null;
           resolve(200);
         } else {
           console.log('删除失败:', res);

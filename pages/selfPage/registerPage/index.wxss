@@ -4,3 +4,8 @@
 .van-button--small {
   width: 160rpx;
 }
+
+.reg-btn {
+  display: block;
+  margin-bottom: 10rpx;
+}

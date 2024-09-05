@@ -284,6 +284,25 @@ Page({
       showPopup: 0,
     });
   },
+  // 游客模式登录
+  onTestLogin() {
+    app.globalData.isloggedin = true;
+    app.globalData.userInfo = {
+      qq: "666666",
+      uid: "000000",
+      role: "user",
+      phone: "12345678901",
+      email: "test-mail@qq.com",
+      campus: "江安",
+      nickname: "游客",
+      available: true,
+      avatarUrl: "https://marketplace.canva.cn/EAGE6DsWb24/1/0/1600w/canva-cFjPThAyvu8.jpg",
+    };
+    Toast("测试身份登录成功");
+    setTimeout(() => {
+      wx.navigateBack();
+    }, 500);
+  },
   reloadData() {
     this.setData({
       userInfo: app.globalData.userInfo,
