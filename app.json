@@ -8,6 +8,7 @@
     "pages/selfPage/settingsPage/index",
     "pages/selfPage/registerPage/index",
     "pages/selfPage/signOutPage/index",
+    "pages/selfPage/newPhonePage/index",
     "pages/activityPage/index",
     "pages/chatPage/index",
     "pages/homePage/ticketDetail/index",

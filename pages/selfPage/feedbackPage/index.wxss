@@ -1,8 +1,1 @@
 /**index.wxss**/
-
-.prompt {
-  text-align: center;
-  color: grey;
-  margin-top: 99%;
-  font-size: 10rpx;
-}

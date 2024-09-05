@@ -1,0 +1,6 @@
+/**index.wxss**/
+
+/* 获取验证码按钮 */
+.van-button--small {
+  width: 160rpx;
+}

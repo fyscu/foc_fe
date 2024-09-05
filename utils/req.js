@@ -623,6 +623,97 @@ function regevent(activity_id, uid = app.globalData.userInfo.uid) {
   });
 }
 
+// https://fyapidocs.wjlo.cc/user/phonechange
+function newPhone(phone) {
+  return new Promise((resolve, reject) => {
+    wx.request({
+      url: app.globalData.rootApiUrl + "/v1/user/newphone",
+      header: {
+        'content-type': 'application/json',
+        'Authorization': `Bearer ${app.globalData.accessToken}`,
+      },
+      data: {
+        phone: phone,
+      },
+      method: 'POST',
+      success(res) {
+        if (res.statusCode === 401) {
+          console.log('鉴权失败，重新登录中...', res);
+          userLogin();
+          resolve(401);
+        } else if (res.data.success === false) {
+          if (res.data.status === "same_phone") {
+            console.log('手机号相同:', res);
+            resolve(300);
+          } else if (res.data.status === "phone_exists") {
+            console.log('手机号已存在:', res);
+            resolve(403);
+          }
+        } else if (res.data.success === true) {
+          if (res.data.status === "verification_code_sent") {
+            console.log('成功发送验证码:', res);
+            resolve(200);
+          } else {
+            console.log('请求失败:', res);
+            resolve(500);
+          }
+        } else {
+          console.log('请求失败:', res);
+          resolve(500);
+        }
+      }
+    })
+  });
+}
+
+//https://fyapidocs.wjlo.cc/user/vchangephone
+function phoneChangeVerify(phone, verifiCode) {
+  return new Promise((resolve, reject) => {
+    console.log("Requesting /user/phonechange_verify...");
+    wx.request({
+      url: app.globalData.rootApiUrl + '/v1/user/phonechange_verify',
+      data: {
+        vcode: verifiCode,
+      },
+      header: {
+        'content-type': 'application/json',
+        'Authorization': `Bearer ${app.globalData.accessToken}`,
+      },
+      method: 'POST',
+      success(res) {
+        if (res.statusCode === 401) {
+          console.log('鉴权失败，重新登录中...', res);
+          userLogin();
+          resolve(401);
+        } else if (res.data.status === "success") {
+          if (res.data.message === "phone_updated") {
+            console.log("手机号更改成功");
+            app.globalData.userInfo.phone = phone;
+            resolve(200);
+          } else {
+            console.log('请求失败:', res);
+            resolve(500);
+          }
+        } else if (res.data.status === "error") {
+          if (res.data.message === "bad_code") {
+            console.log("验证码错误", res);
+            resolve(300);
+          } else {
+            console.log('请求失败:', res);
+            resolve(500);
+          }
+        } else {
+          console.log('请求失败:', res);
+          resolve(500);
+        }
+      },
+      complete() {
+        console.log('requesting /user/phonechange_verify complete.');
+      }
+    })
+  });
+}
+
 module.exports = {
   userLogin,
   unRegister,
@@ -640,4 +731,6 @@ module.exports = {
   setConfig,
   regevent,
   userMigration,
+  newPhone,
+  phoneChangeVerify
 }
