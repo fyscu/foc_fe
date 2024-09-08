@@ -19,6 +19,24 @@
         </block>
       </van-field>
     </van-cell-group>
+    <van-cell-group wx:else inset title="四川大学学生邮箱认证">
+      <van-field required center name="phone" label="学生邮箱" placeholder="学号@stu.scu.edu.cn" value="{{ userInfo.phone }}"
+        border="{{ false }}" bind:change="onPhoneChange" error="{{ !hasPhone }}">
+        <view class="material-icons" slot="right-icon"> mail </view>
+      </van-field>
+      <van-field required center name="phone" type="digit" label="验证码" placeholder="请输入验证码" value="{{ verifiCode }}"
+        border="{{ false }}" bind:change="onVerifiCodeChange" error="{{ !hasVerifiCode }}">
+        <block wx:if="{{ isCountingDown }}">
+          <van-button disabled type="default" slot="button" size="small" round>
+            已发送 {{ countDownNum }}s
+          </van-button>
+        </block>
+        <block wx:else>
+          <van-button slot="button" size="small" type="info" icon="verified_user" class-prefix="material-icons" round
+            bind:click="sendCode">获取</van-button>
+        </block>
+      </van-field>
+    </van-cell-group>
     <view class="btn-container">
       <van-button round type="primary" icon="fingerprint" class-prefix="material-icons"
         bind:click="onVerify">验证</van-button>

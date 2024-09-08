@@ -2,6 +2,7 @@
 import Toast from "@vant/weapp/toast/toast";
 import Dialog from "@vant/weapp/dialog/dialog";
 import {
+  userLogin,
   userRegister,
   uploadQiniuImg,
   userMigration,
@@ -195,11 +196,19 @@ Page({
       if (returnCode === 401) {
         Toast("鉴权失败，请刷新重试");
       } else if (returnCode === 200) {
-        Toast("注册成功");
-        setTimeout(() => {
-          wx.navigateBack();
-        }, 500);
-      } else if (returnCode === 300) {
+        userLogin().then((loginCode) => {
+          if (loginCode === 200) {
+            Toast("注册成功");
+            setTimeout(() => {
+              wx.navigateBack();
+            }, 500);
+          } else {
+            Toast("注册失败，未知错误");
+          }
+        }).catch((error) => {
+          Toast("注册失败！" + error);
+        });
+      } else {
         Toast("注册失败");
       }
     });

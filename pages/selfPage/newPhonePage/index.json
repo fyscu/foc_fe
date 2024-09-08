@@ -1,5 +1,5 @@
 {
-  "navigationBarTitleText": "手机号换绑",
+  "navigationBarTitleText": "更换绑定",
   "usingComponents": {
     "van-field": "@vant/weapp/field/index",
     "van-button": "@vant/weapp/button/index",

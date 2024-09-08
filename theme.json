@@ -25,19 +25,17 @@
     "navigationBarBackgroundColor": "#1F1F1F",
     "backgroundColor": "#1F1F1F",
 
-    "tabBarColor": "#FFFFFFCC",
+    "tabBarColor": "#EFEFEF",
     "tabBarSelectedColor": "#FFF",
     "tabBarBorderStyle": "white",
     "tabBarBackgroundColor": "#1F1F1F",
 
-    "iconPathHome": "image/icon_home.png",
-    "selectedIconPathHome": "image/icon_home_filled.png",
-    "iconPathActivity": "image/icon_activity.png",
-    "selectedIconPathActivity": "image/icon_search_filled.png",
-    "iconPathSelf": "image/icon_self.png",
-    "selectedIconPathSelf": "image/icon_self_filled.png",
-    "iconPathForum": "image/icon_forum.png",
-    "selectedIconPathForum": "image/icon_forum_filled.png",
+    "iconPathHome": "image/light_home.png",
+    "selectedIconPathHome": "image/light_home_filled.png",
+    "iconPathActivity": "image/light_activity.png",
+    "selectedIconPathActivity": "image/light_activity_filled.png",
+    "iconPathSelf": "image/light_self.png",
+    "selectedIconPathSelf": "image/light_self_filled.png",
 
     "backgroundTextStyle": "light"
   }

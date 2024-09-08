@@ -5,9 +5,44 @@
 @import "/utils/MD_Wxss/index.wxss";
 
 /* 设置全局背景颜色 */
-page,
-body {
+page {
   background-color: #f7f8fa;
+}
+
+@media (prefers-color-scheme: dark) {
+  .container {
+    --skeleton-avatar-background-color: #313131;
+    --skeleton-row-background-color: #313131;
+    --cell-text-color: #dedede;
+    --cell-active-color: #505050;
+    --cell-background-color: #1f1f1f;
+    --field-label-color: #dedede;
+    --field-input-text-color: white;
+  }
+
+  page {
+    background-color: #2e2e2e !important;
+  }
+
+  .van-popup {
+    --dialog-background-color: #2e2e2e;
+    --button-default-background-color: #2e2e2e;
+  }
+
+  .van-popup .van-button {
+    color: white !important;
+  }
+
+  .van-hairline--bottom:after,
+  .van-hairline--top-bottom:after,
+  .van-hairline--top:after,
+  .van-hairline:after {
+    border: 0 solid #1f1f1f !important;
+  }
+
+  .van-cell:after {
+    border-bottom: 1px solid #1f1f1f !important;
+  }
 }
 
 .container {

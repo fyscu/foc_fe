@@ -1,86 +1,88 @@
 <!--index.wxml-->
 <scroll-view class="scrollview" scroll-y type="list">
   <!-- link 模式，在右侧显示链接箭头 -->
-  <navigator url="/pages/homePage/announcement/index" open-type="navigate">
-    <van-notice-bar color="#1989fa" background="#ecf9ff" left-icon="info-o" mode="link" text="请务必认真阅读「维修须知」" />
-  </navigator>
-  <van-cell-group wx:if="{{ loggedin !== 1 }}" inset title="个人联系信息">
-    <van-field required center name="qq" type="digit" label="QQ" placeholder="请填写你的QQ号" clearable value="{{ qq }}"
-      bind:change="onQQChange" border="{{ false }}">
-      <view class="material-icons" slot="right-icon"> mail </view>
-    </van-field>
-    <van-field required center name="phone" type="digit" label="手机号" placeholder="请填写手机号" clearable value="{{ phone }}"
-      bind:change="onPhoneChange" border="{{ false }}">
-      <view class="material-icons" slot="right-icon"> phone </view>
-    </van-field>
-  </van-cell-group>
-  <van-cell-group inset title="工单维修信息">
-    <van-cell required title="所在校区" bind:click="showPopup" data-index="1" is-link
-      value="{{ campusValue === '' ? '请选择' : campusValue }}" arrow-direction="down" />
-    <van-cell required title="设备类型" bind:click="showPopup" data-index="2" is-link
-      value="{{ deviceTypeValue  === '' ? '请选择' : deviceTypeValue }}" arrow-direction="down" />
-    <van-cell required title="设备品牌" bind:click="showPopup" data-index="3" is-link
-      value="{{ brandValue  === '' ? '请选择' : brandValue }}" arrow-direction="down" />
-    <van-cell required title="保修状态" bind:click="showPopup" data-index="4" is-link
-      value="{{ warrantStatusValue  === '' ? '请选择' : warrantStatusValue }}" arrow-direction="down" />
-    <van-cell required title="设备问题" bind:click="showPopup" data-index="5" is-link
-      value="{{ deviceProblemValue  === '' ? '请选择' : deviceProblemValue }}" arrow-direction="down" />
-    <van-cell required title="购买日期" value="{{ purchaseDate  === '' ? '请选择' : purchaseDate }}" is-link bind:click="showPopup"
-      data-index="6" arrow-direction="down" />
-    <!-- 说出设备型号门槛过高 -->
-    <!--
+  <view class="container">
+    <navigator url="/pages/homePage/announcement/index" open-type="navigate">
+      <van-notice-bar color="#1989fa" background="#ecf9ff" left-icon="info-o" mode="link" text="请务必认真阅读「维修须知」" />
+    </navigator>
+    <van-cell-group wx:if="{{ loggedin !== 1 }}" inset title="个人联系信息">
+      <van-field required center name="qq" type="digit" label="QQ" placeholder="请填写你的QQ号" clearable value="{{ qq }}"
+        bind:change="onQQChange" border="{{ false }}">
+        <view class="material-icons" slot="right-icon"> mail </view>
+      </van-field>
+      <van-field required center name="phone" type="digit" label="手机号" placeholder="请填写手机号" clearable
+        value="{{ phone }}" bind:change="onPhoneChange" border="{{ false }}">
+        <view class="material-icons" slot="right-icon"> phone </view>
+      </van-field>
+    </van-cell-group>
+    <van-cell-group inset title="工单维修信息">
+      <van-cell required title="所在校区" bind:click="showPopup" data-index="1" is-link
+        value="{{ campusValue === '' ? '请选择' : campusValue }}" arrow-direction="down" />
+      <van-cell required title="设备类型" bind:click="showPopup" data-index="2" is-link
+        value="{{ deviceTypeValue  === '' ? '请选择' : deviceTypeValue }}" arrow-direction="down" />
+      <van-cell required title="设备品牌" bind:click="showPopup" data-index="3" is-link
+        value="{{ brandValue  === '' ? '请选择' : brandValue }}" arrow-direction="down" />
+      <van-cell required title="保修状态" bind:click="showPopup" data-index="4" is-link
+        value="{{ warrantStatusValue  === '' ? '请选择' : warrantStatusValue }}" arrow-direction="down" />
+      <van-cell required title="设备问题" bind:click="showPopup" data-index="5" is-link
+        value="{{ deviceProblemValue  === '' ? '请选择' : deviceProblemValue }}" arrow-direction="down" />
+      <van-cell required title="购买日期" value="{{ purchaseDate  === '' ? '请选择' : purchaseDate }}" is-link
+        bind:click="showPopup" data-index="6" arrow-direction="down" />
+      <!-- 说出设备型号门槛过高 -->
+      <!--
     <van-field center name="model" label="设备型号" placeholder="请填写设备型号" clearable value="{{ model }}"
       border="{{ false }}">
       <view class="material-icons" slot="right-icon"> devices </view>
     </van-field>
     -->
-    <van-field required center autosize type="textarea" name="problem" label="问题描述" placeholder="请详细描述设备问题" clearable bind:change="onProblemDescChange"
-      value="{{ problemDesc }}" border="{{ false }}">
-      <view class="material-icons" slot="right-icon"> bug_report </view>
-    </van-field>
-    <van-cell title="选择图片" title-width="200rpx">
-      <van-image width="5rem" height="5rem" fit="cover" bind:click="chooseImage" use-loading-slot>
-        <view slot="loading" class="material-icons">add_a_photo</view>
-      </van-image>
-      <view class="image-container" wx:for="{{ imageUrl }}" wx:key="id">
-        <van-image width="5rem" height="5rem" fit="cover" src="{{ item }}" bind:click="previewImage"
-          data-src="{{ item }}"></van-image>
-        <view bind:tap="deleteImage" data-src="{{ item }}" class="material-icons close-button"> highlight_off </view>
-      </view>
-    </van-cell>
-  </van-cell-group>
-  <view class="btn-container">
-    <van-button round type="primary" icon="done_all" class-prefix="material-icons" bind:click="submitTicket">提交工单
-    </van-button>
+      <van-field required center autosize type="textarea" name="problem" label="问题描述" placeholder="请详细描述设备问题" clearable
+        bind:change="onProblemDescChange" value="{{ problemDesc }}" border="{{ false }}">
+        <view class="material-icons" slot="right-icon"> bug_report </view>
+      </van-field>
+      <van-cell title="选择图片" title-width="200rpx">
+        <van-image width="5rem" height="5rem" fit="cover" bind:click="chooseImage" use-loading-slot>
+          <view slot="loading" class="material-icons">add_a_photo</view>
+        </van-image>
+        <view class="image-container" wx:for="{{ imageUrl }}" wx:key="id">
+          <van-image width="5rem" height="5rem" fit="cover" src="{{ item }}" bind:click="previewImage"
+            data-src="{{ item }}"></van-image>
+          <view bind:tap="deleteImage" data-src="{{ item }}" class="material-icons close-button"> highlight_off </view>
+        </view>
+      </van-cell>
+    </van-cell-group>
+    <view class="btn-container">
+      <van-button round type="primary" icon="done_all" class-prefix="material-icons" bind:click="submitTicket">提交工单
+      </van-button>
+    </view>
+    <van-popup show="{{ showPopup >= 1 && showPopup <= 6 }}" round position="bottom" custom-style="height: 44"
+      bind:close="onClose">
+      <block wx:if="{{ showPopup === 1 }}">
+        <van-picker title="选择校区" show-toolbar columns="{{ campusList }}" bind:confirm="onConfirmCampus"
+          bind:cancel="onClose" />
+      </block>
+      <block wx:elif="{{ showPopup === 2 }}">
+        <van-picker title="选择设备类型" show-toolbar columns="{{ deviceTypeList }}" bind:confirm="onConfirmDeviceType"
+          bind:cancel="onClose" />
+      </block>
+      <block wx:elif="{{ showPopup === 3 }}">
+        <van-picker title="选择设备品牌" show-toolbar columns="{{ brandList }}" bind:confirm="onConfirmBrand"
+          bind:cancel="onClose" />
+      </block>
+      <block wx:elif="{{ showPopup === 4 }}">
+        <van-picker title="选择保修状态" show-toolbar columns="{{ warrantStatusList }}" bind:confirm="onConfirmWarrantStatus"
+          bind:cancel="onClose" />
+      </block>
+      <block wx:elif="{{ showPopup === 5 }}">
+        <van-picker title="选择设备问题" show-toolbar columns="{{ problemList }}" bind:confirm="onConfirmDeviceProblem"
+          bind:cancel="onClose" />
+      </block>
+      <block wx:elif="{{ showPopup === 6 }}">
+        <van-datetime-picker show="{{ showPopup === 6 }}" type="date" value="{{ currentDate }}" min-date="{{ minDate }}"
+          max-date="{{ maxDate }}" formatter="{{ formatter }}" bind:confirm="onConfirmPurchaseDate"
+          bind:close="onClose" />
+      </block>
+    </van-popup>
+    <van-dialog id="van-dialog" />
+    <van-toast id="van-toast" />
   </view>
-  <van-popup show="{{ showPopup >= 1 && showPopup <= 6 }}" round position="bottom" custom-style="height: 44"
-    bind:close="onClose">
-    <block wx:if="{{ showPopup === 1 }}">
-      <van-picker title="选择校区" show-toolbar columns="{{ campusList }}" bind:confirm="onConfirmCampus"
-        bind:cancel="onClose" />
-    </block>
-    <block wx:elif="{{ showPopup === 2 }}">
-      <van-picker title="选择设备类型" show-toolbar columns="{{ deviceTypeList }}" bind:confirm="onConfirmDeviceType"
-        bind:cancel="onClose" />
-    </block>
-    <block wx:elif="{{ showPopup === 3 }}">
-      <van-picker title="选择设备品牌" show-toolbar columns="{{ brandList }}" bind:confirm="onConfirmBrand"
-        bind:cancel="onClose" />
-    </block>
-    <block wx:elif="{{ showPopup === 4 }}">
-      <van-picker title="选择保修状态" show-toolbar columns="{{ warrantStatusList }}" bind:confirm="onConfirmWarrantStatus"
-        bind:cancel="onClose" />
-    </block>
-    <block wx:elif="{{ showPopup === 5 }}">
-      <van-picker title="选择设备问题" show-toolbar columns="{{ problemList }}" bind:confirm="onConfirmDeviceProblem"
-        bind:cancel="onClose" />
-    </block>
-    <block wx:elif="{{ showPopup === 6 }}">
-      <van-datetime-picker show="{{ showPopup === 6 }}" type="date" value="{{ currentDate }}" min-date="{{ minDate }}"
-        max-date="{{ maxDate }}" formatter="{{ formatter }}" bind:confirm="onConfirmPurchaseDate"
-        bind:close="onClose" />
-    </block>
-  </van-popup>
-  <van-dialog id="van-dialog" />
-  <van-toast id="van-toast" />
 </scroll-view>

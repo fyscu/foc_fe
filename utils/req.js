@@ -282,7 +282,7 @@ function setUserInfo(userInfo) {
           resolve(200);
         } else {
           console.log('修改失败:', res);
-          resolve(300);
+          resolve(500);
         }
       },
       complete() {

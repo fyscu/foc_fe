@@ -4,3 +4,7 @@
 .markdown-body {
   padding: 40rpx;
 }
+
+page {
+  background-color: white !important;
+}
