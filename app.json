@@ -20,10 +20,10 @@
     "pages/forumPage/sharePage/index"
   ],
   "window": {
-    "backgroundTextStyle": "light",
-    "navigationBarBackgroundColor": "#fff",
+    "backgroundTextStyle": "@backgroundTextStyle",
+    "navigationBarBackgroundColor": "@navigationBarBackgroundColor",
     "navigationBarTitleText": "云上飞扬",
-    "navigationBarTextStyle": "black",
+    "navigationBarTextStyle": "@navigationBarTextStyle",
     "enablePullDownRefresh": false
   },
   "tabBar": {

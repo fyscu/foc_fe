@@ -29,8 +29,14 @@ page {
     --button-default-background-color: #2e2e2e;
   }
 
-  .van-popup .van-button {
-    color: white !important;
+  /* .van-picker {
+    --popup-background-color: #2e2e2e;
+    --picker-background-color: #2e2e2e;
+    --picker-option-selected-text-color: white;
+  } */
+
+  .van-popup .van-hairline--right .van-button {
+    color: #dedede !important;
   }
 
   .van-hairline--bottom:after,

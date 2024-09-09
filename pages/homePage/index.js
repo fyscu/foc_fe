@@ -33,7 +33,7 @@ Page({
     // 登录 [TODO]
     // 初始化数据
     this.reloadData(); // 刷新数据
-    if (this.data.isloggedin) {
+    if (this.data.isloggedin && this.data.sysConfig === null) {
       this.initialize();
     }
   },

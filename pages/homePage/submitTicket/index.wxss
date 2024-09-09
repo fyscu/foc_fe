@@ -1,5 +1,9 @@
 /**index.wxss**/
 
+.container {
+  padding-top: 0;
+}
+
 .van-image {
   margin-left: 20rpx;
 }

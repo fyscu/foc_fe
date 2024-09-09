@@ -20,7 +20,6 @@ Page({
       Canceled: "已取消",
     },
     hasCompletedStatus: false,
-    isloggedin: app.globalData.isloggedin,
     userInfo: app.globalData.userInfo,
     ticketList: app.globalData.ticketList,
     isloggedin: app.globalData.isloggedin,

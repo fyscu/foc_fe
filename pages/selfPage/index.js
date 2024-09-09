@@ -1,8 +1,7 @@
 // index.js
 import Toast from "@vant/weapp/toast/toast";
 import {
-  userLogin,
-  getConfig
+  userLogin
 } from "../../utils/req"
 import {
   checkUserInfo
@@ -26,6 +25,16 @@ Page({
   onShow() {
     // console.log(app.globalData);
     this.reloadData();
+    app.globalData.userInfo = this.data.userInfo;
+    // console.log(app.globalData.userInfo);
+    if (app.globalData.isloggedin) { // 如果已经登录
+      if (!checkUserInfo(this.data.userInfo)) {
+        console.log("信息不完善");
+        wx.navigateTo({
+          url: '/pages/selfPage/settingsPage/index?toast=必须完善所有信息',
+        })
+      }
+    }
   },
   // 在输入框不为focused时更新数据
   onNicknameChange(e) {

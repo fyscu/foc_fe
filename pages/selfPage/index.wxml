@@ -3,7 +3,7 @@
   <view class="container">
     <!-- 登录成功，获取到用户头像昵称 -->
     <view wx:if="{{ isloggedin }}" class="headline-container">
-      <text class="headline-msg">{{ userInfo.nickname === "" ? "Anonymous" : userInfo.nickname }}</text>
+      <text class="headline-msg">{{ !userInfo.nickname ? "Anonymous" : userInfo.nickname }}</text>
       <van-image class="headline-avatar" width="5rem" round height="5rem" fit="cover" src="{{ userInfo.avatarUrl }}" />
       <block wx:if="{{ userInfo.role === 'user' }}">
         <van-tag type="primary" size="medium">用户</van-tag>
