@@ -1,13 +1,8 @@
 // index.js
 import Toast from "@vant/weapp/toast/toast";
 import Dialog from "@vant/weapp/dialog/dialog";
-import {
-  userLogin,
-  putFeedback
-} from "../../../utils/req"
-import {
-  checkUserInfo
-} from "../../../utils/util"
+import { userLogin, putFeedback } from "../../../utils/req"
+import { checkUserInfo } from "../../../utils/util"
 
 const app = getApp();
 

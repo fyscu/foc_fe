@@ -1,6 +1,6 @@
 <!--index.wxml-->
 <scroll-view class="scrollview" scroll-y type="list">
-  <rich-text nodes="{{ article }}"></rich-text>
+  <towxml nodes="{{ article }}" />
   <view class="container">
     <view class="btn-container">
       <van-button round type="danger" icon="publish" class-prefix="material-icons" bind:click="onSignOut">

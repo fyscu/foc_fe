@@ -4,7 +4,6 @@
   display: flex;
   flex-direction: column;
   height: 100vh;
-  background: linear-gradient(180deg,#FFFFFF 0%,#EDEDED 10%);
 }
 
 .content {
@@ -102,4 +101,11 @@
   right: -6.25rpx;
   border-top-right-radius: 2.5rpx;
   border-bottom-left-radius: 0;
+}
+
+/* 暗黑模式 */
+@media (prefers-color-scheme: dark) {
+  .wechat-content {
+    color: #1f1f1f;
+  }
 }

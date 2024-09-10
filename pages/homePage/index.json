@@ -1,6 +1,8 @@
 {
   "navigationBarTitleText": "首页",
   "usingComponents": {
+    "towxml": "/towxml/towxml",
+    "van-checkbox": "@vant/weapp/checkbox/index",
     "van-card": "@vant/weapp/card/index",
     "van-tag": "@vant/weapp/tag/index",
     "van-divider": "@vant/weapp/divider/index",

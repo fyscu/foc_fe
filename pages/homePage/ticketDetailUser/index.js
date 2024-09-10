@@ -1,6 +1,7 @@
 import Toast from "@vant/weapp/toast/toast";
 import Dialog from "@vant/weapp/dialog/dialog";
 import { setTicketStatus } from "../../../utils/req";
+import QRCode from "../../../utils/weapp_qrcode.js";
 
 var app = getApp();
 
@@ -8,6 +9,11 @@ Page({
   data: {
     active: 0,
     ticket: null,
+    warrantyMap: {
+      "expired": "过保",
+      "under": "在保",
+      "unknown": "未知",
+    },
     steps: [{
       text: "电脑报修"
     }, {
@@ -34,6 +40,24 @@ Page({
     console.log(this.data.ticket);
     this.setData({
       active: map[this.data.ticket.repair_status],
+    });
+    this.loadQRcode();
+  },
+  loadQRcode() {
+    const theme = app.systemInfo.theme;
+    const qrcode = new QRCode('canvas', {
+      // usingIn: this,
+      text: "https://www.feiyang.ac.cn",
+      padding: 12,
+      width: 150,
+      height: 150,
+      colorDark: theme === "dark" ? "#1CA4FC" : "black",
+      colorLight: theme === "dark" ? "#2e2e2e" : "white",
+      correctLevel: QRCode.CorrectLevel.H,
+      callback: (res) => {
+        // 生成二维码的临时文件
+        console.log(res.path)
+      }
     });
   },
   cancelTheTicket() {

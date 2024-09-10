@@ -1,7 +1,7 @@
 <!--index.wxml-->
 
 <scroll-view class="scrollview">
-  <rich-text nodes="{{ article }}"></rich-text>
+  <towxml nodes="{{ article }}" />
   <view class="btn-container">
     <van-button round open-type="contact" type="primary" icon="call" class-prefix="material-icons">
       联系客服

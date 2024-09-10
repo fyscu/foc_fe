@@ -8,6 +8,11 @@ Page({
   data: {
     active: 0,
     ticket: null,
+    warrantyMap: {
+      "expired": "过保",
+      "under": "在保",
+      "unknown": "未知",
+    },
     steps: [{
       text: "电脑报修"
     }, {

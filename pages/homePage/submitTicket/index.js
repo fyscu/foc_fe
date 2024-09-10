@@ -1,7 +1,4 @@
-import {
-  addTicket,
-  uploadQiniuImg
-} from "../../../utils/req"
+import { addTicket, uploadQiniuImg } from "../../../utils/req"
 import { formatDate } from "../../../utils/util";
 import Toast from "@vant/weapp/toast/toast";
 import Dialog from "@vant/weapp/dialog/dialog";
@@ -43,7 +40,7 @@ Page({
     // 设备品牌
     brandValue: "",
     // 保修状态
-    warrantStatusValue: "",
+    warrantyStatusValue: "",
     // 设备问题
     deviceProblemValue: "",
     // 不弹出选择框
@@ -96,7 +93,7 @@ Page({
       "其他",
     ],
     // showPopup = 4:
-    warrantStatusList: ["过保", "在保", "未知"],
+    warrantyStatusList: ["过保", "在保", "未知"],
     // showPopup = 5:
     problemList: ["设备清灰", "系统重装", "无法开机", "设备进水", "软件问题"],
     // userinfo
@@ -145,13 +142,13 @@ Page({
       showPopup: 0,
     });
   },
-  onConfirmWarrantStatus(event) {
+  onConfirmWarrantyStatus(event) {
     // 保修状态
     const {
       value
     } = event.detail;
     this.setData({
-      warrantStatusValue: value,
+      warrantyStatusValue: value,
       showPopup: 0,
     });
   },
@@ -255,21 +252,17 @@ Page({
         return;
       }
     }
+    const warrantyMap = {
+      "过保": "expired",
+      "在保": "under",
+      "未知": "unknown",
+    }
     Dialog.confirm({
       title: "确认提交？",
       confirmButtonText: "确认",
       message: `提交后不可更改；技术员会通过您提交的信息联系您。`,
     }).then(() => {
       // on confirm
-      console.log(this.data.purchaseDate);
-      console.log(this.data.phone);
-      console.log(this.data.deviceTypeValue);
-      console.log(this.data.brandValue);
-      console.log(this.data.problemDesc);
-      console.log(this.data.imageUrl);
-      console.log(this.data.deviceProblemValue);
-      console.log(this.data.qq);
-      console.log(this.data.campusValue);
       addTicket(
         this.data.purchaseDate, // 机器购买时间
         this.data.phone, // 用于联系的手机号
@@ -280,6 +273,7 @@ Page({
         this.data.deviceProblemValue, // 问题类型
         this.data.qq, // 用户预留qq号
         this.data.campusValue, // 用户所在校区
+        warrantyMap[this.data.warrantyStatusValue], // 保修状态
       ).then((returnCode) => {
         if (returnCode === 401) {
           Toast("鉴权失败，请刷新重试");

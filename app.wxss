@@ -4,27 +4,43 @@
 /* 因为vant自带的icons太少了，所以引入material design icons */
 @import "/utils/MD_Wxss/index.wxss";
 
-/* 设置全局背景颜色 */
-page {
-  background-color: #f7f8fa;
+/* 亮色模式 */
+@media (prefers-color-scheme: light) {
+
+  /* 设置全局背景颜色 */
+  page {
+    background-color: #f7f8fa;
+  }
 }
 
+/* 暗黑模式 */
 @media (prefers-color-scheme: dark) {
   .container {
     --skeleton-avatar-background-color: #313131;
     --skeleton-row-background-color: #313131;
     --cell-text-color: #dedede;
-    --cell-active-color: #505050;
+    --cell-active-color: #272727;
     --cell-background-color: #1f1f1f;
     --field-label-color: #dedede;
     --field-input-text-color: white;
+    --card-text-color: #dedede;
+    --cell-background-color: #1f1f1f;
+    --card-background-color: #2e2e2e;
+    --steps-background-color: #444444;
+    --tag-plain-background-color: #444444;
   }
 
+  .van-step__circle-container {
+    background-color: #444444 !important;
+  }
+
+  /* 设置全局背景颜色 */
   page {
-    background-color: #2e2e2e !important;
+    background-color: #2e2e2e;
   }
 
   .van-popup {
+    --checkbox-label-color: #dedede;
     --dialog-background-color: #2e2e2e;
     --button-default-background-color: #2e2e2e;
   }
@@ -51,6 +67,7 @@ page {
   }
 }
 
+/* container */
 .container {
   height: 100%;
   display: flex;

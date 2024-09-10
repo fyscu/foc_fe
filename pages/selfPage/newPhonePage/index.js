@@ -1,9 +1,6 @@
 // index.js
 import Toast from "@vant/weapp/toast/toast";
-import {
-  newPhone,
-  phoneChangeVerify
-} from "../../../utils/req"
+import { newPhone, phoneChangeVerify } from "../../../utils/req"
 
 var app = getApp();
 

@@ -1,19 +1,9 @@
 // index.js
 import Toast from "@vant/weapp/toast/toast";
-import {
-  userLogin
-} from "../../utils/req"
-import {
-  checkUserInfo
-} from "../../utils/util";
+import { userLogin } from "../../utils/req"
+import { checkUserInfo } from "../../utils/util";
 
 var app = getApp();
-
-wx.login({
-  success: (res) => {
-    console.log("Here is a test code:", res.code);
-  }
-});
 
 Page({
   data: {

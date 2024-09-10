@@ -23,7 +23,7 @@
       <van-cell required title="设备品牌" bind:click="showPopup" data-index="3" is-link
         value="{{ brandValue  === '' ? '请选择' : brandValue }}" arrow-direction="down" />
       <van-cell required title="保修状态" bind:click="showPopup" data-index="4" is-link
-        value="{{ warrantStatusValue  === '' ? '请选择' : warrantStatusValue }}" arrow-direction="down" />
+        value="{{ warrantyStatusValue  === '' ? '请选择' : warrantyStatusValue }}" arrow-direction="down" />
       <van-cell required title="设备问题" bind:click="showPopup" data-index="5" is-link
         value="{{ deviceProblemValue  === '' ? '请选择' : deviceProblemValue }}" arrow-direction="down" />
       <van-cell required title="购买日期" value="{{ purchaseDate  === '' ? '请选择' : purchaseDate }}" is-link
@@ -69,8 +69,8 @@
           bind:cancel="onClose" />
       </block>
       <block wx:elif="{{ showPopup === 4 }}">
-        <van-picker title="选择保修状态" show-toolbar columns="{{ warrantStatusList }}" bind:confirm="onConfirmWarrantStatus"
-          bind:cancel="onClose" />
+        <van-picker title="选择保修状态" show-toolbar columns="{{ warrantyStatusList }}"
+          bind:confirm="onConfirmwarrantyStatus" bind:cancel="onClose" />
       </block>
       <block wx:elif="{{ showPopup === 5 }}">
         <van-picker title="选择设备问题" show-toolbar columns="{{ problemList }}" bind:confirm="onConfirmDeviceProblem"

@@ -12,6 +12,10 @@ let sysConfigOriginal = null;
 
 Page({
   data: {
+    // [toxml] 显示在dialog中的维修须知
+    article: {},
+    showDialog: false,
+    announcementAgreed: false,
     // 显示骨架屏
     loading: false,
     statusList: {
@@ -33,7 +37,10 @@ Page({
     // 登录 [TODO]
     // 初始化数据
     this.reloadData(); // 刷新数据
-    if (this.data.isloggedin && this.data.sysConfig === null) {
+    if (this.data.isloggedin) {
+      if (this.data.sysConfig === null) {
+        this.setData({ loading: true });
+      }
       this.initialize();
     }
   },
@@ -78,7 +85,6 @@ Page({
     }
   },
   initialize() {
-    this.setData({ loading: true });
     // 获取全局配置
     getConfig().then((returnCode) => {
       if (returnCode === 401) {
@@ -110,7 +116,7 @@ Page({
           // 成功获取用户的所有工单
           this.reloadData(); // 刷新数据
         } else if (returnCode === 403) {
-          Toast("工单获取失败，权限不足");
+          Toast("工单获取失败");
         } else {
           Toast("未知错误");
         }
@@ -127,7 +133,7 @@ Page({
           // 成功获取用户的所有工单
           this.reloadData(); // 刷新数据
         } else if (returnCode === 403) {
-          Toast("工单获取失败，权限不足");
+          Toast("工单获取失败");
         } else {
           Toast("未知错误");
         }
@@ -154,25 +160,30 @@ Page({
   onNavigateToTechOptions() {
     wx.navigateTo({
       url: "/pages/homePage/techOptions/index",
-      success(res) {
-        // console.log("success:", res);
-      },
     });
   },
   navigateToSubmitTicketPage() {
-    Dialog.confirm({
-      title: "维修须知",
-      messageAlign: "left",
-      confirmButtonText: "我已仔细阅读",
-      message: findDataByName(this.data.sysConfig, 'Global_Tips'),
-    }).then(() => {
-      // on confirm
-      wx.navigateTo({
-        url: "/pages/homePage/submitTicket/index",
-      });
-    }).catch(() => {
-      // on cancel
-      console.log("用户已取消报修");
+    wx.navigateTo({
+      url: "/pages/homePage/submitTicket/index",
     });
   },
+  // 维修须知弹窗
+  onShowDialog() {
+    let result = app.towxml(
+      findDataByName(this.data.sysConfig, 'Global_Tips'),
+      'markdown',
+      { theme: app.systemInfo.theme }
+    );
+    // 显示确认弹窗
+    this.setData({
+      showDialog: true,
+      article: result,
+    });
+  },
+  onCloseDialog() {
+    this.setData({ showDialog: false });
+  },
+  onAgreeChange(event) {
+    this.setData({ announcementAgreed: event.detail });
+  }
 });

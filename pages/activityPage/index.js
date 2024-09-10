@@ -1,7 +1,6 @@
 // index.js
 import Toast from "@vant/weapp/toast/toast";
 import { regevent } from "../../utils/req";
-// var api = require("./includeAPI.wxs");
 
 var app = getApp();
 

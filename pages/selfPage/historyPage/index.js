@@ -1,11 +1,6 @@
 import Toast from "@vant/weapp/toast/toast";
-import Dialog from "@vant/weapp/dialog/dialog";
-import {
-  getTicket,
-} from "../../../utils/req"
-import {
-  checkUserInfo
-} from "../../../utils/util"
+import { getTicket, } from "../../../utils/req"
+import { checkUserInfo } from "../../../utils/util"
 
 var app = getApp();
 
@@ -51,7 +46,7 @@ Page({
           // 成功获取用户的所有工单
           this.reloadData(); // 刷新数据
         } else if (returnCode === 403) {
-          Toast("工单获取失败，权限不足");
+          Toast("工单获取失败");
         } else {
           Toast("未知错误");
         }
@@ -68,7 +63,7 @@ Page({
           // 成功获取用户的所有工单
           this.reloadData(); // 刷新数据
         } else if (returnCode === 403) {
-          Toast("工单获取失败，权限不足");
+          Toast("工单获取失败");
         } else {
           Toast("未知错误");
         }

@@ -2,21 +2,30 @@
 import Toast from "@vant/weapp/toast/toast";
 import Dialog from "@vant/weapp/dialog/dialog";
 import { unRegister } from "../../../utils/req";
+import { findDataByName } from "../../../utils/util";
 
 const app = getApp();
+
 const article = `
-<div class="markdown-body">
-  <h1 class="h1" id="-">删除账号</h1>
-  <p class="p">删除后您当前账号的所有数据，包括维修订单、报修记录、个人信息等<b>将被永久删除，且不可恢复</b>。请谨慎操作。</p>
-</div>
+# 删除账号</h1>
+
+删除后您当前账号的所有数据，包括维修订单、报修记录、个人信息等**将被永久删除，且不可恢复**。请谨慎操作。
 `
 
 Page({
   data: {
     article
   },
-  onShow() {
-    this.reloadData();
+  onLoad() {
+    let result = app.towxml(
+      article,
+      'markdown',
+      { theme: app.systemInfo.theme }
+    );
+    // 更新解析数据
+    this.setData({
+      article: result,
+    });
   },
   onSignOut() {
     Dialog.confirm({
@@ -37,11 +46,6 @@ Page({
       });
     }).catch(() => {
       console.log("用户取消删除");
-    });
-  },
-  reloadData() {
-    this.setData({
-      userInfo: app.globalData.userInfo,
     });
   },
 });

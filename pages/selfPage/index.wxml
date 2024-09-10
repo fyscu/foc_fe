@@ -9,7 +9,7 @@
         <van-tag type="primary" size="medium">用户</van-tag>
       </block>
       <block wx:elif="{{ userInfo.role === 'technician' }}">
-        <van-tag type="success" size="medium">技术员</van-tag>
+        <van-tag type="success" size="medium">技术员 {{ userInfo.uid }}</van-tag>
       </block>
       <block wx:elif="{{ userInfo.role === 'admin' }}">
         <van-tag type="danger" size="medium">管理员</van-tag>

@@ -16,3 +16,17 @@
 .van-tag {
   margin-right: 10rpx;
 }
+
+.dialog-article-container {
+  overflow: scroll;
+  height: 800rpx;
+}
+
+.dialog-article-container .van-checkbox {
+  padding-left: 40rpx;
+  padding-bottom: 40rpx;
+}
+
+.dialog-article-container .h2w-dark {
+  background-color: #2e2e2e !important;
+}

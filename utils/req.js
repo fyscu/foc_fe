@@ -390,7 +390,11 @@ function putFeedback(text) {
 }
 
 // https://fyapidocs.wjlo.cc/ticket/add
-function addTicket(purchase_date, phone, device_type, brand, description, image, fault_type, qq, campus) {
+function addTicket(
+  purchase_date, phone, device_type,
+  brand, description, image,
+  fault_type, qq, campus, warranty_status
+) {
   return new Promise((resolve, reject) => {
     if (!image) {
       image = "https://focapp.feiyang.ac.cn/public/ticketdefault.svg";
@@ -409,6 +413,7 @@ function addTicket(purchase_date, phone, device_type, brand, description, image,
         fault_type: fault_type, // 问题类型 string
         qq: qq, // 用户预留qq号 int
         campus: campus, // 用户所在校区 string
+        warranty_status: warranty_status, // 保修状态
       },
       header: {
         'content-type': 'application/json',

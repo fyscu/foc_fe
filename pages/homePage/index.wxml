@@ -35,8 +35,7 @@
           </view>
         </view>
         <view class="btn-container">
-          <van-button round icon="build" class-prefix="material-icons" type="info"
-            bind:click="navigateToSubmitTicketPage">
+          <van-button round icon="build" class-prefix="material-icons" type="info" bind:click="onShowDialog">
             我要报修
           </van-button>
         </view>
@@ -94,6 +93,15 @@
       <van-empty description="请先登录～" />
     </view>
   </view>
-  <van-dialog id="van-dialog" />
+  <van-dialog use-slot title="维修须知" show="{{ showDialog }}" show-cancel-button bind:close="onCloseDialog"
+    show-confirm-button="{{ announcementAgreed }}" confirm-button-text="我已仔细阅读"
+    bind:confirm="navigateToSubmitTicketPage">
+    <view class="dialog-article-container">
+      <towxml nodes="{{ article }}" />
+      <van-checkbox value="{{ announcementAgreed }}" bind:change="onAgreeChange">
+        我已阅读并同意「维修须知」
+      </van-checkbox>
+    </view>
+  </van-dialog>
   <van-toast id="van-toast" />
 </scroll-view>

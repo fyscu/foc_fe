@@ -1,60 +1,62 @@
 <!--index.wxml-->
 <scroll-view class="scrollview" scroll-y type="list">
-  <view class="step-container">
-    <van-steps steps="{{ steps }}" active="{{ active }}" active-icon="success" active-color="#38f" />
-  </view>
-  <view wx:if="{{ ticket !== null }}" class="table-container">
-    <van-cell-group inset title="机主联系方式">
-      <van-cell center title="QQ" value="{{ ticket.qq_number }}">
-        <copy-button text-to-copy="{{ ticket.qq_number }}" slot="right-icon" />
-      </van-cell>
-      <van-cell center title="手机号" value="{{ ticket.user_phone }}">
-        <copy-button text-to-copy="{{ ticket.user_phone }}" slot="right-icon" />
-      </van-cell>
-    </van-cell-group>
-    <van-cell-group inset title="工单维修信息">
-      <van-cell center title="图片" title-width="200rpx">
-        <view class="image-container" wx:for="{{ [ticket.repair_image_url] }}" wx:key="id">
-          <van-image width="5rem" height="5rem" fit="cover" src="{{ item }}" bind:click="previewImage"
-            data-src="{{ item }}">
-          </van-image>
-        </view>
-      </van-cell>
-      <van-cell center title="所在校区" value="{{ ticket.campus }}">
-        <copy-button text-to-copy="{{ ticket.campus }}" slot="right-icon" />
-      </van-cell>
-      <van-cell center title="设备类型" value="{{ ticket.device_type }}">
-        <copy-button text-to-copy="{{ ticket.device_type }}" slot="right-icon" />
-      </van-cell>
-      <van-cell center title="设备品牌" value="{{ ticket.computer_brand }}">
-        <copy-button text-to-copy="{{ ticket.computer_brand }}" slot="right-icon" />
-      </van-cell>
-      <van-cell center title="保修状态" value="{{ '过保' }}">
-        <copy-button text-to-copy="{{ '过保' }}" slot="right-icon" />
-      </van-cell>
-      <van-cell center title="设备问题" value="{{ ticket.fault_type }}">
-        <copy-button text-to-copy="{{ ticket.fault_type }}" slot="right-icon" />
-      </van-cell>
-      <van-cell center title="购买日期" value="{{ ticket.machine_purchase_date }}">
-        <copy-button text-to-copy="{{ ticket.machine_purchase_date }}" slot="right-icon" />
-      </van-cell>
-      <!-- 说出设备型号门槛过高 省略...-->
-      <van-cell center title="问题描述" value="{{ ticket.repair_description }}">
-        <copy-button text-to-copy="{{ ticket.repair_description }}" slot="right-icon" />
-      </van-cell>
-    </van-cell-group>
-  </view>
-  <view
-    wx:if="{{ ticket.repair_status !== 'Done' && ticket.repair_status !== 'Canceled' && ticket.repair_status !== 'Closed' }}"
-    class="btn-container">
-    <van-button round class="close-btn" icon="block" class-prefix="material-icons" type="info"
-      bind:click="completeTheTicket">
-      结束工单
-    </van-button>
-    <van-button round class="close-btn" icon="warning" class-prefix="material-icons" type="danger"
-      bind:click="closeTheTicket">
-      强行关闭
-    </van-button>
+  <view class="container">
+    <view class="step-container">
+      <van-steps steps="{{ steps }}" active="{{ active }}" active-icon="success" active-color="#38f" />
+    </view>
+    <view wx:if="{{ ticket !== null }}" class="table-container">
+      <van-cell-group inset title="机主联系方式">
+        <van-cell center title="QQ" value="{{ ticket.qq_number }}">
+          <copy-button text-to-copy="{{ ticket.qq_number }}" slot="right-icon" />
+        </van-cell>
+        <van-cell center title="手机号" value="{{ ticket.user_phone }}">
+          <copy-button text-to-copy="{{ ticket.user_phone }}" slot="right-icon" />
+        </van-cell>
+      </van-cell-group>
+      <van-cell-group inset title="工单维修信息">
+        <van-cell center title="图片" title-width="200rpx">
+          <view class="image-container" wx:for="{{ [ticket.repair_image_url] }}" wx:key="id">
+            <van-image width="5rem" height="5rem" fit="cover" src="{{ item }}" bind:click="previewImage"
+              data-src="{{ item }}">
+            </van-image>
+          </view>
+        </van-cell>
+        <van-cell center title="所在校区" value="{{ ticket.campus }}">
+          <copy-button text-to-copy="{{ ticket.campus }}" slot="right-icon" />
+        </van-cell>
+        <van-cell center title="设备类型" value="{{ ticket.device_type }}">
+          <copy-button text-to-copy="{{ ticket.device_type }}" slot="right-icon" />
+        </van-cell>
+        <van-cell center title="设备品牌" value="{{ ticket.computer_brand }}">
+          <copy-button text-to-copy="{{ ticket.computer_brand }}" slot="right-icon" />
+        </van-cell>
+        <van-cell center title="保修状态" value="{{ warrantyMap[ticket.warranty_status] }}">
+          <copy-button text-to-copy="{{ '过保' }}" slot="right-icon" />
+        </van-cell>
+        <van-cell center title="设备问题" value="{{ ticket.fault_type }}">
+          <copy-button text-to-copy="{{ ticket.fault_type }}" slot="right-icon" />
+        </van-cell>
+        <van-cell center title="购买日期" value="{{ ticket.machine_purchase_date }}">
+          <copy-button text-to-copy="{{ ticket.machine_purchase_date }}" slot="right-icon" />
+        </van-cell>
+        <!-- 说出设备型号门槛过高 省略...-->
+        <van-cell center title="问题描述" value="{{ ticket.repair_description }}">
+          <copy-button text-to-copy="{{ ticket.repair_description }}" slot="right-icon" />
+        </van-cell>
+      </van-cell-group>
+    </view>
+    <view
+      wx:if="{{ ticket.repair_status !== 'Done' && ticket.repair_status !== 'Canceled' && ticket.repair_status !== 'Closed' }}"
+      class="btn-container">
+      <van-button round class="close-btn" icon="block" class-prefix="material-icons" type="info"
+        bind:click="completeTheTicket">
+        结束工单
+      </van-button>
+      <van-button round class="close-btn" icon="warning" class-prefix="material-icons" type="danger"
+        bind:click="closeTheTicket">
+        强行关闭
+      </van-button>
+    </view>
   </view>
   <van-dialog id="van-dialog" />
   <van-toast id="van-toast" />

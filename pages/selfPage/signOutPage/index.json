@@ -1,6 +1,7 @@
 {
   "navigationBarTitleText": "删除账号",
   "usingComponents": {
+    "towxml": "/towxml/towxml",
     "van-button": "@vant/weapp/button/index",
     "van-dialog": "@vant/weapp/dialog/index",
     "van-toast": "@vant/weapp/toast/index"
