@@ -23,7 +23,7 @@
       <van-cell is-link size="large" title="历史工单" link-type="navigateTo" url="./historyPage/index">
         <view class="material-icons" slot="icon"> history </view>
       </van-cell>
-      <van-cell is-link size="large" title="个人信息设置" link-type="navigateTo" url="./settingsPage/index">
+      <van-cell is-link size="large" title="个人设置" link-type="navigateTo" url="./settingsPage/index">
         <view class="material-icons" slot="icon"> settings </view>
       </van-cell>
       <van-cell is-link size="large" title="问题反馈" link-type="navigateTo" url="./feedbackPage/index">

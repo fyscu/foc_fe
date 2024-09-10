@@ -41,7 +41,7 @@
         </block>
       </van-field>
     </van-cell-group>
-    <van-cell-group wx:if="{{ verified && !migration }}" inset title="个人信息设置" style="margin-top: 20rpx;">
+    <van-cell-group wx:if="{{ verified && !migration }}" inset title="个人设置" style="margin-top: 20rpx;">
       <van-field required center name="nickname" type="nickname" label="用户名" placeholder="请输入昵称"
         value="{{ userInfo.nickname }}" border="{{ false }}" bind:change="onNicknameChange" bind:blur="onNicknameBlur"
         error="{{ !hasNickname }}">

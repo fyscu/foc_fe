@@ -12,14 +12,16 @@ const article = `
 
 ## 制作团队
 
-| <img src="https://lab.feiyang.ac.cn/images/huzongyao.jpg" alt="胡宗尧"> | 胡宗尧 | 小程序开发 |
+| | | |
 | :------------------------------------------------------: | :-----: | :--------: |
-| <img src="https://cdn.wjlo.cc/br/picture/wjlavatar.png" alt="王嘉麟"> | 王嘉麟 | 后端开发 <br> QQ: 1175671881 |
+| <img src="https://lab.feiyang.ac.cn/images/huzongyao.jpg" alt="胡宗尧"> | 胡宗尧 | 小程序开发 |
+| <img src="https://cdn.wjlo.cc/br/picture/wjlavatar.png" alt="王嘉麟"> | 王嘉麟 | 后端开发 |
 | <img src="https://www.ljm.im/avatar/512.png" alt="林峻茗"> | 林峻茗 | 管理后台开发 |
 
-- Powered By [四川大学飞扬俱乐部研发部](https://lab.feiyang.ac.cn/)
-- 飞扬俱乐部官网： <https://feiyang.ac.cn>
-- 飞扬俱乐部研发部官网： <https://lab.feiyang.ac.cn>
+Powered By 2024 四川大学飞扬俱乐部研发部
+- 飞扬俱乐部： <https://fyscu.com>
+- 飞扬俱乐部研发部： <https://lab.fyscu.com>
+- 源码仓库：<https://github.com/fyscu/foc_fe>
 `;
 
 const app = getApp();
