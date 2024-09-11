@@ -154,7 +154,9 @@ Page({
             message: '确定接单吗？单号：' + parsed[1],
           }).then(() => {
             console.log(res.result);
+            wx.showLoading({ title: "接单中", mask: true });
             giveTicket(parsed[1], parsed[2]).then((returnCode) => {
+              wx.hideLoading();
               if (returnCode === 401) {
                 Toast("鉴权失败，请刷新重试");
               } else if (returnCode === 200) {

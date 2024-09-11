@@ -10,6 +10,7 @@ Page({
   data: {
     active: 0,
     ticket: null,
+    qrcodePath: null,
     warrantyMap: {
       "expired": "过保",
       "under": "在保",
@@ -43,6 +44,15 @@ Page({
       active: map[this.data.ticket.repair_status],
     });
     this.loadQRcode();
+    let that = this;
+    setTimeout(() => {
+      qrcode.exportImage(function (path) {
+        console.log("qrcode path:", path);
+        if (that.data.qrcodePath === null) {
+          that.setData({ qrcodePath: path });
+        }
+      });
+    }, 200);
   },
   loadQRcode() {
     const theme = app.systemInfo.theme;
@@ -57,12 +67,9 @@ Page({
     });
   },
   previewQRcode() {
-    qrcode.exportImage(function (path) {
-      console.log("qrcode.exportImage path:", path);
-      wx.previewImage({
-        current: path,
-        urls: [path],
-      });
+    wx.previewImage({
+      current: this.data.qrcodePath,
+      urls: [this.data.qrcodePath],
     });
   },
   completeTheTicket() {
@@ -70,7 +77,9 @@ Page({
       title: "结束工单",
       message: "确认结束工单吗？",
     }).then(() => {
+      wx.showLoading({ title: "结束工单中", mask: true });
       completeTicket(this.data.ticket.id).then((returnCode) => {
+        wx.hideLoading();
         if (returnCode === 401) {
           Toast("鉴权失败，请刷新重试");
         } else if (returnCode === 200) {
@@ -94,7 +103,9 @@ Page({
       title: "强制关闭工单",
       message: "确认强制关闭工单吗？该功能仅在异常情况下使用。",
     }).then(() => {
+      wx.showLoading({ title: "强制关闭工单", mask: true });
       setTicketStatus(this.data.ticket.id, "Closed").then((returnCode) => {
+        wx.hideLoading();
         if (returnCode === 401) {
           Toast("鉴权失败，请刷新重试");
         } else if (returnCode === 200) {

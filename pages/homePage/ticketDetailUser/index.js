@@ -10,6 +10,7 @@ Page({
   data: {
     active: 0,
     ticket: null,
+    qrcodePath: null,
     warrantyMap: {
       "expired": "过保",
       "under": "在保",
@@ -43,6 +44,15 @@ Page({
       active: map[this.data.ticket.repair_status],
     });
     this.loadQRcode();
+    let that = this;
+    setTimeout(() => {
+      qrcode.exportImage(function (path) {
+        console.log("qrcode path:", path);
+        if (that.data.qrcodePath === null) {
+          that.setData({ qrcodePath: path });
+        }
+      });
+    }, 200);
   },
   loadQRcode() {
     const theme = app.systemInfo.theme;
@@ -57,12 +67,9 @@ Page({
     });
   },
   previewQRcode() {
-    qrcode.exportImage(function (path) {
-      console.log("qrcode.exportImage path:", path);
-      wx.previewImage({
-        current: path,
-        urls: [path],
-      });
+    wx.previewImage({
+      current: this.data.qrcodePath,
+      urls: [this.data.qrcodePath],
     });
   },
   cancelTheTicket() {
@@ -70,7 +77,9 @@ Page({
       title: "取消工单",
       message: "确认取消工单吗？",
     }).then(() => {
+      wx.showLoading({ title: "取消工单", mask: true });
       setTicketStatus(this.data.ticket.id, "Canceled").then((returnCode) => {
+        wx.hideLoading();
         if (returnCode === 401) {
           Toast("鉴权失败，请刷新重试");
         } else if (returnCode === 200) {

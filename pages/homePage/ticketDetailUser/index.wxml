@@ -52,9 +52,11 @@
     </view>
     <view
       wx:if="{{ ticket.repair_status !== 'Done' && ticket.repair_status !== 'Canceled' && ticket.repair_status !== 'Closed' }}"
-      class="qrcode-container" bind:tap="previewQRcode">
-      <canvas class='canvas' canvas-id='canvas'>
+      class="qrcode-container">
+      <canvas wx:if="{{ qrcodePath === null }}" class="canvas" canvas-id="canvas">
       </canvas>
+      <van-image wx:else width="150px" height="150px" src="{{ qrcodePath }}" bind:click="previewQRcode">
+      </van-image>
       <view class="tips">技术员扫码可面对面接单</view>
     </view>
     <view
