@@ -4,6 +4,7 @@ import { setTicketStatus } from "../../../utils/req";
 import QRCode from "../../../utils/weapp_qrcode.js";
 
 var app = getApp();
+var qrcode;
 
 Page({
   data: {
@@ -45,19 +46,23 @@ Page({
   },
   loadQRcode() {
     const theme = app.systemInfo.theme;
-    const qrcode = new QRCode('canvas', {
-      // usingIn: this,
-      text: "https://www.feiyang.ac.cn",
+    qrcode = new QRCode('canvas', {
+      text: `[give];${this.data.ticket.id};${this.data.ticket.order_hash}`,
       padding: 12,
       width: 150,
       height: 150,
       colorDark: theme === "dark" ? "#1CA4FC" : "black",
       colorLight: theme === "dark" ? "#2e2e2e" : "white",
-      correctLevel: QRCode.CorrectLevel.H,
-      callback: (res) => {
-        // 生成二维码的临时文件
-        console.log(res.path)
-      }
+      correctLevel: QRCode.CorrectLevel.H
+    });
+  },
+  previewQRcode() {
+    qrcode.exportImage(function (path) {
+      console.log("qrcode.exportImage path:", path);
+      wx.previewImage({
+        current: path,
+        urls: [path],
+      });
     });
   },
   cancelTheTicket() {

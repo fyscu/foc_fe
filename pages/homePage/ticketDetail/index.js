@@ -1,8 +1,10 @@
 import Toast from "@vant/weapp/toast/toast";
 import Dialog from "@vant/weapp/dialog/dialog";
 import { completeTicket, setTicketStatus } from "../../../utils/req";
+import QRCode from "../../../utils/weapp_qrcode.js";
 
 var app = getApp();
+var qrcode;
 
 Page({
   data: {
@@ -39,6 +41,28 @@ Page({
     console.log(this.data.ticket);
     this.setData({
       active: map[this.data.ticket.repair_status],
+    });
+    this.loadQRcode();
+  },
+  loadQRcode() {
+    const theme = app.systemInfo.theme;
+    qrcode = new QRCode('canvas', {
+      text: `[give];${this.data.ticket.id};${this.data.ticket.order_hash}`,
+      padding: 12,
+      width: 150,
+      height: 150,
+      colorDark: theme === "dark" ? "#1CA4FC" : "black",
+      colorLight: theme === "dark" ? "#2e2e2e" : "white",
+      correctLevel: QRCode.CorrectLevel.H
+    });
+  },
+  previewQRcode() {
+    qrcode.exportImage(function (path) {
+      console.log("qrcode.exportImage path:", path);
+      wx.previewImage({
+        current: path,
+        urls: [path],
+      });
     });
   },
   completeTheTicket() {

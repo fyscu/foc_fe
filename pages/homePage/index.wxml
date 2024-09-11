@@ -64,9 +64,8 @@
           </view>
         </view>
         <view class="btn-container">
-          <van-button round icon="settings" class-prefix="material-icons" type="info"
-            bind:click="onNavigateToTechOptions">
-            设置
+          <van-button round icon="center_focus_weak" class-prefix="material-icons" type="info" bind:click="onScanCode">
+            扫码接单
           </van-button>
         </view>
       </view>
@@ -103,5 +102,6 @@
       </van-checkbox>
     </view>
   </van-dialog>
+  <van-dialog id="van-dialog" />
   <van-toast id="van-toast" />
 </scroll-view>

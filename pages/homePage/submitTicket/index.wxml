@@ -70,7 +70,7 @@
       </block>
       <block wx:elif="{{ showPopup === 4 }}">
         <van-picker title="选择保修状态" show-toolbar columns="{{ warrantyStatusList }}"
-          bind:confirm="onConfirmwarrantyStatus" bind:cancel="onClose" />
+          bind:confirm="onConfirmWarrantyStatus" bind:cancel="onClose" />
       </block>
       <block wx:elif="{{ showPopup === 5 }}">
         <van-picker title="选择设备问题" show-toolbar columns="{{ problemList }}" bind:confirm="onConfirmDeviceProblem"

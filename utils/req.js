@@ -81,7 +81,6 @@ function unRegister() {
           app.globalData.userInfo.phone = ""; // 用户手机号
           app.globalData.userInfo.campus = ""; // 所在校区
           app.globalData.userInfo.nickname = ""; // 用户昵称
-          app.globalData.userInfo.available = true;
           app.globalData.userInfo.avatarUrl = "https://img1.doubanio.com/view/group_topic/l/public/p560183288.webp"; // 用户头像地址
           app.globalData.ticketList = [];
           app.globalData.isloggedin = false;
@@ -180,8 +179,12 @@ function userLogin() {
                   app.globalData.userInfo.phone = result.phone;
                   app.globalData.userInfo.campus = result.campus;
                   app.globalData.userInfo.nickname = result.nickname;
-                  app.globalData.userInfo.available = result.available;
                   app.globalData.userInfo.avatarUrl = result.avatar;
+                  // 设置技术员信息
+                  if (result.role === "technician") {
+                    app.globalData.userInfo.wants = result.wants;
+                    app.globalData.userInfo.available = result.available;
+                  }
                   // 成功登录
                   app.globalData.isloggedin = true;
                   resolve(200); // 返回 200 (成功登录)
@@ -293,14 +296,14 @@ function setUserInfo(userInfo) {
 }
 
 // 设置技术员是否接单
-function setTechInfo(available = true) {
+function setTechInfo(userInfo) {
   return new Promise((resolve, reject) => {
     console.log("Requesting /user/setuser...");
     wx.request({
       url: app.globalData.rootApiUrl + '/v1/user/setuser',
       data: {
-        // qq: qq,
-        available: available,
+        id: app.globalData.openid, // 必填
+        wants: userInfo.wants
       },
       header: {
         'content-type': 'application/json',
@@ -315,7 +318,7 @@ function setTechInfo(available = true) {
         } else if (res.data.success === true) {
           // 修改成功
           console.log('修改成功:', res);
-          app.globalData.userInfo.available = available;
+          app.globalData.userInfo.wants = userInfo.wants;
           resolve(200);
         } else {
           console.log('修改失败:', res);
@@ -428,9 +431,42 @@ function addTicket(
         } else if (res.data.success === true) {
           console.log("创建工单成功，工单号:", res.data.ticketid);
           resolve(200);
+        } else if (res.data.success === false) {
+          if (res.data.message === "order_exists") {
+            console.log("工单已存在", res);
+            resolve(300);
+          }
         } else {
-          console.log("创建工单失败:", res.data);
-          resolve(300);
+          console.log("创建工单失败:", res);
+          resolve(500);
+        }
+      }
+    });
+  });
+}
+
+// https://fyapidocs.wjlo.cc/ticket/give
+function giveTicket(order_id, order_hash) {
+  return new Promise((resolve, reject) => {
+    wx.request({
+      url: app.globalData.rootApiUrl + "/v1/ticket/give",
+      data: { order_id: order_id, order_hash: order_hash },
+      header: {
+        'content-type': 'application/json',
+        'Authorization': `Bearer ${app.globalData.accessToken}`,
+      },
+      method: 'POST',
+      success(res) {
+        if (res.statusCode === 401) {
+          console.log('鉴权失败，重新登录中...', res);
+          userLogin();
+          resolve(401);
+        } else if (res.data.success === true) {
+          console.log("分配工单成功", res);
+          resolve(200);
+        } else {
+          console.log("分配工单失败:", res);
+          resolve(500);
         }
       }
     });
@@ -743,6 +779,7 @@ module.exports = {
   setTechInfo,
   uploadQiniuImg,
   addTicket,
+  giveTicket,
   getTicket,
   putFeedback,
   getConfig,

@@ -47,6 +47,13 @@
     </view>
     <view
       wx:if="{{ ticket.repair_status !== 'Done' && ticket.repair_status !== 'Canceled' && ticket.repair_status !== 'Closed' }}"
+      class="qrcode-container" bind:tap="previewQRcode">
+      <canvas class='canvas' canvas-id='canvas'>
+      </canvas>
+      <view class="tips">二维码用于转单给别的技术员</view>
+    </view>
+    <view
+      wx:if="{{ ticket.repair_status !== 'Done' && ticket.repair_status !== 'Canceled' && ticket.repair_status !== 'Closed' }}"
       class="btn-container">
       <van-button round class="close-btn" icon="block" class-prefix="material-icons" type="info"
         bind:click="completeTheTicket">

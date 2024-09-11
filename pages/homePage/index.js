@@ -3,6 +3,7 @@ import Toast from "@vant/weapp/toast/toast";
 import { findDataByName } from "../../utils/util"
 import {
   getTicket,
+  giveTicket,
   setConfig,
   getConfig
 } from "../../utils/req"
@@ -141,6 +142,41 @@ Page({
     } else { // admin
       this.setData({ loading: false });
     }
+  },
+  onScanCode() {
+    let that = this;
+    wx.scanCode({
+      success(res) {
+        let parsed = res.result.split(";");
+        if (parsed[0] === "[give]") {
+          Dialog.confirm({
+            title: '接单确认',
+            message: '确定接单吗？单号：' + parsed[1],
+          }).then(() => {
+            console.log(res.result);
+            giveTicket(parsed[1], parsed[2]).then((returnCode) => {
+              if (returnCode === 401) {
+                Toast("鉴权失败，请刷新重试");
+              } else if (returnCode === 200) {
+                Toast("接单成功");
+                that.initialize();
+              } else if (returnCode === 403) {
+                Toast("接单失败，权限不足");
+              } else {
+                Toast("接单失败，未知错误");
+              }
+            });
+          }).catch(() => {
+            wx.hideLoading();
+          });
+        } else {
+          Toast("扫码成功");
+        }
+      },
+      fail(err) {
+        console.log("err:", err);
+      },
+    });
   },
   reloadData() {
     this.setData({

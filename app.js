@@ -15,7 +15,6 @@ App({
       email: "", // 用户邮箱
       phone: "", // 用户手机号
       campus: "", // 所在校区
-      available: true, // 是否接单
       nickname: "", // 用户昵称
       avatarUrl: "https://img1.doubanio.com/view/group_topic/l/public/p560183288.webp", // 默认用户头像地址
     },
@@ -51,7 +50,7 @@ App({
                 }
                 if (result.registered) {
                   // 用户已经注册
-                  console.log('用户已注册:', result.access_token);
+                  console.log('用户已注册:', result);
                   globalData.accessToken = result.access_token;
                   // 设置用户信息
                   globalData.userInfo.uid = result.uid;
@@ -60,8 +59,12 @@ App({
                   globalData.userInfo.phone = result.phone;
                   globalData.userInfo.campus = result.campus;
                   globalData.userInfo.nickname = result.nickname;
-                  globalData.userInfo.available = result.available;
                   globalData.userInfo.avatarUrl = result.avatar;
+                  // 设置技术员信息
+                  if (result.role === "technician") {
+                    globalData.userInfo.wants = result.wants;
+                    globalData.userInfo.available = result.available;
+                  }
                   // 成功登录
                   globalData.isloggedin = true;
                   wx.reLaunch({

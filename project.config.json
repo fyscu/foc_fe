@@ -14,7 +14,8 @@
     "enhance": true,
     "showShadowRootInWxmlPanel": false,
     "packNpmManually": false,
-    "ignoreUploadUnusedFiles": true,
+    "ignoreDevUnusedFiles": false,
+    "ignoreUploadUnusedFiles": false,
     "compileHotReLoad": false,
     "skylineRenderEnable": true,
     "es6": true

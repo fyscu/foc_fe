@@ -12,3 +12,20 @@
   display: block;
   margin-bottom: 10rpx;
 }
+
+.qrcode-container {
+  margin-top: 40rpx;
+  text-align: center;
+  display: block;
+  position: unset;
+}
+
+.qrcode-container .canvas {
+  width: 150px;
+  height: 150px;
+  margin-left: calc(50% - 75px);
+}
+
+.qrcode-container .tips {
+  margin-top: 20rpx;
+}
