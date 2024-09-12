@@ -6,7 +6,9 @@
 
 /* 亮色模式 */
 @media (prefers-color-scheme: light) {
-
+  .container {
+    --button-disabled-opacity: 0.9;
+  }
   /* 设置全局背景颜色 */
   page {
     background-color: #f7f8fa;
@@ -28,6 +30,9 @@
     --card-background-color: #2e2e2e;
     --steps-background-color: #444444;
     --tag-plain-background-color: #444444;
+    --divider-border-color: #8b8b8b;
+    --step-finish-text-color: #8b8b8b;
+    --button-disabled-opacity: 0.9;
   }
 
   .van-step__circle-container {
@@ -137,5 +142,13 @@
 }
 
 .class-status-Closed .van-tag--mark {
+  background-color: #cfbe06;
+}
+
+.class-status-UserConfirming .van-tag--mark {
+  background-color: #bf1d9c;
+}
+
+.class-status-TechConfirming .van-tag--mark {
   background-color: #cfbe06;
 }

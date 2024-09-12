@@ -14,6 +14,7 @@ import {
 
 var app = getApp();
 let userInfoOriginal = {};
+let wantsMap3 = ["a", "b", "c", "d", "e"];
 
 Page({
   data: {
@@ -65,9 +66,13 @@ Page({
   },
   // 拖动滑块时触发
   onDrag(event) {
-    let wantsMap3 = ["a", "b", "c", "d", "e"];
     this.setData({
       ["userInfo.wants"]: wantsMap3[event.detail.value],
+    });
+  },
+  onChange(event) {
+    this.setData({
+      ["userInfo.wants"]: wantsMap3[event.detail],
     });
   },
   // 在输入框不为focused时更新数据

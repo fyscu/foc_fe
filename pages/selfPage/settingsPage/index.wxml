@@ -36,7 +36,7 @@
       <van-cell title="接单意愿" value="{{ wantsMap1[userInfo.wants] }}" border="{{ false }}" />
       <van-cell center>
         <van-slider slot="title" class="willing-silder" max="4" step="1" bar-height="4px" active-color="#ee0a24"
-          value="{{ wantsMap2[userInfo.wants] }}" bind:drag="onDrag">
+          value="{{ wantsMap2[userInfo.wants] }}" bind:change="onChange" bind:drag="onDrag">
         </van-slider>
       </van-cell>
     </van-cell-group>

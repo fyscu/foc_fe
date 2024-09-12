@@ -9,6 +9,8 @@ var qrcode;
 Page({
   data: {
     active: 0,
+    role: "user",
+    activeColor: "#38f",
     ticket: null,
     qrcodePath: null,
     warrantyMap: {
@@ -27,34 +29,51 @@ Page({
     }],
   },
   onLoad(options) {
-    let map = {
-      Pending: 0,
-      Repairing: 1,
-      Done: 3,
-      Closed: 3,
-      Canceled: 3,
-    };
+    console.log("ticketDetail options:", options);
     this.setData({
+      role: options.role,
       ticket: app.globalData.ticketList.find(
         (item) => item.id === options.id
       ),
     });
-    console.log(this.data.ticket);
-    this.setData({
-      active: map[this.data.ticket.repair_status],
-    });
+    this.calcSteps(this.data.ticket.repair_status);
     this.loadQRcode();
-    let that = this;
-    setTimeout(() => {
-      qrcode.exportImage(function (path) {
-        console.log("qrcode path:", path);
-        if (that.data.qrcodePath === null) {
-          that.setData({ qrcodePath: path });
-        }
+  },
+  calcSteps(repair_status) {
+    let statusMap = {
+      Pending: 0,
+      Repairing: 1,
+      UserConfirming: 2,
+      TechConfirming: 2,
+      Done: 3,
+      Closed: 3,
+      Canceled: 3,
+    };
+    if (repair_status === "UserConfirming") {
+      this.setData({
+        ["steps[2].text"]: "技术员确认"
       });
-    }, 200);
+    } else if (repair_status === "TechConfirming") {
+      this.setData({
+        ["steps[2].text"]: "用户确认"
+      });
+    } else if (repair_status === "Canceled") {
+      this.setData({
+        activeColor: "#ff0000",
+        ["steps[3]"]: { text: "用户取消", activeIcon: 'close' }
+      });
+    } else if (repair_status === "Closed") {
+      this.setData({
+        activeColor: "#ff0000",
+        ["steps[3]"]: { text: "强制关闭", activeIcon: 'warning-o' }
+      });
+    }
+    this.setData({
+      active: statusMap[repair_status],
+    });
   },
   loadQRcode() {
+    let that = this;
     const theme = app.systemInfo.theme;
     qrcode = new QRCode('canvas', {
       text: `[give];${this.data.ticket.id};${this.data.ticket.order_hash}`,
@@ -65,6 +84,14 @@ Page({
       colorLight: theme === "dark" ? "#2e2e2e" : "white",
       correctLevel: QRCode.CorrectLevel.H
     });
+    setTimeout(() => {
+      qrcode.exportImage(function (path) {
+        console.log("qrcode path:", path);
+        if (that.data.qrcodePath === null) {
+          that.setData({ qrcodePath: path });
+        }
+      });
+    }, 500);
   },
   previewQRcode() {
     wx.previewImage({
@@ -84,7 +111,7 @@ Page({
           Toast("鉴权失败，请刷新重试");
         } else if (returnCode === 200) {
           Toast("结束工单成功");
-          this.setData({ active: 3 });
+          this.calcSteps('Done');
           setTimeout(() => {
             wx.navigateBack();
           }, 1000);
@@ -96,6 +123,60 @@ Page({
       });
     }).catch((err) => {
       console.log("取消结束工单", err);
+    });
+  },
+  confirmTheTicket() {
+    let confirmStatus;
+    if (this.data.role === "technician") {
+      confirmStatus = "UserConfirming";
+    } else if (this.data.role === "user") {
+      confirmStatus = "TechConfirming";
+    } else {
+      Toast("管理员请用强制关闭功能");
+      return;
+    }
+    Dialog.confirm({
+      title: "确认工单完成",
+      message: "确认工单完成吗？只有用户和技术员双向确认，工单才会关闭",
+    }).then(() => {
+      wx.showLoading({ title: "确认工单", mask: true });
+      setTicketStatus(this.data.ticket.id, confirmStatus).then((returnCode) => {
+        wx.hideLoading();
+        if (returnCode === 401) {
+          Toast("鉴权失败，请刷新重试");
+        } else if (returnCode === 200) {
+          Toast("确认工单成功");
+          this.calcSteps(confirmStatus);
+        } else {
+          Toast("确认工单失败");
+        }
+      });
+    }).catch((err) => {
+      console.log("取消确认工单", err);
+    });
+  },
+  cancelTheTicket() {
+    Dialog.confirm({
+      title: "取消工单",
+      message: "确认取消工单吗？",
+    }).then(() => {
+      wx.showLoading({ title: "取消工单", mask: true });
+      setTicketStatus(this.data.ticket.id, "Canceled").then((returnCode) => {
+        wx.hideLoading();
+        if (returnCode === 401) {
+          Toast("鉴权失败，请刷新重试");
+        } else if (returnCode === 200) {
+          Toast("取消工单成功");
+          this.calcSteps("Canceled");
+          setTimeout(() => {
+            wx.navigateBack();
+          }, 1000);
+        } else {
+          Toast("取消工单失败");
+        }
+      });
+    }).catch((err) => {
+      console.log("取消关闭工单", err);
     });
   },
   closeTheTicket() {
@@ -110,7 +191,7 @@ Page({
           Toast("鉴权失败，请刷新重试");
         } else if (returnCode === 200) {
           Toast("强制关闭成功");
-          this.setData({ active: 0 });
+          this.calcSteps('Closed');
           setTimeout(() => {
             wx.navigateBack();
           }, 1000);

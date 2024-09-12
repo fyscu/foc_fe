@@ -1,6 +1,7 @@
 {
   "navigationBarTitleText": "工单详情",
   "usingComponents": {
+    "van-loading": "@vant/weapp/loading/index",
     "van-steps": "@vant/weapp/steps/index",
     "van-dialog": "@vant/weapp/dialog/index",
     "van-button": "@vant/weapp/button/index",

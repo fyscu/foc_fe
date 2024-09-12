@@ -17,7 +17,8 @@
         <view wx:for="{{ ticketList }}" wx:key="id">
           <view
             wx:if="{{ item.repair_status === 'Done' || item.repair_status === 'Canceled' || item.repair_status === 'Closed'}}">
-            <navigator url="/pages/homePage/ticketDetailUser/index?id={{ item.id }}" open-type="navigate">
+            <navigator url="/pages/homePage/ticketDetail/index?id={{ item.id }}&role={{ userInfo.role }}"
+              open-type="navigate">
               <van-card class="class-status-{{ item.repair_status }}" desc="{{ item.repair_description }}"
                 title="{{ item.device_type }} {{ item.fault_type }}" thumb="{{ item.repair_image_url }}"
                 tag="{{ statusList[item.repair_status] }}">
@@ -41,7 +42,8 @@
         <view wx:for="{{ ticketList }}" wx:key="id">
           <view
             wx:if="{{ item.repair_status === 'Done' || item.repair_status === 'Canceled' || item.repair_status === 'Closed'}}">
-            <navigator url="/pages/homePage/ticketDetail/index?id={{ item.id }}" open-type="navigate">
+            <navigator url="/pages/homePage/ticketDetail/index?id={{ item.id }}&role={{ userInfo.role }}"
+              open-type="navigate">
               <van-card class="class-status-{{ item.repair_status }}" desc="{{ item.repair_description }}"
                 title="{{ item.device_type }} {{ item.fault_type }}" thumb="{{ item.repair_image_url }}"
                 tag="{{ statusList[item.repair_status] }}">

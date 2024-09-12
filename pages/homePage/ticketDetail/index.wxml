@@ -2,15 +2,35 @@
 <scroll-view class="scrollview" scroll-y type="list">
   <view class="container">
     <view class="step-container">
-      <van-steps steps="{{ steps }}" active="{{ active }}" active-icon="success" active-color="#38f" />
+      <van-steps steps="{{ steps }}" active="{{ active }}" active-icon="success" active-color="{{ activeColor }}" />
     </view>
     <view wx:if="{{ ticket !== null }}" class="table-container">
-      <van-cell-group inset title="机主联系方式">
-        <van-cell center title="QQ" value="{{ ticket.qq_number }}">
+      <van-cell-group wx:if="{{ role === 'technician' }}" inset title="机主联系方式">
+        <van-cell center title="QQ/微信号" value="{{ ticket.qq_number }}">
           <copy-button text-to-copy="{{ ticket.qq_number }}" slot="right-icon" />
         </van-cell>
         <van-cell center title="手机号" value="{{ ticket.user_phone }}">
           <copy-button text-to-copy="{{ ticket.user_phone }}" slot="right-icon" />
+        </van-cell>
+        <van-cell wx:if="{{ ticket.assigned_time !== null }}" l center title="分配时间" value="{{ ticket.assigned_time }}">
+          <copy-button text-to-copy="{{ ticket.assigned_time }}" slot="right-icon" />
+        </van-cell>
+        <van-cell wx:if="{{ ticket.completion_time !== null }}" center title="完成时间"
+          value="{{ ticket.completion_time }}">
+          <copy-button text-to-copy="{{ ticket.completion_time }}" slot="right-icon" />
+        </van-cell>
+      </van-cell-group>
+      <van-cell-group wx:elif="{{ role === 'user' && ticket.assigned_technician_id !== null }}" inset title="技术员联系方式">
+        <van-cell wx:if="{{ ticket.assigned_technician_id !== null }}" center title="技工号"
+          value="{{ ticket.assigned_technician_id }}">
+          <copy-button text-to-copy="{{ ticket.assigned_technician_id }}" slot="right-icon" />
+        </van-cell>
+        <van-cell wx:if="{{ ticket.assigned_time !== null }}" l center title="分配时间" value="{{ ticket.assigned_time }}">
+          <copy-button text-to-copy="{{ ticket.assigned_time }}" slot="right-icon" />
+        </van-cell>
+        <van-cell wx:if="{{ ticket.completion_time !== null }}" center title="完成时间"
+          value="{{ ticket.completion_time }}">
+          <copy-button text-to-copy="{{ ticket.completion_time }}" slot="right-icon" />
         </van-cell>
       </van-cell-group>
       <van-cell-group inset title="工单维修信息">
@@ -48,22 +68,48 @@
     <view
       wx:if="{{ ticket.repair_status !== 'Done' && ticket.repair_status !== 'Canceled' && ticket.repair_status !== 'Closed' }}"
       class="qrcode-container">
-      <canvas wx:if="{{ qrcodePath === null }}" class="canvas" canvas-id="canvas">
-      </canvas>
+      <van-image wx:if="{{ qrcodePath === null }}" width="150px" height="150px" use-loading-slot>
+        <van-loading slot="loading" type="spinner" size="30" vertical />
+      </van-image>
       <van-image wx:else width="150px" height="150px" src="{{ qrcodePath }}" bind:click="previewQRcode">
       </van-image>
-      <view class="tips">二维码用于转单给别的技术员</view>
+      <view wx:if="{{ role === 'user' }}" class="tips">技术员扫码可面对面接单</view>
+      <view wx:elif="{{ role === 'technician' }}" class="tips">二维码用于转单给别的技术员</view>
+      <canvas wx:if="{{ qrcodePath === null }}" class="canvas" canvas-id="canvas">
+      </canvas>
     </view>
     <view
       wx:if="{{ ticket.repair_status !== 'Done' && ticket.repair_status !== 'Canceled' && ticket.repair_status !== 'Closed' }}"
       class="btn-container">
-      <van-button round class="close-btn" icon="block" class-prefix="material-icons" type="info"
-        bind:click="completeTheTicket">
-        结束工单
+      <van-button wx:if="{{ ticket.repair_status === 'Repairing' }}" round class="close-btn" icon="check_circle"
+        class-prefix="material-icons" type="info" bind:click="confirmTheTicket">
+        维修完成
       </van-button>
-      <van-button round class="close-btn" icon="warning" class-prefix="material-icons" type="danger"
-        bind:click="closeTheTicket">
+      <van-button wx:elif="{{ role === 'technician' && ticket.repair_status === 'UserConfirming' }}" disabled round
+        class="close-btn" icon="hourglass_empty" class-prefix="material-icons" type="default"
+        bind:click="completeTheTicket">
+        等待用户确认
+      </van-button>
+      <van-button wx:elif="{{ role === 'technician' && ticket.repair_status === 'TechConfirming' }}" round
+        class="close-btn" icon="check_circle" class-prefix="material-icons" type="info" bind:click="completeTheTicket">
+        维修完成
+      </van-button>
+      <van-button wx:elif="{{ role === 'user' && ticket.repair_status === 'TechConfirming' }}" disabled round
+        class="close-btn" icon="hourglass_empty" class-prefix="material-icons" type="default"
+        bind:click="completeTheTicket">
+        等待技术员确认
+      </van-button>
+      <van-button wx:elif="{{ role === 'user' && ticket.repair_status === 'UserConfirming' }}" round class="close-btn"
+        icon="check_circle" class-prefix="material-icons" type="info" bind:click="completeTheTicket">
+        维修完成
+      </van-button>
+      <van-button wx:if="{{ role === 'technician' }}" round class="close-btn" icon="warning"
+        class-prefix="material-icons" type="danger" bind:click="closeTheTicket">
         强行关闭
+      </van-button>
+      <van-button wx:elif="{{ role === 'user' }}" round class="close-btn" icon="delete_forever"
+        class-prefix="material-icons" type="warning" bind:click="cancelTheTicket">
+        取消工单
       </van-button>
     </view>
   </view>

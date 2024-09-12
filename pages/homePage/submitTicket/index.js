@@ -50,8 +50,9 @@ Page({
     // showPopup = 2:
     deviceTypeList: [
       "笔记本 (Laptop)",
-      "台式机 (PC/Mac)",
-      "移动手机 (Phone)",
+      "MacBook (Mac)",
+      "台式机 (PC)",
+      // "移动手机 (Phone)",
       "其他设备 (Others)",
     ],
     // showPopup = 3:
