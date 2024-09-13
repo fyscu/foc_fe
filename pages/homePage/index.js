@@ -13,7 +13,7 @@ let sysConfigOriginal = null;
 
 Page({
   data: {
-    // [toxml] 显示在dialog中的维修须知
+    // [toxml] 显示在dialog中的维修条款及隐私协议
     article: {},
     showDialog: false,
     announcementAgreed: false,
@@ -207,7 +207,7 @@ Page({
       url: "/pages/homePage/submitTicket/index",
     });
   },
-  // 维修须知弹窗
+  // 维修条款及隐私协议弹窗
   onShowDialog() {
     let result = app.towxml(
       findDataByName(this.data.sysConfig, 'Global_Tips'),
