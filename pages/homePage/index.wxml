@@ -92,13 +92,13 @@
       <van-empty description="请先登录～" />
     </view>
   </view>
-  <van-dialog use-slot title="维修须知" show="{{ showDialog }}" show-cancel-button bind:close="onCloseDialog"
-    show-confirm-button="{{ announcementAgreed }}" confirm-button-text="我已仔细阅读"
+  <van-dialog use-slot title="维修条款及隐私协议" show="{{ showDialog }}" show-cancel-button bind:close="onCloseDialog"
+    show-confirm-button="{{ announcementAgreed }}" confirm-button-text="继续"
     bind:confirm="navigateToSubmitTicketPage">
     <view class="dialog-article-container">
       <towxml nodes="{{ article }}" />
       <van-checkbox value="{{ announcementAgreed }}" bind:change="onAgreeChange">
-        我已阅读并同意「维修须知」
+        我已阅读并同意维修条款及隐私协议
       </van-checkbox>
     </view>
   </van-dialog>

@@ -19,7 +19,15 @@
 
 .dialog-article-container {
   overflow: scroll;
-  height: 800rpx;
+  height: 900rpx;
+}
+
+.h2w.h2w {
+  font-size: 28rpx;
+}
+
+.h2w__h3.h2w__h3 {
+  font-size: 36rpx;
 }
 
 .dialog-article-container .van-checkbox {

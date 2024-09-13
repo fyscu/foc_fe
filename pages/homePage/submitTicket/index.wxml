@@ -3,7 +3,7 @@
   <!-- link 模式，在右侧显示链接箭头 -->
   <view class="container">
     <navigator url="/pages/homePage/announcement/index" open-type="navigate">
-      <van-notice-bar color="#1989fa" background="#ecf9ff" left-icon="info-o" mode="link" text="请务必认真阅读「维修须知」" />
+      <van-notice-bar color="#1989fa" background="#ecf9ff" left-icon="info-o" mode="link" text="请务必认真阅读维修条款及隐私协议" />
     </navigator>
     <van-cell-group wx:if="{{ loggedin !== 1 }}" inset title="个人联系信息">
       <van-field required center name="qq" type="digit" label="QQ/微信" placeholder="请填写你的QQ号/微信号" clearable value="{{ qq }}"
