@@ -1,6 +1,7 @@
 {
   "navigationBarTitleText": "个人设置",
   "usingComponents": {
+    "van-tag": "@vant/weapp/tag/index",
     "van-field": "@vant/weapp/field/index",
     "van-button": "@vant/weapp/button/index",
     "van-cell-group": "@vant/weapp/cell-group/index",

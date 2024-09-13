@@ -10,3 +10,8 @@
   margin-top: 10rpx;
   margin-bottom: 10rpx;
 }
+
+.label-text {
+  margin-right: 10rpx;
+  display: inline-block;
+}

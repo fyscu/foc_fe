@@ -69,6 +69,7 @@ Page({
       });
     }
     this.setData({
+      ["ticket.repair_status"]: repair_status,
       active: statusMap[repair_status],
     });
   },

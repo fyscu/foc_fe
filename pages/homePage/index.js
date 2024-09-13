@@ -23,7 +23,7 @@ Page({
       Pending: "待分配",
       Repairing: "维修中",
       UserConfirming: "等待用户确认",
-      TechConfirming: "等待技术员确认",
+      TechConfirming: "等待技工确认",
       Done: "已完成",
       Closed: "已关闭",
       Canceled: "已取消",

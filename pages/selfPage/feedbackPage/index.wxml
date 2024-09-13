@@ -2,8 +2,12 @@
 <scroll-view class="scrollview" scroll-y type="list">
   <view class="container">
     <van-cell-group title="反馈" inset>
+      <van-field wx:if="{{ loggedin !== 1 }}" center name="contact" type="text" label="联系方式" placeholder="微信/QQ/邮箱/手机号"
+        model:value="{{ contact }}">
+        <view class="material-icons" slot="right-icon"> phone </view>
+      </van-field>
       <van-field class="feedback-textfield" model:value="{{ rawText }}" type="textarea" placeholder="请输入您的反馈……"
-        autosize="{{ autosizeData}}" border="{{ false }}">
+        autosize="{{ autosizeData }}" border="{{ false }}">
       </van-field>
     </van-cell-group>
     <view class="btn-container">

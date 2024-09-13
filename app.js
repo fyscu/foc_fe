@@ -60,6 +60,7 @@ App({
                   globalData.userInfo.campus = result.campus;
                   globalData.userInfo.nickname = result.nickname;
                   globalData.userInfo.avatarUrl = result.avatar;
+                  globalData.userInfo.isEmailValid = result.isEmailValid;
                   // 设置技术员信息
                   if (result.role === "technician") {
                     globalData.userInfo.wants = result.wants;

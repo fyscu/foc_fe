@@ -14,7 +14,7 @@
           <image src="{{ userInfo.avatarUrl }}" />
         </view>
         <view class="wechat-dialog-text">
-          {{item.content}}
+          {{ item.content }}
         </view>
       </view>
     </view>

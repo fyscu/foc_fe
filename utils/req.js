@@ -81,6 +81,7 @@ function unRegister() {
           app.globalData.userInfo.phone = ""; // 用户手机号
           app.globalData.userInfo.campus = ""; // 所在校区
           app.globalData.userInfo.nickname = ""; // 用户昵称
+          app.globalData.userInfo.isEmailValid = false;
           app.globalData.userInfo.avatarUrl = "https://img1.doubanio.com/view/group_topic/l/public/p560183288.webp"; // 用户头像地址
           app.globalData.ticketList = [];
           app.globalData.isloggedin = false;
@@ -180,6 +181,7 @@ function userLogin() {
                   app.globalData.userInfo.campus = result.campus;
                   app.globalData.userInfo.nickname = result.nickname;
                   app.globalData.userInfo.avatarUrl = result.avatar;
+                  app.globalData.userInfo.isEmailValid = result.isEmailValid;
                   // 设置技术员信息
                   if (result.role === "technician") {
                     app.globalData.userInfo.wants = result.wants;
@@ -364,11 +366,11 @@ function uploadQiniuImg(localFilePath) {
   });
 }
 
-function putFeedback(text) {
+function putFeedback(contact, text) {
   return new Promise((resolve, reject) => {
     wx.request({
       url: app.globalData.rootApiUrl + '/v1/feedback/add',
-      data: { "text": text },
+      data: { text: text, contact: contact },
       method: 'POST',
       header: {
         'content-type': 'application/json',
@@ -722,6 +724,46 @@ function newPhone(phone) {
   });
 }
 
+function newEmail(email) {
+  console.log("Requesting /user/newemail...");
+  return new Promise((resolve, reject) => {
+    wx.request({
+      url: app.globalData.rootApiUrl + "/v1/user/newemail",
+      header: {
+        'content-type': 'application/json',
+        'Authorization': `Bearer ${app.globalData.accessToken}`,
+      },
+      data: {
+        email: email,
+      },
+      method: 'POST',
+      success(res) {
+        if (res.statusCode === 401) {
+          console.log('鉴权失败，重新登录中...', res);
+          userLogin();
+          resolve(401);
+        } else if (res.data.success === false) {
+          if (res.data.status === "same_email") {
+            console.log('邮箱未改变:', res);
+            resolve(300);
+          }
+        } else if (res.data.success === true) {
+          if (res.data.status === "verification_email_sent") {
+            console.log('成功发送验证码:', res);
+            resolve(200);
+          } else {
+            console.log('请求失败:', res);
+            resolve(500);
+          }
+        } else {
+          console.log('请求失败:', res);
+          resolve(500);
+        }
+      }
+    })
+  });
+}
+
 //https://fyapidocs.wjlo.cc/user/vchangephone
 function phoneChangeVerify(phone, verifiCode) {
   return new Promise((resolve, reject) => {
@@ -789,5 +831,6 @@ module.exports = {
   regevent,
   userMigration,
   newPhone,
+  newEmail,
   phoneChangeVerify
 }

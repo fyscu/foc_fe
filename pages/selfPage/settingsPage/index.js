@@ -3,6 +3,7 @@ import Toast from "@vant/weapp/toast/toast";
 import Dialog from "@vant/weapp/dialog/dialog";
 import {
   userLogin,
+  newEmail,
   uploadQiniuImg,
   setTechInfo,
   setUserInfo
@@ -25,6 +26,8 @@ Page({
     hasCampus: true,
     hasNickname: true,
     hasAvatarUrl: true,
+    countDownNum: 60,
+    isCountingDown: false,
     userInfo: app.globalData.userInfo,
     campusList: ["江安", "望江", "华西"],
     showPopup: 0, // 不弹出选择框
@@ -92,6 +95,56 @@ Page({
     this.setData({ ["userInfo.email"]: e.detail });
     this.setData({ hasEmail: e.detail !== "" });
     this.setData({ validEmail: true });
+  },
+  sendCode(e) {
+    if (this.data.loggedin === 1) {
+      Toast("很抱歉，本小程序仅对四川大学在校生开放");
+      return;
+    }
+    let _email = this.data.userInfo.email.trim();
+    if (_email === "") {
+      Toast('请先完善邮箱');
+      this.setData({ hasEmail: false });
+      return;
+    }
+    // 调用发送验证码接口
+    wx.showLoading({ title: '发送中', mask: true });
+    newEmail(_email).then((returnCode) => {
+      wx.hideLoading();
+      if (returnCode === 401) {
+        Toast("鉴权失败，请刷新重试");
+      } else if (returnCode === 200) { // 成功发送
+        Toast("验证码已发送，验证后请重新登录");
+        this.startCountingDown();
+      } else if (returnCode === 300) {
+        Toast("邮箱未改变");
+      } else {
+        Toast("未知错误");
+      }
+    }).catch((error) => {
+      Toast("请求失败:" + error);
+    });
+  },
+  startCountingDown() {
+    // 开始倒计时
+    if (!this.data.isCountingDown) {
+      this.setData({
+        isCountingDown: true
+      });
+      let interval = setInterval(() => {
+        let countDownNum = this.data.countDownNum - 1;
+        this.setData({
+          countDownNum: countDownNum
+        });
+        if (countDownNum === 0) {
+          clearInterval(interval);
+          this.setData({
+            isCountingDown: false,
+            countDownNum: 60 // 重置倒计时时间
+          });
+        }
+      }, 1000);
+    }
   },
   // 选择头像
   onChooseAvatar(e) {
@@ -241,6 +294,7 @@ Page({
       app.globalData.userInfo.phone = ""; // 用户手机号
       app.globalData.userInfo.campus = ""; // 所在校区
       app.globalData.userInfo.nickname = ""; // 用户昵称
+      app.globalData.userInfo.isEmailValid = false;
       app.globalData.userInfo.avatarUrl = "https://img1.doubanio.com/view/group_topic/l/public/p560183288.webp"; // 用户头像地址
       app.globalData.ticketList = [];
       app.globalData.isloggedin = false;

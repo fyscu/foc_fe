@@ -47,7 +47,7 @@
         error="{{ !hasNickname }}">
         <view class="material-icons" slot="right-icon"> face </view>
       </van-field>
-      <van-field required error-message="{{ validEmail ? '' : '邮箱格式错误'}}" center name="email" label="邮箱" placeholder="请输入电子邮箱"
+      <van-field required error-message="{{ validEmail ? '' : '邮箱格式错误' }}" center name="email" label="邮箱" placeholder="请输入电子邮箱"
         value="{{ userInfo.email }}" border="{{ false }}" bind:change="onEmailChange" error="{{ !hasEmail }}">
         <view class="material-icons" slot="right-icon"> mail </view>
       </van-field>
