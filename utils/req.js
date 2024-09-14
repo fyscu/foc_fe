@@ -611,6 +611,35 @@ function getConfig() {
   });
 }
 
+function getTopTech() {
+  return new Promise((resolve, reject) => {
+    wx.request({
+      url: app.globalData.rootApiUrl + "/v1/status/getLaomo",
+      header: {
+        'content-type': 'application/json',
+        'Authorization': `Bearer ${app.globalData.accessToken}`,
+      },
+      method: 'GET',
+      data: {
+        campus: app.globalData.userInfo.campus,
+      },
+      success(res) {
+        if (res.statusCode === 401) {
+          console.log('鉴权失败，重新登录中...', res);
+          userLogin();
+          resolve(401);
+        } else if (res.data.success === true) {
+          console.log('获取劳模成功:', res);
+          resolve(res.data.top_technicians);
+        } else {
+          console.log('获取劳模失败:', res);
+          resolve(500);
+        }
+      }
+    })
+  });
+}
+
 function setConfig(name, data) {
   return new Promise((resolve, reject) => {
     wx.request({
@@ -828,6 +857,7 @@ module.exports = {
   completeTicket,
   setTicketStatus,
   setConfig,
+  getTopTech,
   regevent,
   userMigration,
   newPhone,

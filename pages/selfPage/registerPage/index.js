@@ -12,10 +12,22 @@ import {
 } from "../../../utils/req"
 
 var app = getApp();
+let message = `
+1. 本小程序会收集您的手机号、邮箱地址和昵称。
+    - 手机号用于给您发送维修进度的短信通知；
+    - 邮箱地址用于接收维修进度的邮件通知；
+    - 您的昵称和头像将会显示在工单中，提供给技术员。
+2. 本小程序不会在未经用户同意的情况下，存储或公开用户的任何隐私信息。
+3. 本小程序不会向用户发送任何广告、推销或与维修工单无关的信息。
+4. 本小程序不会向任何无关人员（包括其他用户和技术员）和第三方机构提供您的任何信息。
+5. 您的个人信息会在您主动注销账号或者撤回同意本隐私协议时被永久删除。
+6. 您不同意本隐私条例仅仅限制您使用本小程序的报修功能，但不会影响您使用其他功能，例如报名活动和AI助手等。您也可以选择线下维修、参与校区大型维修等其他方式。`
 
 Page({
   data: {
     loggedin: 1,
+    showDialog: false,
+    article: {},
     // 账号是否需要迁移
     migration: true,
     verified: false,
@@ -39,26 +51,7 @@ Page({
   onLoad(options) {
     console.log(options);
     function _0xce74(_0x422ad9, _0x437c41) { var _0x219971 = _0x2199(); return _0xce74 = function (_0xce74c2, _0xe5a875) { _0xce74c2 = _0xce74c2 - 0x17e; var _0x492802 = _0x219971[_0xce74c2]; return _0x492802; }, _0xce74(_0x422ad9, _0x437c41); } var _0x28e9c1 = _0xce74; function _0x2199() { var _0x336cce = ['52219341TVqAMo', 'GET', '738642fWNokL', '6394024PJbQCP', '1698244TWwtTD', 'status', 'success', 'application/json', '1353734QBrgTc', '6588470zDcVLE', 'data', '15VfyMdn', '938190DMdWex', 'setData', '/v1/status/getTicketStatus?version=1.0.9', '8iqFzdF']; _0x2199 = function () { return _0x336cce; }; return _0x2199(); } (function (_0xe1f587, _0x57051b) { var _0x31c7bc = _0xce74, _0x286767 = _0xe1f587(); while (!![]) { try { var _0x3974a9 = -parseInt(_0x31c7bc(0x189)) / 0x1 + -parseInt(_0x31c7bc(0x185)) / 0x2 + parseInt(_0x31c7bc(0x183)) / 0x3 + -parseInt(_0x31c7bc(0x184)) / 0x4 + -parseInt(_0x31c7bc(0x18c)) / 0x5 * (parseInt(_0x31c7bc(0x18d)) / 0x6) + -parseInt(_0x31c7bc(0x18a)) / 0x7 + -parseInt(_0x31c7bc(0x180)) / 0x8 * (-parseInt(_0x31c7bc(0x181)) / 0x9); if (_0x3974a9 === _0x57051b) break; else _0x286767['push'](_0x286767['shift']()); } catch (_0x2a794d) { _0x286767['push'](_0x286767['shift']()); } } }(_0x2199, 0xcc458), wx['request']({ 'url': app['globalData']['rootApiUrl'] + _0x28e9c1(0x17f), 'method': _0x28e9c1(0x182), 'header': { 'content-type': _0x28e9c1(0x188) }, 'success': _0x53f14e => { var _0x39e452 = _0x28e9c1; _0x53f14e[_0x39e452(0x18b)][_0x39e452(0x187)] === !![] && this[_0x39e452(0x17e)]({ 'loggedin': _0x53f14e[_0x39e452(0x18b)][_0x39e452(0x186)] }); } }));
-    Dialog.confirm({
-      title: "隐私协议",
-      messageAlign: "left",
-      confirmButtonText: "我同意",
-      cancelButtonText: "不同意",
-      message: `
-      1. 本小程序会收集您的手机号、邮箱地址和昵称。
-        - 手机号用于给您发送维修进度的短信通知；
-        - 邮箱地址用于接收维修进度的邮件通知；
-        - 您的昵称和头像将会显示在工单中，提供给技术员。
-      2. 本小程序不会在未经用户同意的情况下，存储或公开用户的任何隐私信息。
-      3. 本小程序不会向用户发送任何广告、推销或与维修工单无关的信息。
-      4. 本小程序不会向任何无关人员（包括其他用户和技术员）和第三方机构提供您的任何信息。
-      5. 您的个人信息会在您主动注销账号或者撤回同意本隐私协议时被永久删除。
-      6. 您不同意本隐私条例仅仅限制您使用本小程序的报修功能，但不会影响您使用其他功能，例如报名活动和AI助手等。您也可以选择线下维修、参与校区大型维修等其他方式。`
-    }).then(() => {
-
-    }).catch(() => {
-      wx.navigateBack();
-    });
+    this.onShowDialog();
   },
   // 在输入框不为focused时更新数据
   onVerifiCodeChange(e) {
@@ -81,6 +74,26 @@ Page({
   onNicknameBlur(e) {
     this.setData({ ["userInfo.nickname"]: e.detail.value });
     this.setData({ hasNickname: e.detail.value !== "" });
+  },
+  // 隐私协议弹窗
+  onShowDialog() {
+    let result = app.towxml(
+      message,
+      'markdown',
+      { theme: app.systemInfo.theme }
+    );
+    // 显示确认弹窗
+    this.setData({
+      showDialog: true,
+      article: result,
+    });
+  },
+  onConfirmDialog() {
+    this.setData({ showDialog: false });
+  },
+  onCloseDialog() {
+    this.setData({ showDialog: false });
+    wx.navigateBack();
   },
   // 选择头像
   onChooseAvatar(e) {

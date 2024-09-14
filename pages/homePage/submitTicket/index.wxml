@@ -5,9 +5,10 @@
     <navigator url="/pages/homePage/announcement/index" open-type="navigate">
       <van-notice-bar color="#1989fa" background="#ecf9ff" left-icon="info-o" mode="link" text="请务必认真阅读维修条款及隐私协议" />
     </navigator>
+    <van-notice-bar scrollable mode="closeable" text="如果您的问题可以线上解决，推荐直接加入2024飞扬俱乐部会员群咨询：972863858" />
     <van-cell-group wx:if="{{ loggedin !== 1 }}" inset title="个人联系信息">
-      <van-field required center name="qq" type="digit" label="QQ/微信" placeholder="请填写你的QQ号/微信号" clearable value="{{ qq }}"
-        bind:change="onQQChange" border="{{ false }}">
+      <van-field required center name="qq" type="digit" label="QQ/微信" placeholder="请填写你的QQ号/微信号" clearable
+        value="{{ qq }}" bind:change="onQQChange" border="{{ false }}">
         <view class="material-icons" slot="right-icon"> mail </view>
       </van-field>
       <van-field required center name="phone" type="digit" label="手机号" placeholder="请填写手机号" clearable

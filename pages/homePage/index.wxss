@@ -38,3 +38,106 @@
 .dialog-article-container .h2w-dark {
   background-color: #2e2e2e !important;
 }
+
+/* 技术员排名 CSS */
+
+/* 设置整体容器 */
+.ranking-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+/* 每个排名项的样式 */
+.ranking-box {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background-color: white;
+  padding: 20rpx;
+  flex: auto;
+}
+
+/* 第一名 */
+.ranking-box.first {
+  /* 增加高亮效果 */
+  box-shadow: 0 6px 12px rgba(170, 226, 255, 0.281);
+  /* 使中间的项稍微放大 */
+  transform: scale(1.1);
+}
+
+/* 第二名 */
+.ranking-box.second {
+  margin-top: 40rpx;
+}
+
+/* 第三名 */
+.ranking-box.third {
+  margin-top: 40rpx;
+}
+
+/* 徽章的样式 */
+.badge {
+  background-color: #ffcc00;
+  border-radius: 22rpx;
+  padding: 6rpx 20rpx;
+  color: white;
+  margin-bottom: 16rpx;
+  font-size: 24rpx;
+}
+
+/* 不同排名项的颜色 */
+.ranking-box.second .badge {
+  background-color: #d3d3d3;
+}
+
+.ranking-box.first .badge {
+  background-color: #ffcc00;
+}
+
+.ranking-box.third .badge {
+  background-color: #ff9900;
+}
+
+/* 圆圈的样式 */
+.circle {
+  text-align: center;
+  display: inline-block;
+  width: 100rpx;
+  height: 100rpx;
+  border-radius: 50%;
+  border-width: 10rpx;
+  border-color: #b1dafd;
+  border-style: solid;
+  background-color: #f5f9fe;
+  font-family: "Dosis", sans-serif;
+  line-height: 100rpx;
+  box-shadow: 0 1px 4px rgba(30, 30, 30, 0.2);
+}
+
+.circle .number {
+  display: inline-block;
+  color: black;
+  font-weight: bold;
+  font-size: 40rpx;
+}
+
+.circle .unit {
+  display: inline-block;
+  color: grey;
+  font-size: 20rpx;
+}
+
+.div-line {
+  width: 30rpx;
+  height: 8rpx;
+  background-color: #479ef0;
+  border-radius: 4rpx;
+}
+
+.tech-name {
+  color: #181818;
+  margin-top: 20rpx;
+  margin-bottom: 10rpx;
+  font-size: 26rpx;
+}

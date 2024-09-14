@@ -19,7 +19,8 @@
           <view wx:for="{{ ticketList }}" wx:key="id">
             <view
               wx:if="{{ item.repair_status !== 'Done' && item.repair_status !== 'Canceled' && item.repair_status !== 'Closed' }}">
-              <navigator url="/pages/homePage/ticketDetail/index?id={{ item.id }}&role={{ userInfo.role }}" open-type="navigate">
+              <navigator url="/pages/homePage/ticketDetail/index?id={{ item.id }}&role={{ userInfo.role }}"
+                open-type="navigate">
                 <van-card class="class-status-{{ item.repair_status }}" desc="{{ item.repair_description }}"
                   title="{{ item.device_type }} {{ item.fault_type }}" thumb="{{ item.repair_image_url }}"
                   tag="{{ statusList[item.repair_status] }}">
@@ -42,13 +43,43 @@
       </view>
       <view wx:elif='{{ userInfo.role === "technician" }}'>
         <view wx:if="{{ !hasUnfinishedStatus }}">
+          <view wx:if="{{ topTech.length === 3 }}" class="ranking-container">
+            <view class="ranking-box second">
+              <view class="badge">第2名</view>
+              <view class="circle">
+                <view class="number">{{ topTech[1].count }}</view>
+                <view class="unit">台</view>
+              </view>
+              <view class="tech-name">🥈{{ topTech[1].nickname }}</view>
+              <view class="div-line"></view>
+            </view>
+            <view class="ranking-box first">
+              <view class="badge">第1名</view>
+              <view class="circle">
+                <view class="number">{{ topTech[0].count }}</view>
+                <view class="unit">台</view>
+              </view>
+              <view class="tech-name">🥇{{ topTech[0].nickname }}</view>
+              <view class="div-line"></view>
+            </view>
+            <view class="ranking-box third">
+              <view class="badge">第3名</view>
+              <view class="circle">
+                <view class="number">{{ topTech[2].count }}</view>
+                <view class="unit">台</view>
+              </view>
+              <view class="tech-name">🥉{{ topTech[2].nickname }}</view>
+              <view class="div-line"></view>
+            </view>
+          </view>
           <van-empty description="您还没有接到的工单哦" />
         </view>
         <view wx:else>
           <view wx:for="{{ ticketList }}" wx:key="id">
             <view
               wx:if="{{ item.repair_status !== 'Done' && item.repair_status !== 'Canceled' && item.repair_status !== 'Closed' }}">
-              <navigator url="/pages/homePage/ticketDetail/index?id={{ item.id }}&role={{ userInfo.role }}" open-type="navigate">
+              <navigator url="/pages/homePage/ticketDetail/index?id={{ item.id }}&role={{ userInfo.role }}"
+                open-type="navigate">
                 <van-card class="class-status-{{ item.repair_status }}" desc="{{ item.repair_description }}"
                   title="{{ item.device_type }} {{ item.fault_type }}" thumb="{{ item.repair_image_url }}"
                   tag="{{ statusList[item.repair_status] }}">
@@ -93,8 +124,7 @@
     </view>
   </view>
   <van-dialog use-slot title="维修条款及隐私协议" show="{{ showDialog }}" show-cancel-button bind:close="onCloseDialog"
-    show-confirm-button="{{ announcementAgreed }}" confirm-button-text="继续"
-    bind:confirm="navigateToSubmitTicketPage">
+    show-confirm-button="{{ announcementAgreed }}" confirm-button-text="继续" bind:confirm="navigateToSubmitTicketPage">
     <view class="dialog-article-container">
       <towxml nodes="{{ article }}" />
       <van-checkbox value="{{ announcementAgreed }}" bind:change="onAgreeChange">

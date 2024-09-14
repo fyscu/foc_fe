@@ -5,6 +5,7 @@ import {
   getTicket,
   giveTicket,
   setConfig,
+  getTopTech,
   getConfig
 } from "../../utils/req"
 
@@ -34,6 +35,8 @@ Page({
     isloggedin: app.globalData.isloggedin,
     sysConfig: app.globalData.sysConfig,
     repairFlag: true, // 全局报修开关（是否可以报修）
+    // 技术员排行
+    topTech: [],
   },
   // 显示页面时更新数据
   onShow() {
@@ -106,6 +109,18 @@ Page({
       } else {
         Toast("未知错误");
       }
+    });
+    // 获取技术员排行榜
+    getTopTech().then((res) => {
+      if (res === 401) {
+        Toast("鉴权失败，请刷新重试");
+      } else if (res === 500) {
+        Toast("获取技术员排行榜失败");
+      } else
+        console.log("获取技术员排行榜成功", res);
+        // 按照item.rank排序
+        res.sort((a, b) => a.rank - b.rank);
+        this.setData({ topTech: res });
     });
     if (this.data.userInfo.role === "user") {
       // 获取用户的工单

@@ -1,6 +1,7 @@
 {
   "navigationBarTitleText": "注册",
   "usingComponents": {
+    "towxml": "/towxml/towxml",
     "van-field": "@vant/weapp/field/index",
     "van-button": "@vant/weapp/button/index",
     "van-cell-group": "@vant/weapp/cell-group/index",
