@@ -1,6 +1,6 @@
 // Markdown转WXML页面
 const article = `
-<img src="https://about.feiyang.ac.cn/assets/logo.png" alt="logo">
+<img src="https://about.feiyang.ac.cn/assets/logo.png" alt="logo" />
 
 # 关于云上飞扬
 
