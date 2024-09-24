@@ -20,11 +20,11 @@
   position: unset;
 }
 
-.qrcode-container .canvas {
-  width: 150px;
-  height: 150px;
-  margin-left: calc(50% - 75px);
-}
+/* @media (prefers-color-scheme: light) {
+  .qrcode-container .van-image__img {
+    filter: invert(0.8125);
+  }
+} */
 
 .qrcode-container .tips {
   margin-top: 20rpx;

@@ -1,10 +1,8 @@
 import Toast from "@vant/weapp/toast/toast";
 import Dialog from "@vant/weapp/dialog/dialog";
 import { completeTicket, setTicketStatus } from "../../../utils/req";
-import QRCode from "../../../utils/weapp_qrcode.js";
 
 var app = getApp();
-var qrcode;
 
 Page({
   data: {
@@ -12,7 +10,6 @@ Page({
     role: "user",
     activeColor: "#38f",
     ticket: null,
-    qrcodePath: null,
     warrantyMap: {
       "expired": "过保",
       "under": "在保",
@@ -37,7 +34,6 @@ Page({
       ),
     });
     this.calcSteps(this.data.ticket.repair_status);
-    this.loadQRcode();
   },
   calcSteps(repair_status) {
     let statusMap = {
@@ -73,31 +69,10 @@ Page({
       active: statusMap[repair_status],
     });
   },
-  loadQRcode() {
-    let that = this;
-    const theme = app.systemInfo.theme;
-    qrcode = new QRCode('canvas', {
-      text: `[give];${this.data.ticket.id};${this.data.ticket.order_hash}`,
-      padding: 12,
-      width: 150,
-      height: 150,
-      colorDark: theme === "dark" ? "#1CA4FC" : "black",
-      colorLight: theme === "dark" ? "#2e2e2e" : "white",
-      correctLevel: QRCode.CorrectLevel.H
-    });
-    setTimeout(() => {
-      qrcode.exportImage(function (path) {
-        console.log("qrcode path:", path);
-        if (that.data.qrcodePath === null) {
-          that.setData({ qrcodePath: path });
-        }
-      });
-    }, 500);
-  },
   previewQRcode() {
     wx.previewImage({
-      current: this.data.qrcodePath,
-      urls: [this.data.qrcodePath],
+      current: this.data.ticket.qrcode_url,
+      urls: [this.data.ticket.qrcode_url],
     });
   },
   completeTheTicket() {
