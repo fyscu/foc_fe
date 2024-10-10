@@ -6,6 +6,8 @@ import {
   giveTicket,
   setConfig,
   getTopTech,
+  userLogin,
+  getRootApi,
   getConfig
 } from "../../utils/req"
 
@@ -40,7 +42,6 @@ Page({
   },
   // 显示页面时更新数据
   onShow() {
-    // 登录 [TODO]
     // 初始化数据
     this.reloadData(); // 刷新数据
     if (this.data.isloggedin) {
@@ -48,7 +49,34 @@ Page({
         this.setData({ loading: true });
       }
       this.initialize();
+    } else {
+      // 获取 rootApiUrl
+      getRootApi().then((returnCode) => {
+        if (returnCode === 200) {
+          this.onLogin();
+        }
+      });
     }
+  },
+  onLogin() {
+    wx.showLoading({ title: '登录中', mask: true });
+    userLogin().then((returnCode) => {
+      wx.hideLoading();
+      if (returnCode === 300) {
+        Toast("您尚未注册");
+        // 跳转到注册页
+        wx.navigateTo({
+          url: '/pages/selfPage/registerPage/index',
+        });
+      } else if (returnCode === 200) {
+        // 成功登录
+        this.initialize();
+      } else {
+        console.log("未知错误", returnCode);
+      }
+    }).catch((error) => {
+      Toast("登录失败！" + error);
+    });
   },
   onSysConfigChange(event) {
     let sysConfigName = event.currentTarget.dataset.name;
@@ -116,11 +144,12 @@ Page({
         Toast("鉴权失败，请刷新重试");
       } else if (res === 500) {
         Toast("获取技术员排行榜失败");
-      } else
+      } else {
         console.log("获取技术员排行榜成功", res);
         // 按照item.rank排序
         res.sort((a, b) => a.rank - b.rank);
         this.setData({ topTech: res });
+      }
     });
     if (this.data.userInfo.role === "user") {
       // 获取用户的工单

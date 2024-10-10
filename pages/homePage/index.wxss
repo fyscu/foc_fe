@@ -53,7 +53,6 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  background-color: white;
   padding: 20rpx;
   flex: auto;
 }
@@ -61,7 +60,7 @@
 /* 第一名 */
 .ranking-box.first {
   /* 增加高亮效果 */
-  box-shadow: 0 6px 12px rgba(170, 226, 255, 0.281);
+  box-shadow: 0 4px 16px rgba(170, 226, 255, 0.281);
   /* 使中间的项稍微放大 */
   transform: scale(1.1);
 }
@@ -78,10 +77,8 @@
 
 /* 徽章的样式 */
 .badge {
-  background-color: #ffcc00;
   border-radius: 22rpx;
   padding: 6rpx 20rpx;
-  color: white;
   margin-bottom: 16rpx;
   font-size: 24rpx;
 }
@@ -107,9 +104,7 @@
   height: 100rpx;
   border-radius: 50%;
   border-width: 10rpx;
-  border-color: #b1dafd;
   border-style: solid;
-  background-color: #f5f9fe;
   font-family: "Dosis", sans-serif;
   line-height: 100rpx;
   box-shadow: 0 1px 4px rgba(30, 30, 30, 0.2);
@@ -117,7 +112,6 @@
 
 .circle .number {
   display: inline-block;
-  color: black;
   font-weight: bold;
   font-size: 40rpx;
 }
@@ -131,13 +125,73 @@
 .div-line {
   width: 30rpx;
   height: 8rpx;
-  background-color: #479ef0;
   border-radius: 4rpx;
 }
 
 .tech-name {
-  color: #181818;
   margin-top: 20rpx;
   margin-bottom: 10rpx;
   font-size: 26rpx;
+}
+
+@media (prefers-color-scheme: dark) {
+  .ranking-box {
+    background-color: #2e2e2e;
+  }
+
+  .badge {
+    background-color: #ffcc00;
+  }
+
+  .circle {
+    background-color: #2e2e2e;
+    border-color: #b1dafd;
+  }
+
+  .circle .number {
+    color: white;
+  }
+
+  .circle .unit {
+    color: #dedede;
+  }
+
+  .div-line {
+    background-color: #479ef0;
+  }
+
+  .tech-name {
+    color: #dedede;
+  }
+}
+
+@media (prefers-color-scheme: light) {
+  .ranking-box {
+    background-color: white;
+  }
+
+  .badge {
+    background-color: #ffcc00;
+  }
+
+  .circle {
+    background-color: #f5f9fe;
+    border-color: #b1dafd;
+  }
+
+  .circle .number {
+    color: black;
+  }
+
+  .circle .unit {
+    color: grey;
+  }
+
+  .div-line {
+    background-color: #479ef0;
+  }
+
+  .tech-name {
+    color: #181818;
+  }
 }

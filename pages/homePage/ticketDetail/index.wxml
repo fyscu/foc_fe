@@ -70,7 +70,7 @@
       class="qrcode-container">
       <van-image width="150px" height="150px" src="{{ ticket.qrcode_url }}" bind:click="previewQRcode">
       </van-image>
-      <view wx:if="{{ role === 'user' }}" class="tips">技术员扫码可面对面接单</view>
+      <view wx:if="{{ role === 'user' }}" class="tips">请让您指定的技术员扫码</view>
       <view wx:elif="{{ role === 'technician' }}" class="tips">二维码用于转单给别的技术员</view>
     </view>
     <view

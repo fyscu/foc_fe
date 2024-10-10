@@ -1,0 +1,25 @@
+<!--index.wxml-->
+
+<view class="number-container">
+  <view wx:if="{{number_status == 0}}">
+    <view class="prompt">您的号码为</view>
+    <view id="number_id" class="number">{{ your_number }}</view>
+  </view>
+
+  <view wx:elif="{{number_status == 1}}">
+    <view class="prompt chosen">
+      <view>🎉 恭喜 🎉</view>
+      <view>您的号码被抽中</view>
+    </view>
+    <view id="number_id" class="number chosen">
+      {{ your_number }}
+    </view>
+  </view>
+
+  <view wx:else>
+    <view class="prompt">您是管理员哦</view>
+    <view id="number_id" class="number">{{ your_number }}</view>
+  </view>
+  <canvas canvas-id="confettiCanvas" style="width: 100%; height: 100vh;"></canvas>
+  <!-- <canvas canvas-id="confettiCanvas" style="width: 100%; height: 100%;" bindtouchstart="onTouchStart"></canvas> -->
+</view>

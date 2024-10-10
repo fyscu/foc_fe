@@ -91,7 +91,7 @@
   margin-bottom: 15%;
   width: 100%;
   position: fixed;
-  bottom: 0px;
+  bottom: 0;
   display: block;
   justify-content: center;
   text-align: center;

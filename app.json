@@ -10,7 +10,7 @@
     "pages/selfPage/signOutPage/index",
     "pages/selfPage/newPhonePage/index",
     "pages/activityPage/index",
-    "pages/chatPage/index",
+    "pages/activityPage/numberPage/index",
     "pages/homePage/ticketDetail/index",
     "pages/homePage/announcement/index",
     "pages/homePage/submitTicket/index",

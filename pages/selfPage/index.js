@@ -1,6 +1,6 @@
 // index.js
 import Toast from "@vant/weapp/toast/toast";
-import { userLogin } from "../../utils/req"
+import { userLogin, getRootApi } from "../../utils/req"
 import { checkUserInfo } from "../../utils/util";
 
 var app = getApp();
@@ -16,14 +16,20 @@ Page({
     // console.log(app.globalData);
     this.reloadData();
     app.globalData.userInfo = this.data.userInfo;
-    // console.log(app.globalData.userInfo);
-    if (app.globalData.isloggedin) { // 如果已经登录
+    if (this.data.isloggedin) { // 如果已经登录
       if (!checkUserInfo(this.data.userInfo)) {
         console.log("信息不完善");
         wx.navigateTo({
           url: '/pages/selfPage/settingsPage/index?toast=必须完善所有信息',
         })
       }
+    } else {
+      // 获取 rootApiUrl
+      getRootApi().then((returnCode) => {
+        if (returnCode === 200) {
+          this.onLogin();
+        }
+      });
     }
   },
   // 在输入框不为focused时更新数据

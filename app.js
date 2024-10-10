@@ -26,69 +26,6 @@ App({
   onLaunch() {
     // 获取全局配置
     this.systemInfo = wx.getSystemInfoSync();
-    var globalData = this.globalData;
-    wx.login({
-      success: (res) => {
-        if (res.code) {
-          globalData.code = res.code;
-          console.log('code:', res.code);
-          wx.request({
-            url: globalData.rootApiUrl + '/v1/user/login',
-            method: "POST",
-            header: {
-              'content-type': 'application/json',
-            },
-            data: {
-              'code': globalData.code,
-            },
-            success(apiRes) {
-              let result = apiRes.data;
-              if (result.success) {
-                if (result.openid) {
-                  // 成功获取用户OpenId
-                  globalData.openid = result.openid;
-                }
-                if (result.registered) {
-                  // 用户已经注册
-                  console.log('用户已注册:', result);
-                  globalData.accessToken = result.access_token;
-                  // 设置用户信息
-                  globalData.userInfo.uid = result.uid;
-                  globalData.userInfo.role = result.role;
-                  globalData.userInfo.email = result.email;
-                  globalData.userInfo.phone = result.phone;
-                  globalData.userInfo.campus = result.campus;
-                  globalData.userInfo.nickname = result.nickname;
-                  globalData.userInfo.avatarUrl = result.avatar;
-                  globalData.userInfo.isEmailValid = result.isEmailValid;
-                  // 设置技术员信息
-                  if (result.role === "technician") {
-                    globalData.userInfo.wants = result.wants;
-                    globalData.userInfo.available = result.available;
-                  }
-                  // 成功登录
-                  globalData.isloggedin = true;
-                  wx.reLaunch({
-                    url: '/pages/homePage/index', // 假设首页是 /pages/index/index
-                  });
-                } else {
-                  // 用户尚未注册
-                  console.log('用户尚未注册:', result);
-                  globalData.accessToken = result.access_token;
-                }
-              } else {
-                console.log('请求失败:', result);
-              }
-            },
-            complete() {
-              console.log('requesting /user/login complete.');
-            },
-          })
-        } else {
-          console.log('获取code失败:', res);
-        }
-      },
-    });
   },
 });
 

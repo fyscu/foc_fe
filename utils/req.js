@@ -841,6 +841,55 @@ function phoneChangeVerify(phone, verifiCode) {
   });
 }
 
+function getRootApi() {
+  return new Promise((resolve, reject) => {
+    wx.request({
+      url: "https://fyclub.oss-cn-chengdu.aliyuncs.com/rootApiUrl.json",
+      method: "GET",
+      header: {
+        'content-type': 'application/json',
+        'Authorization': `Bearer ${app.globalData.accessToken}`,
+      },
+      success(res) {
+        console.log("获取rootApiUrl成功", res);
+        app.globalData.rootApiUrl = res.data.url;
+        resolve(200);
+      },
+      fail(err) {
+        console.log("获取rootApiUrl失败", err);
+        resolve(500);
+      }
+    });
+  });
+}
+
+// https://fyapidocs.wjlo.cc/get/getevent
+function getEvent() {
+  return new Promise((resolve, reject) => {
+    wx.request({
+      url: app.globalData.rootApiUrl + "/v1/status/getEvent",
+      method: "GET",
+      header: {
+        'content-type': 'application/json',
+        'Authorization': `Bearer ${app.globalData.accessToken}`,
+      },
+      success(res) {
+        if (res.statusCode === 401) {
+          console.log('鉴权失败，重新登录中...', res);
+          userLogin();
+          resolve(401);
+        } else if (res.data.success === true) {
+          console.log("获取活动成功", res);
+          resolve(res.data.activities);
+        } else{
+          console.log("获取活动失败", res);
+          resolve(500);
+        }
+      }
+    });
+  });
+}
+
 module.exports = {
   userLogin,
   unRegister,
@@ -862,5 +911,7 @@ module.exports = {
   userMigration,
   newPhone,
   newEmail,
+  getRootApi,
+  getEvent,
   phoneChangeVerify
 }
