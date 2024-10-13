@@ -39,30 +39,6 @@
         </button>
       </van-cell>
     </van-cell-group>
-    <!-- 登录了但是没有获取到昵称 -->
-    <!--
-    <van-popup show="{{ showPopup }}" round position="bottom" custom-style="height: 95%" bind:close="onClosePopup"
-      closeable>
-      <button class="avatar-wrapper" open-type="chooseAvatar" bind:chooseavatar="onChooseAvatar">
-        <image class="avatar"
-          src="{{ userInfo.avatarUrl === '' ? '/image/icons/image_upload_failed.svg' : userInfo.avatarUrl }}"></image>
-      </button>
-      <van-cell-group inset>
-        <van-field required center name="nickname" label="用户名" placeholder="请输入昵称" clearable
-          value="{{ userInfo.nickname }}" border="{{ false }}" bind:change="onNicknameChange">
-          <view class="material-icons" slot="right-icon"> face </view>
-        </van-field>
-        <van-field required center name="phone" label="联系方式" placeholder="请输入联系方式" clearable
-          value="{{ userInfo.phone }}" border="{{ false }}" bind:change="onPhoneChange">
-          <view class="material-icons" slot="right-icon"> phone </view>
-        </van-field>
-        <van-field center name="email" label="邮箱" placeholder="请输入电子邮箱" clearable value="{{ userInfo.email }}"
-          border="{{ false }}" bind:change="onEmailChange">
-          <view class="material-icons" slot="right-icon"> mail </view>
-        </van-field>
-      </van-cell-group>
-    </van-popup>
-    -->
     <view wx:if="{{ !isloggedin }}" class="btn-container">
       <van-button round icon="input" class-prefix="material-icons" type="info" bind:click="onLogin">登录</van-button>
     </view>

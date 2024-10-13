@@ -11,33 +11,26 @@
         value="{{ userInfo.phone }}" border="{{ false }}" bind:change="onPhoneChange" error="{{ !hasPhone }}">
         <view class="material-icons" slot="right-icon"> phone </view>
       </van-field>
+      <van-field wx:if="{{ userInfo.email }}" disabled center name="email" placeholder="请输入电子邮箱" clearable
+        value="{{ userInfo.email }}" border="{{ false }}" bind:change="onEmailChange" error="{{ !hasEmail }}">
+        <view slot="label">
+          <view class="label-text">邮箱</view>
+          <van-tag type="success">已验证</van-tag>
+        </view>
+        <view slot="right-icon" class="material-icons"> mail </view>
+      </van-field>
       <van-field required center name="nickname" type="nickname" label="用户名" placeholder="请输入昵称" clearable
         value="{{ userInfo.nickname }}" border="{{ false }}" bind:change="onNicknameChange" bind:blur="onNicknameBlur"
         error="{{ !hasNickname }}">
         <view class="material-icons" slot="right-icon"> face </view>
       </van-field>
-      <van-field required error-message="{{ validEmail ? '' : '邮箱格式错误' }}" center name="email" placeholder="请输入电子邮箱"
-        clearable value="{{ userInfo.email }}" border="{{ false }}" bind:change="onEmailChange" error="{{ !hasEmail }}">
-        <view wx:if="{{ userInfo.isEmailValid === false }}" slot="label">
-          <view class="label-text">邮箱</view>
-          <van-tag type="warning">未验证</van-tag>
-        </view>
-        <view wx:else slot="label">
-          <view class="label-text">邮箱</view>
-          <van-tag type="success">已验证</van-tag>
-        </view>
-        <van-button wx:if="{{ userInfo.isEmailValid === false && isCountingDown }}" disabled type="default"
-          slot="button" size="small" round>
-          已发送 {{ countDownNum }}s
-        </van-button>
-        <van-button wx:elif="{{ userInfo.isEmailValid === false && !isCountingDown }}" slot="button" size="small"
-          type="info" icon="verified_user" class-prefix="material-icons" round bind:click="sendCode">
-          验证邮箱
-        </van-button>
-        <view wx:else slot="right-icon" class="material-icons"> mail </view>
-      </van-field>
       <van-cell required title="所在校区" bind:click="showPopup" data-index="1" is-link
         value="{{ userInfo.campus === '' ? '请选择' : userInfo.campus }}" arrow-direction="down">
+      </van-cell>
+      <van-cell wx:if="{{ userInfo.email }}" is-link title="跟换绑定邮箱" link-type="navigateTo" url="../newEmailPage/index">
+      </van-cell>
+      <van-cell wx:else is-link title="绑定邮箱" link-type="navigateTo" url="../newEmailPage/index"
+        label="您可以绑定邮箱以接收工单进度通知">
       </van-cell>
       <van-cell wx:if="{{ loggedin !== 1 }}" is-link title="手机号换绑" link-type="navigateTo" url="../newPhonePage/index">
       </van-cell>

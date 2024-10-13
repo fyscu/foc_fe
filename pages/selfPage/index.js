@@ -9,7 +9,6 @@ Page({
   data: {
     isloggedin: app.globalData.isloggedin,
     userInfo: app.globalData.userInfo,
-    showPopup: false,
   },
   // 显示页面时更新数据
   onShow() {
@@ -32,22 +31,6 @@ Page({
       });
     }
   },
-  // 在输入框不为focused时更新数据
-  onNicknameChange(e) {
-    this.setData({
-      ["userInfo.nickname"]: e.detail
-    });
-  },
-  onPhoneChange(e) {
-    this.setData({
-      ["userInfo.phone"]: e.detail
-    });
-  },
-  onEmailChange(e) {
-    this.setData({
-      ["userInfo.email"]: e.detail
-    });
-  },
   // 选择头像
   onChooseAvatar(e) {
     const {
@@ -56,20 +39,6 @@ Page({
     // console.log("get avatar url:", e.detail);
     this.setData({
       ["userInfo.avatarUrl"]: avatarUrl
-    });
-  },
-  // 关闭popup弹窗 并更新数据
-  onClosePopup() {
-    let nickname_trim = this.data.userInfo.nickname.trim();
-    // TODO: Save Data
-    this.setData({
-      showPopup: false,
-    });
-    app.globalData.userInfo = this.data.userInfo;
-  },
-  onShowPopup() {
-    this.setData({
-      showPopup: true
     });
   },
   onLogin() {
@@ -91,10 +60,6 @@ Page({
           wx.navigateTo({
             url: '/pages/selfPage/settingsPage/index?toast=登录成功！请完善个人信息',
           });
-          // 弹出个人信息填写页 (弃用)
-          // this.setData({
-          //   showPopup: true
-          // });
         }
       } else {
         console.log("未知错误", returnCode);

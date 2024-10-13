@@ -33,19 +33,17 @@ Page({
       Toast("很抱歉，本小程序仅对四川大学在校生开放");
       return;
     }
-    let unfilled = false;
     if (this.data.verifiCode === "") {
       this.setData({ hasVerifiCode: false });
       Toast("请填写验证码");
-      unfilled = true;
+      return;
     }
     if (this.data.newPhone === "") {
       this.setData({ hasPhone: false });
       Toast("请填写手机号");
-      unfilled = true;
+      return;
     }
     // 有未填写的信息
-    if (unfilled) { return; }
     // 验证码校验
     wx.showLoading({ title: '核验中', mask: true });
     phoneChangeVerify(this.data.newPhone, this.data.verifiCode).then((returnCode) => {
@@ -65,31 +63,25 @@ Page({
     });
   },
   sendCode() {
-    console.log(1);
     if (this.data.loggedin === 1) {
       Toast("很抱歉，本小程序仅对四川大学在校生开放");
       return;
     }
-    console.log(2);
     let _phone = this.data.newPhone.trim();
-    console.log(3);
     if (_phone === "") {
       Toast('请先完善手机号');
-      console.log(4);
       this.setData({ hasPhone: false });
       return;
     }
-    console.log(5);
     // 调用发送验证码接口
+    wx.showLoading({ title: '发送中', mask: true });
     newPhone(_phone).then((returnCode) => {
-      console.log(6);
+      wx.hideLoading();
       if (returnCode === 401) {
         Toast("鉴权失败，请刷新重试");
       } else if (returnCode === 200) { // 成功发送
-        console.log(7);
         Toast("验证码已发送");
         this.startCountingDown();
-        console.log(8);
       } else if (returnCode === 300) {
         Toast("该手机号已注册");
       } else if (returnCode === 403) {
@@ -98,7 +90,6 @@ Page({
         Toast("未知错误");
       }
     }).catch((error) => {
-      console.log(9);
       Toast("请求失败:" + error);
     });
   },

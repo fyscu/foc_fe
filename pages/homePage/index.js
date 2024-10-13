@@ -40,6 +40,36 @@ Page({
     // 技术员排行
     topTech: [],
   },
+  onLoad(options) {
+    if (options.operator === "give") {
+      if (options.order_id && options.tvcode) {
+        Dialog.confirm({
+          title: '接单确认',
+          message: '确定接单吗？单号：' + options.order_id,
+        }).then(() => {
+          wx.showLoading({ title: "接单中", mask: true });
+          giveTicket({
+            order_id: options.order_id,
+            tvcode: options.tvcode
+          }).then((returnCode) => {
+            wx.hideLoading();
+            if (returnCode === 401) {
+              Toast("鉴权失败，请刷新重试");
+            } else if (returnCode === 200) {
+              Toast("接单成功");
+              this.initialize();
+            } else if (returnCode === 403) {
+              Toast("抱歉，你来晚了。工单已经被接走了！");
+            } else {
+              Toast("接单失败，未知错误");
+            }
+          });
+        }).catch(() => {
+          console.log("取消接单");
+        });
+      }
+    }
+  },
   // 显示页面时更新数据
   onShow() {
     // 初始化数据
@@ -199,9 +229,11 @@ Page({
             title: '接单确认',
             message: '确定接单吗？单号：' + parsed[1],
           }).then(() => {
-            console.log(res.result);
             wx.showLoading({ title: "接单中", mask: true });
-            giveTicket(parsed[1], parsed[2]).then((returnCode) => {
+            giveTicket({
+              order_id: parsed[1],
+              order_hash: parsed[2]
+            }).then((returnCode) => {
               wx.hideLoading();
               if (returnCode === 401) {
                 Toast("鉴权失败，请刷新重试");
@@ -215,7 +247,7 @@ Page({
               }
             });
           }).catch(() => {
-            wx.hideLoading();
+            console.log("取消接单");
           });
         } else {
           Toast("扫码成功");
@@ -241,9 +273,9 @@ Page({
     // 更新 sysConfig
     sysConfigOriginal = JSON.parse(JSON.stringify(this.data.sysConfig));
   },
-  onNavigateToTechOptions() {
+  navigateToGiveOrderPage() {
     wx.navigateTo({
-      url: "/pages/homePage/techOptions/index",
+      url: "/pages/homePage/giveOrder/index",
     });
   },
   navigateToSubmitTicketPage() {

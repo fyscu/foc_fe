@@ -95,8 +95,12 @@
           </view>
         </view>
         <view class="btn-container">
-          <van-button round icon="center_focus_weak" class-prefix="material-icons" type="info" bind:click="onScanCode">
+          <van-button round class="give-order-btn" icon="center_focus_weak" class-prefix="material-icons" type="info" bind:click="onScanCode">
             扫码接单
+          </van-button>
+          <van-button round class="give-order-btn" icon="drag_indicator" class-prefix="material-icons" type="primary"
+            bind:click="navigateToGiveOrderPage">
+            手动接单
           </van-button>
         </view>
       </view>

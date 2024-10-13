@@ -44,9 +44,7 @@ function checkUserInfo(userInfo) {
   // if (userInfo.qq === "") { return false; }
   // if (userInfo.uid === "") { return false; }
   // if (userInfo.role === "") { return false; }
-  if (userInfo.email === "") {
-    return false;
-  }
+  // if (userInfo.email === "") { return false; }
   if (userInfo.phone === "") {
     return false;
   }

@@ -1,7 +1,6 @@
 // index.js
 import Toast from "@vant/weapp/toast/toast";
 import Dialog from "@vant/weapp/dialog/dialog";
-import { checkUserInfo, isValidEmail } from "../../../utils/util"
 import {
   userLogin,
   userRegister,
@@ -32,7 +31,6 @@ Page({
     migration: true,
     verified: false,
     // 检查是否完善信息
-    validEmail: true,
     hasVerifiCode: true,
     hasEmail: true,
     hasPhone: true,
@@ -61,11 +59,6 @@ Page({
   onPhoneChange(e) {
     this.setData({ ["userInfo.phone"]: e.detail });
     this.setData({ hasPhone: e.detail !== "" });
-  },
-  onEmailChange(e) {
-    this.setData({ ["userInfo.email"]: e.detail });
-    this.setData({ hasEmail: e.detail !== "" });
-    this.setData({ validEmail: true });
   },
   onNicknameChange(e) {
     this.setData({ ["userInfo.nickname"]: e.detail });
@@ -184,14 +177,6 @@ Page({
     if (thisUserInfo.nickname === "") {
       this.setData({ hasNickname: false });
       Toast("请填写昵称");
-      unfilled = true;
-    }
-    if (thisUserInfo.email === "") {
-      this.setData({ hasEmail: false });
-      Toast("请填写邮箱");
-      unfilled = true;
-    } else if (!isValidEmail(thisUserInfo.email)) {
-      this.setData({ validEmail: false });
       unfilled = true;
     }
     // 有未填写的信息

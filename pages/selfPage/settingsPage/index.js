@@ -6,10 +6,10 @@ import {
   newEmail,
   uploadQiniuImg,
   setTechInfo,
+  getUserInfo,
   setUserInfo
 } from "../../../utils/req"
 import {
-  isValidEmail,
   checkUserInfo
 } from "../../../utils/util"
 
@@ -20,14 +20,10 @@ let wantsMap3 = ["a", "b", "c", "d", "e"];
 Page({
   data: {
     loggedin: 1,
-    validEmail: true,
-    hasEmail: true,
     hasPhone: true,
     hasCampus: true,
     hasNickname: true,
     hasAvatarUrl: true,
-    countDownNum: 60,
-    isCountingDown: false,
     userInfo: app.globalData.userInfo,
     campusList: ["江安", "望江", "华西"],
     showPopup: 0, // 不弹出选择框
@@ -56,15 +52,17 @@ Page({
   },
   // 显示页面时更新数据
   onShow() {
-    this.reloadData();
-    // 对 userInfo 使用深拷贝
-    userInfoOriginal = JSON.parse(JSON.stringify(this.data.userInfo));
-  },
-  // Do something when page ready.
-  onReady() {
-    // login if havn't
     if (!app.globalData.isloggedin) {
       this.onLogin();
+    } else {
+      getUserInfo().then((returnCode) => {
+        if (returnCode === 200) {
+          this.reloadData();
+          this.checkUnverifiedEmail();
+          // 对 userInfo 使用深拷贝
+          userInfoOriginal = JSON.parse(JSON.stringify(this.data.userInfo));
+        }
+      });
     }
   },
   // 拖动滑块时触发
@@ -90,61 +88,6 @@ Page({
   onPhoneChange(e) {
     this.setData({ ["userInfo.phone"]: e.detail });
     this.setData({ hasPhone: e.detail !== "" });
-  },
-  onEmailChange(e) {
-    this.setData({ ["userInfo.email"]: e.detail });
-    this.setData({ hasEmail: e.detail !== "" });
-    this.setData({ validEmail: true });
-  },
-  sendCode(e) {
-    if (this.data.loggedin === 1) {
-      Toast("很抱歉，本小程序仅对四川大学在校生开放");
-      return;
-    }
-    let _email = this.data.userInfo.email.trim();
-    if (_email === "") {
-      Toast('请先完善邮箱');
-      this.setData({ hasEmail: false });
-      return;
-    }
-    // 调用发送验证码接口
-    wx.showLoading({ title: '发送中', mask: true });
-    newEmail(_email).then((returnCode) => {
-      wx.hideLoading();
-      if (returnCode === 401) {
-        Toast("鉴权失败，请刷新重试");
-      } else if (returnCode === 200) { // 成功发送
-        Toast("验证码已发送，验证后请重新登录");
-        this.startCountingDown();
-      } else if (returnCode === 300) {
-        Toast("邮箱未改变");
-      } else {
-        Toast("未知错误");
-      }
-    }).catch((error) => {
-      Toast("请求失败:" + error);
-    });
-  },
-  startCountingDown() {
-    // 开始倒计时
-    if (!this.data.isCountingDown) {
-      this.setData({
-        isCountingDown: true
-      });
-      let interval = setInterval(() => {
-        let countDownNum = this.data.countDownNum - 1;
-        this.setData({
-          countDownNum: countDownNum
-        });
-        if (countDownNum === 0) {
-          clearInterval(interval);
-          this.setData({
-            isCountingDown: false,
-            countDownNum: 60 // 重置倒计时时间
-          });
-        }
-      }, 1000);
-    }
   },
   // 选择头像
   onChooseAvatar(e) {
@@ -186,6 +129,38 @@ Page({
       showPopup: 0,
     });
   },
+  // 弹出邮箱未验证
+  checkUnverifiedEmail() {
+    let _email = this.data.userInfo.tempEmail;
+    if (_email) {
+      Dialog.confirm({
+        title: "您有未验证的邮箱",
+        message: `${_email} 未验证\n是否重新发送验证邮件？\n没看到请去垃圾邮件中找找哦~`,
+      }).then(() => {
+        console.log("确认");
+        wx.showLoading({ title: '发送中', mask: true });
+        newEmail(_email).then((returnCode) => {
+          wx.hideLoading();
+          if (returnCode === 401) {
+            Toast("鉴权失败，请刷新重试");
+          } else if (returnCode === 200) { // 成功发送
+            Toast("邮箱验证码已发送，请于验证后刷新页面");
+            setTimeout(() => {
+              wx.navigateBack();  // 返回上一页
+            }, 500);
+          } else if (returnCode === 300) {
+            Toast("邮箱未改变");
+          } else {
+            Toast("未知错误");
+          }
+        }).catch((error) => {
+          Toast("请求失败:" + error);
+        });
+      }).catch(() => {
+        console.log("取消");
+      });
+    }
+  },
   onLogin() {
     wx.showLoading({ title: '登录中', mask: true });
     userLogin().then((returnCode) => {
@@ -199,6 +174,7 @@ Page({
       } else if (returnCode === 200) {
         // 成功登录
         this.reloadData();
+        this.checkUnverifiedEmail();
         // 更新 userInfoOriginal
         userInfoOriginal = JSON.parse(JSON.stringify(this.data.userInfo));
         if (!checkUserInfo(this.data.userInfo)) {
@@ -216,8 +192,12 @@ Page({
   saveChanges() {
     let unfilled = false;
     let thisUserInfo = this.data.userInfo;
-    // 保存技术员信息
-    setTechInfo(thisUserInfo);
+    if (thisUserInfo.role === "technician") {
+      if (thisUserInfo.wants === "") {
+        // 保存技术员信息
+        setTechInfo(thisUserInfo);
+      }
+    }
     // 保存用户信息
     if (JSON.stringify(thisUserInfo) === JSON.stringify(userInfoOriginal)) {
       // 如果信息不变
@@ -245,14 +225,6 @@ Page({
       if (thisUserInfo.nickname === "") {
         this.setData({ hasNickname: false });
         Toast("请填写昵称");
-        unfilled = true;
-      }
-      if (thisUserInfo.email === "") {
-        this.setData({ hasEmail: false });
-        Toast("请填写邮箱");
-        unfilled = true;
-      } else if (!isValidEmail(thisUserInfo.email)) {
-        this.setData({ validEmail: false });
         unfilled = true;
       }
       if (unfilled) { // 有未填写的信息
@@ -294,7 +266,7 @@ Page({
       app.globalData.userInfo.phone = ""; // 用户手机号
       app.globalData.userInfo.campus = ""; // 所在校区
       app.globalData.userInfo.nickname = ""; // 用户昵称
-      app.globalData.userInfo.isEmailValid = false;
+      app.globalData.userInfo.tempEmail = ""; // 临时邮箱
       app.globalData.userInfo.avatarUrl = "https://img1.doubanio.com/view/group_topic/l/public/p560183288.webp"; // 用户头像地址
       app.globalData.ticketList = [];
       app.globalData.isloggedin = false;

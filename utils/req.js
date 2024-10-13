@@ -8,7 +8,7 @@ var app = getApp();
 // 用户注册 https://fyapidocs.wjlo.cc/user/register
 function userRegister(phone) {
   return new Promise((resolve, reject) => {
-    console.log("Requesting /user/register...");
+    console.log("Requesting /user/register...", phone);
     wx.request({
       url: app.globalData.rootApiUrl + '/v1/user/register',
       data: {
@@ -46,7 +46,7 @@ function userRegister(phone) {
         }
       },
       complete() {
-        console.log('requesting /user/register complete.');
+        console.log('Requesting /user/register complete.');
       },
     })
   });
@@ -81,7 +81,7 @@ function unRegister() {
           app.globalData.userInfo.phone = ""; // 用户手机号
           app.globalData.userInfo.campus = ""; // 所在校区
           app.globalData.userInfo.nickname = ""; // 用户昵称
-          app.globalData.userInfo.isEmailValid = false;
+          app.globalData.userInfo.tempEmail = ""; // 临时邮箱
           app.globalData.userInfo.avatarUrl = "https://img1.doubanio.com/view/group_topic/l/public/p560183288.webp"; // 用户头像地址
           app.globalData.ticketList = [];
           app.globalData.isloggedin = false;
@@ -95,7 +95,7 @@ function unRegister() {
         }
       },
       complete() {
-        console.log('requesting /user/delete complete.');
+        console.log('Requesting /user/delete complete.');
       },
     })
   });
@@ -104,7 +104,7 @@ function unRegister() {
 // https://fyapidocs.wjlo.cc/user/migration
 function userMigration(phone, verifiCode) {
   return new Promise((resolve, reject) => {
-    console.log("Requesting /user/migration...");
+    console.log("Requesting /user/migration...", phone, verifiCode);
     wx.request({
       url: app.globalData.rootApiUrl + '/v1/user/migration',
       data: {
@@ -138,7 +138,7 @@ function userMigration(phone, verifiCode) {
         }
       },
       complete() {
-        console.log('requesting /user/migration complete.');
+        console.log('Requesting /user/migration complete.');
       },
     })
   });
@@ -147,12 +147,11 @@ function userMigration(phone, verifiCode) {
 // 微信登录 https://fyapidocs.wjlo.cc/admin/login
 function userLogin() {
   return new Promise((resolve, reject) => {
-    console.log("Requesting /user/login...");
     wx.login({
       success: (res) => {
         if (res.code) {
           app.globalData.code = res.code;
-          console.log('code:', res.code);
+          console.log("Requesting /user/login...", app.globalData.code);
           wx.request({
             url: app.globalData.rootApiUrl + '/v1/user/login',
             method: "POST",
@@ -171,7 +170,7 @@ function userLogin() {
                 }
                 if (result.registered) {
                   // 用户已经注册
-                  console.log('用户已注册:', result.access_token);
+                  console.log('用户已注册:', result);
                   app.globalData.accessToken = result.access_token;
                   // 设置用户信息
                   app.globalData.userInfo.uid = result.uid;
@@ -181,7 +180,7 @@ function userLogin() {
                   app.globalData.userInfo.campus = result.campus;
                   app.globalData.userInfo.nickname = result.nickname;
                   app.globalData.userInfo.avatarUrl = result.avatar;
-                  app.globalData.userInfo.isEmailValid = result.isEmailValid;
+                  app.globalData.userInfo.tempEmail = result.temp_email;
                   // 设置技术员信息
                   if (result.role === "technician") {
                     app.globalData.userInfo.wants = result.wants;
@@ -202,7 +201,7 @@ function userLogin() {
               }
             },
             complete() {
-              console.log('requesting /user/login complete.');
+              console.log('Requesting /user/login complete.');
             },
           })
         } else {
@@ -218,7 +217,7 @@ function userLogin() {
 // https://fyapidocs.wjlo.cc/user/verify
 function verify(phone, verifiCode) {
   return new Promise((resolve, reject) => {
-    console.log("Requesting /user/verify...");
+    console.log("Requesting /user/verify...", phone, verifiCode);
     wx.request({
       url: app.globalData.rootApiUrl + '/v1/user/verify',
       data: {
@@ -252,7 +251,7 @@ function verify(phone, verifiCode) {
         }
       },
       complete() {
-        console.log('requesting /user/verify complete.');
+        console.log('Requesting /user/verify complete.');
       }
     })
   });
@@ -266,7 +265,6 @@ function setUserInfo(userInfo) {
       url: app.globalData.rootApiUrl + '/v1/user/setuser',
       data: {
         id: app.globalData.openid, // 必填
-        email: userInfo.email,
         campus: userInfo.campus,
         avatar: userInfo.avatarUrl,
         nickname: userInfo.nickname,
@@ -291,7 +289,7 @@ function setUserInfo(userInfo) {
         }
       },
       complete() {
-        console.log('requesting /user/setuser complete.');
+        console.log('Requesting /user/setuser complete.');
       }
     })
   });
@@ -300,7 +298,7 @@ function setUserInfo(userInfo) {
 // 设置技术员是否接单
 function setTechInfo(userInfo) {
   return new Promise((resolve, reject) => {
-    console.log("Requesting /user/setuser...");
+    console.log("Requesting /user/setuser...", userInfo);
     wx.request({
       url: app.globalData.rootApiUrl + '/v1/user/setuser',
       data: {
@@ -328,7 +326,7 @@ function setTechInfo(userInfo) {
         }
       },
       complete() {
-        console.log('requesting /user/setuser complete.');
+        console.log('Requesting /user/setuser complete.');
       }
     })
   });
@@ -337,6 +335,7 @@ function setTechInfo(userInfo) {
 // https://fyapidocs.wjlo.cc/user/avatar
 function uploadQiniuImg(localFilePath) {
   return new Promise((resolve, reject) => {
+    console.log("Requesting /user/avatar...", localFilePath);
     wx.uploadFile({
       url: app.globalData.rootApiUrl + "/v1/user/avatar",
       name: "file",
@@ -368,6 +367,7 @@ function uploadQiniuImg(localFilePath) {
 
 function putFeedback(contact, text) {
   return new Promise((resolve, reject) => {
+    console.log("Requesting /feedback/add...", contact, text);
     wx.request({
       url: app.globalData.rootApiUrl + '/v1/feedback/add',
       data: { text: text, contact: contact },
@@ -448,11 +448,12 @@ function addTicket(
 }
 
 // https://fyapidocs.wjlo.cc/ticket/give
-function giveTicket(order_id, order_hash) {
+function giveTicket(data) {
   return new Promise((resolve, reject) => {
+    console.log("Requesting /ticket/give...", data);
     wx.request({
       url: app.globalData.rootApiUrl + "/v1/ticket/give",
-      data: { order_id: order_id, order_hash: order_hash },
+      data: data,
       header: {
         'content-type': 'application/json',
         'Authorization': `Bearer ${app.globalData.accessToken}`,
@@ -478,6 +479,7 @@ function giveTicket(order_id, order_hash) {
 // https://fyapidocs.wjlo.cc/get/getticket
 function getTicket(data) {
   return new Promise((resolve, reject) => {
+    console.log("Requesting /status/getTicket...", data);
     wx.request({
       url: app.globalData.rootApiUrl + "/v1/status/getTicket",
       header: {
@@ -494,9 +496,8 @@ function getTicket(data) {
         } else if (res.data.success === false) {
           console.log('获取失败，权限不足:', res);
           resolve(403);
-        } else if (res.data.data) {
+        } else if (res.data.success === true && res.data.data) {
           console.log('获取工单成功:', res);
-          // 更新全局工单
           app.globalData.ticketList = res.data.data;
           resolve(200);
         } else {
@@ -511,6 +512,7 @@ function getTicket(data) {
 // https://fyapidocs.wjlo.cc/ticket/complete
 function completeTicket(orderId) {
   return new Promise((resolve, reject) => {
+    console.log("Requesting /ticket/complete...", orderId);
     wx.request({
       url: app.globalData.rootApiUrl + "/v1/ticket/complete",
       header: {
@@ -552,6 +554,7 @@ function completeTicket(orderId) {
 // https://fyapidocs.wjlo.cc/ticket/set
 function setTicketStatus(orderId, status) {
   return new Promise((resolve, reject) => {
+    console.log("Requesting /ticket/set...", orderId, status);
     wx.request({
       url: app.globalData.rootApiUrl + "/v1/ticket/set",
       header: {
@@ -580,9 +583,42 @@ function setTicketStatus(orderId, status) {
   });
 }
 
+// https://fyapidocs.wjlo.cc/ticket/set
+function setCompleteImage(orderId, url) {
+  return new Promise((resolve, reject) => {
+    console.log("Requesting /ticket/set...", orderId, url);
+    wx.request({
+      url: app.globalData.rootApiUrl + "/v1/ticket/set",
+      header: {
+        'content-type': 'application/json',
+        'Authorization': `Bearer ${app.globalData.accessToken}`,
+      },
+      method: 'POST',
+      data: {
+        tid: orderId,
+        complete_image_url: url,
+      },
+      success(res) {
+        if (res.statusCode === 401) {
+          console.log('鉴权失败，重新登录中...', res);
+          userLogin();
+          resolve(401);
+        } else if (res.data.success === true) {
+          console.log('更改成功:', res);
+          resolve(200);
+        } else {
+          console.log('更改失败:', res);
+          resolve(500);
+        }
+      }
+    })
+  });
+}
+
 // https://fyapidocs.wjlo.cc/get/getconfig
 function getConfig() {
   return new Promise((resolve, reject) => {
+    console.log("Requesting /conf/get...");
     wx.request({
       url: app.globalData.rootApiUrl + "/v1/conf/get",
       header: {
@@ -613,6 +649,7 @@ function getConfig() {
 
 function getTopTech() {
   return new Promise((resolve, reject) => {
+    console.log("Requesting /status/getLaomo...");
     wx.request({
       url: app.globalData.rootApiUrl + "/v1/status/getLaomo",
       header: {
@@ -621,7 +658,7 @@ function getTopTech() {
       },
       method: 'GET',
       data: {
-        campus: app.globalData.userInfo.campus,
+        campus: app.globalData.userInfo.campus === "江安" ? "j" : "m",
       },
       success(res) {
         if (res.statusCode === 401) {
@@ -642,6 +679,7 @@ function getTopTech() {
 
 function setConfig(name, data) {
   return new Promise((resolve, reject) => {
+    console.log("Requesting /conf/set...", name, data);
     wx.request({
       url: app.globalData.rootApiUrl + "/v1/conf/set",
       header: {
@@ -679,6 +717,7 @@ function setConfig(name, data) {
 // - 活动开始时微信推送
 function regevent(activity_id, uid = app.globalData.userInfo.uid) {
   return new Promise((resolve, reject) => {
+    console.log("Requesting /event/regevent...", activity_id, uid);
     wx.request({
       url: app.globalData.rootApiUrl + "/v1/event/regevent",
       header: {
@@ -713,6 +752,7 @@ function regevent(activity_id, uid = app.globalData.userInfo.uid) {
 // https://fyapidocs.wjlo.cc/user/phonechange
 function newPhone(phone) {
   return new Promise((resolve, reject) => {
+    console.log("Requesting /user/newphone...");
     wx.request({
       url: app.globalData.rootApiUrl + "/v1/user/newphone",
       header: {
@@ -754,8 +794,8 @@ function newPhone(phone) {
 }
 
 function newEmail(email) {
-  console.log("Requesting /user/newemail...");
   return new Promise((resolve, reject) => {
+    console.log("Requesting /user/newemail...", email);
     wx.request({
       url: app.globalData.rootApiUrl + "/v1/user/newemail",
       header: {
@@ -835,7 +875,7 @@ function phoneChangeVerify(phone, verifiCode) {
         }
       },
       complete() {
-        console.log('requesting /user/phonechange_verify complete.');
+        console.log('Requesting /user/phonechange_verify complete.');
       }
     })
   });
@@ -843,6 +883,7 @@ function phoneChangeVerify(phone, verifiCode) {
 
 function getRootApi() {
   return new Promise((resolve, reject) => {
+    console.log("Requesting /rootApiUrl.json...");
     wx.request({
       url: "https://fyclub.oss-cn-chengdu.aliyuncs.com/rootApiUrl.json",
       method: "GET",
@@ -866,6 +907,7 @@ function getRootApi() {
 // https://fyapidocs.wjlo.cc/get/getevent
 function getEvent() {
   return new Promise((resolve, reject) => {
+    console.log("Requesting /status/getEvent...");
     wx.request({
       url: app.globalData.rootApiUrl + "/v1/status/getEvent",
       method: "GET",
@@ -881,8 +923,51 @@ function getEvent() {
         } else if (res.data.success === true) {
           console.log("获取活动成功", res);
           resolve(res.data.activities);
-        } else{
+        } else {
           console.log("获取活动失败", res);
+          resolve(500);
+        }
+      }
+    });
+  });
+}
+
+// https://fyapidocs.wjlo.cc/get/getuser
+function getUserInfo() {
+  return new Promise((resolve, reject) => {
+    console.log("Requesting /status/getUser...");
+    wx.request({
+      url: app.globalData.rootApiUrl + "/v1/status/getUser",
+      method: "GET",
+      header: {
+        'content-type': 'application/json',
+        'Authorization': `Bearer ${app.globalData.accessToken}`,
+      },
+      data: {
+        openid: app.globalData.openid,
+      },
+      success(res) {
+        if (res.statusCode === 401) {
+          console.log('鉴权失败，重新登录中...', res);
+          userLogin();
+          resolve(401);
+        } else if (res.data.success === true) {
+          let tmpData = res.data.data;
+          console.log("获取用户数据成功", res);
+          app.globalData.userInfo.uid = tmpData.id;
+          app.globalData.userInfo.role = tmpData.role;
+          app.globalData.userInfo.email = tmpData.email;
+          app.globalData.userInfo.phone = tmpData.phone;
+          app.globalData.userInfo.campus = tmpData.campus;
+          app.globalData.userInfo.nickname = tmpData.nickname;
+          app.globalData.userInfo.avatarUrl = tmpData.avatar;
+          app.globalData.userInfo.tempEmail = tmpData.temp_email;
+          resolve(200);
+        } else if (res.data.success === false && res.data.data === "权限不足") {
+          console.log("权限不足", res);
+          resolve(403);
+        } else {
+          console.log("获取用户数据失败", res);
           resolve(500);
         }
       }
@@ -905,6 +990,7 @@ module.exports = {
   getConfig,
   completeTicket,
   setTicketStatus,
+  setCompleteImage,
   setConfig,
   getTopTech,
   regevent,
@@ -913,5 +999,6 @@ module.exports = {
   newEmail,
   getRootApi,
   getEvent,
+  getUserInfo,
   phoneChangeVerify
 }

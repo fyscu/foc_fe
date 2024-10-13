@@ -17,7 +17,11 @@
       </van-field>
     </van-cell-group>
     <van-cell-group inset title="工单维修信息">
-      <van-cell required title="所在校区" bind:click="showPopup" data-index="1" is-link
+      <van-cell title="线下接单" label="开启后您的工单不会被自动分配，请在线下和技术员协商接单">
+        <van-switch style="height: 24px;" slot="right-icon" checked="{{ offline }}" bind:change="onToggleOffline"
+          size="40rpx" />
+      </van-cell>
+      <van-cell required title="所在校区" bind:click="showPopup" data-index="1" is-link="{{ !offline }}"
         value="{{ campusValue === '' ? '请选择' : campusValue }}" arrow-direction="down" />
       <van-cell required title="设备类型" bind:click="showPopup" data-index="2" is-link
         value="{{ deviceTypeValue  === '' ? '请选择' : deviceTypeValue }}" arrow-direction="down" />

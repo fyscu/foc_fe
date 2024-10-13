@@ -68,10 +68,17 @@
     <view
       wx:if="{{ ticket.repair_status !== 'Done' && ticket.repair_status !== 'Canceled' && ticket.repair_status !== 'Closed' }}"
       class="qrcode-container">
-      <van-image width="150px" height="150px" src="{{ ticket.qrcode_url }}" bind:click="previewQRcode">
+      <van-image width="150px" height="150px" src="{{ ticket.qrcode_url }}" data-src="{{ ticket.qrcode_url }}"
+        bind:click="previewImage">
       </van-image>
-      <view wx:if="{{ role === 'user' }}" class="tips">请让您指定的技术员扫码</view>
-      <view wx:elif="{{ role === 'technician' }}" class="tips">二维码用于转单给别的技术员</view>
+      <view wx:if="{{ role === 'user' }}" class="tips">
+        <view>请让您指定的技术员扫码</view>
+        <view>或者告诉他工单号（{{ ticket.id }}）和转单验证码（{{ ticket.transcode }}）</view>
+      </view>
+      <view wx:elif="{{ role === 'technician' }}" class="tips">
+        <view>二维码用于转单给别的技术员</view>
+        <view>或者告诉他工单号（{{ ticket.id }}）和转单验证码（{{ ticket.transcode }}）</view>
+      </view>
     </view>
     <view
       wx:if="{{ ticket.repair_status !== 'Done' && ticket.repair_status !== 'Canceled' && ticket.repair_status !== 'Closed' }}"
@@ -109,5 +116,14 @@
     </view>
   </view>
   <van-dialog id="van-dialog" />
+  <van-dialog use-slot title="结束工单" show="{{ showDialog }}" show-cancel-button bind:close="closeDialog"
+    confirm-button-text="上传图片" bind:confirm="completeImage">
+    <view class="dialog-article-container">
+      <view class="tips">为了保护您免遭奇怪问题和奇怪人的影响，请在维修完毕后提交一张照片存档留证。该照片不会在用户端或者技术员端显示。</view>
+      <van-image wx:if="{{ ticket.complete_image_url }}" width="5rem" height="5rem" fit="cover"
+        bind:click="previewImage" src="{{ ticket.complete_image_url }}" data-src="{{ ticket.complete_image_url }}">
+      </van-image>
+    </view>
+  </van-dialog>
   <van-toast id="van-toast" />
 </scroll-view>

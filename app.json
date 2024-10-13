@@ -9,11 +9,13 @@
     "pages/selfPage/registerPage/index",
     "pages/selfPage/signOutPage/index",
     "pages/selfPage/newPhonePage/index",
+    "pages/selfPage/newEmailPage/index",
     "pages/activityPage/index",
     "pages/activityPage/numberPage/index",
     "pages/homePage/ticketDetail/index",
     "pages/homePage/announcement/index",
     "pages/homePage/submitTicket/index",
+    "pages/homePage/giveOrder/index",
     "pages/forumPage/index",
     "pages/forumPage/sharePage/index"
   ],

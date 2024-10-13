@@ -28,4 +28,11 @@
 
 .qrcode-container .tips {
   margin-top: 20rpx;
+  margin-left: 60rpx;
+  margin-right: 60rpx;
+}
+
+.dialog-article-container .tips {
+  margin: 40rpx;
+  font-size: small;
 }

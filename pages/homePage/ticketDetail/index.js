@@ -1,6 +1,11 @@
 import Toast from "@vant/weapp/toast/toast";
 import Dialog from "@vant/weapp/dialog/dialog";
-import { completeTicket, setTicketStatus } from "../../../utils/req";
+import {
+  uploadQiniuImg,
+  completeTicket,
+  setTicketStatus,
+  setCompleteImage,
+} from "../../../utils/req";
 
 var app = getApp();
 
@@ -8,6 +13,8 @@ Page({
   data: {
     active: 0,
     role: "user",
+    showDialog: false, // 是否显示结束工单确认框
+    needCompleteImage: true, // 是否未上传图片
     activeColor: "#38f",
     ticket: null,
     warrantyMap: {
@@ -34,6 +41,7 @@ Page({
       ),
     });
     this.calcSteps(this.data.ticket.repair_status);
+    this.setData({ needCompleteImage: !this.data.ticket.complete_image });
   },
   calcSteps(repair_status) {
     let statusMap = {
@@ -69,17 +77,45 @@ Page({
       active: statusMap[repair_status],
     });
   },
-  previewQRcode() {
-    wx.previewImage({
-      current: this.data.ticket.qrcode_url,
-      urls: [this.data.ticket.qrcode_url],
+  // 关闭、弹出索要图片框
+  closeDialog() {
+    this.setData({ showDialog: false });
+  },
+  completeImage() {
+    let that = this;
+    wx.chooseMedia({
+      count: 1, // 可选择的图片数量
+      mediaType: ["image"],
+      sourceType: ["album", "camera"], // 来源：相册或相机
+      camera: "back",
+      success(res) {
+        wx.showLoading({ title: "上传图片中", mask: true });
+        let tempFilePath = res.tempFiles[0].tempFilePath;
+        uploadQiniuImg(tempFilePath).then((url) => {
+          setCompleteImage(that.data.ticket.id, url).then(returnCode => {
+            wx.hideLoading();
+            if (returnCode === 401) {
+              Toast("鉴权失败，请刷新重试");
+            } else if (returnCode === 200) {
+              Toast("上传图片成功，请再次点击维修完成");
+              that.setData({ showDialog: false });
+              that.setData({ needCompleteImage: false });
+            } else {
+              Toast("上传图片失败，请重试");
+              that.setData({ showDialog: true });
+              that.setData({ needCompleteImage: true });
+            }
+          });
+        });
+      },
     });
   },
   completeTheTicket() {
-    Dialog.confirm({
-      title: "结束工单",
-      message: "确认结束工单吗？",
-    }).then(() => {
+    if (this.data.role === "technician" && this.data.needCompleteImage) {
+      // 如果是技术员且未上传结束图片
+      this.setData({ showDialog: true });
+      return;
+    } else {
       wx.showLoading({ title: "结束工单中", mask: true });
       completeTicket(this.data.ticket.id).then((returnCode) => {
         wx.hideLoading();
@@ -97,13 +133,15 @@ Page({
           Toast("工单结束失败");
         }
       });
-    }).catch((err) => {
-      console.log("取消结束工单", err);
-    });
+    }
   },
   confirmTheTicket() {
     let confirmStatus;
-    if (this.data.role === "technician") {
+    if (this.data.role === "technician" && this.data.needCompleteImage) {
+      // 如果是技术员且未上传结束图片
+      this.setData({ showDialog: true });
+      return;
+    } else if (this.data.role === "technician") {
       confirmStatus = "UserConfirming";
     } else if (this.data.role === "user") {
       confirmStatus = "TechConfirming";
@@ -180,10 +218,16 @@ Page({
     });
   },
   previewImage(event) {
-    console.log("previewImage:", event);
     wx.previewImage({
       current: event.target.dataset.src,
-      urls: [this.data.ticket.repair_image_url],
+      urls: [event.target.dataset.src],
     });
+  },
+  onShareAppMessage() {
+    return {
+      title: '我能把这个工单托付给你吗？',
+      path: `/pages/homePage/index?operator=give&order_id=${this.data.ticket.id}&tvcode=${this.data.ticket.transcode}`,
+      imageUrl: this.data.ticket.repair_image_url,
+    }
   }
 });

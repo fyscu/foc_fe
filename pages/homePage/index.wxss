@@ -1,4 +1,8 @@
 /**index.wxss**/
+.give-order-btn {
+  display: block;
+  margin-bottom: 10rpx;
+}
 
 .van-card__title {
   font-size: medium;

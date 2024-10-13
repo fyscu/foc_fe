@@ -10,6 +10,8 @@ var app = getApp();
 Page({
   data: {
     loggedin: 1,
+    // 是否线下接单
+    offline: false,
     // 日期区间
     minDate: new Date(2019, 0, 1).getTime(),
     maxDate: new Date().getTime(),
@@ -191,8 +193,10 @@ Page({
     });
   },
   showPopup(event) {
+    let index = parseInt(event.target.dataset.index)
+    if (index === 1 && this.data.offline) { return; }
     this.setData({
-      showPopup: parseInt(event.target.dataset.index),
+      showPopup: index,
     });
   },
   chooseImage() {
@@ -206,9 +210,7 @@ Page({
       success(res) {
         // console.log(res);
         res.tempFiles.forEach((item) => {
-          console.log("start uploading:", item.tempFilePath);
           uploadQiniuImg(item.tempFilePath).then((url) => {
-            console.log("qiniu upload success!", url);
             let temp_imageUrl = that.data.imageUrl;
             temp_imageUrl.push(url);
             that.setData({
@@ -220,7 +222,6 @@ Page({
     });
   },
   previewImage(event) {
-    console.log("previewImage:", event);
     wx.previewImage({
       current: event.target.dataset.src,
       urls: this.data.imageUrl,
@@ -236,6 +237,14 @@ Page({
     this.setData({
       imageUrl: temp_imageUrl,
     });
+  },
+  onToggleOffline(event) {
+    this.setData({ offline: event.detail });
+    if (this.data.offline === true) {
+      this.setData({ campusValue: "线下" });
+    } else {
+      this.setData({ campusValue: app.globalData.userInfo.campus });
+    }
   },
   submitTicket() {
     let fields = {

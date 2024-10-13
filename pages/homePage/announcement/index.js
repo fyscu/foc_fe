@@ -10,7 +10,7 @@ Page({
     isLoading: true,
     sysConfig: app.globalData.sysConfig,
   },
-  onLoad: function () {
+  onLoad() {
     if (this.data.sysConfig === null) {
       getConfig().then((returnCode) => {
         if (returnCode === 401) {
