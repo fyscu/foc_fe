@@ -32,6 +32,10 @@
   margin-right: 60rpx;
 }
 
+.dialog-article-container {
+  text-align: center;
+}
+
 .dialog-article-container .tips {
   margin: 40rpx;
   font-size: small;

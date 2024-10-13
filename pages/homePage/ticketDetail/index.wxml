@@ -64,6 +64,14 @@
           <copy-button text-to-copy="{{ ticket.repair_description }}" slot="right-icon" />
         </van-cell>
       </van-cell-group>
+      <van-cell-group inset title="转单信息">
+        <van-cell center title="工单号" value="{{ ticket.id }}">
+          <copy-button text-to-copy="{{ ticket.id }}" slot="right-icon" />
+        </van-cell>
+        <van-cell center title="转单验证码" value="{{ ticket.transcode }}">
+          <copy-button text-to-copy="{{ ticket.transcode }}" slot="right-icon" />
+        </van-cell>
+      </van-cell-group>
     </view>
     <view
       wx:if="{{ ticket.repair_status !== 'Done' && ticket.repair_status !== 'Canceled' && ticket.repair_status !== 'Closed' }}"
@@ -73,11 +81,11 @@
       </van-image>
       <view wx:if="{{ role === 'user' }}" class="tips">
         <view>请让您指定的技术员扫码</view>
-        <view>或者告诉他工单号（{{ ticket.id }}）和转单验证码（{{ ticket.transcode }}）</view>
+        <!-- <view>或者告诉他工单号（{{ ticket.id }}）和转单验证码（{{ ticket.transcode }}）</view> -->
       </view>
       <view wx:elif="{{ role === 'technician' }}" class="tips">
         <view>二维码用于转单给别的技术员</view>
-        <view>或者告诉他工单号（{{ ticket.id }}）和转单验证码（{{ ticket.transcode }}）</view>
+        <!-- <view>或者告诉他工单号（{{ ticket.id }}）和转单验证码（{{ ticket.transcode }}）</view> -->
       </view>
     </view>
     <view

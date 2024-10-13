@@ -41,7 +41,9 @@ Page({
       ),
     });
     this.calcSteps(this.data.ticket.repair_status);
-    this.setData({ needCompleteImage: !this.data.ticket.complete_image });
+    this.setData({
+      needCompleteImage: !this.data.ticket.complete_image_url
+    });
   },
   calcSteps(repair_status) {
     let statusMap = {

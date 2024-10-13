@@ -19,6 +19,8 @@ Page({
         Toast("鉴权失败，请刷新重试");
       } else if (ret === 500) {
         Toast("获取活动失败");
+      } else if (ret === 404) {
+        Toast("找不到活动");
       } else {
         this.setData({ activities: ret });
         this.setActivityStatus();

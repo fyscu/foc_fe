@@ -44,7 +44,7 @@ Page({
           wx.navigateBack();
         }, 500);
       } else if (returnCode === 403) {
-        Toast("接单失败，权限不足");
+        Toast("抱歉，你来晚了。工单已经被接走了！");
       } else {
         Toast("接单失败，未知错误");
       }

@@ -467,6 +467,14 @@ function giveTicket(data) {
         } else if (res.data.success === true) {
           console.log("分配工单成功", res);
           resolve(200);
+        } else if (res.data.success === false) {
+          if (res.data.message === "Transfer vcode mismatch") {
+            console.log("验证码不匹配:", res);
+            resolve(403);
+          } else {
+            console.log("分配工单失败:", res);
+            resolve(500);
+          }
         } else {
           console.log("分配工单失败:", res);
           resolve(500);
@@ -923,6 +931,14 @@ function getEvent() {
         } else if (res.data.success === true) {
           console.log("获取活动成功", res);
           resolve(res.data.activities);
+        } else if (res.data.success === false) {
+          if (res.data.activities === "No activities found") {
+            console.log("找不到活动", res);
+            resolve(404);
+          } else {
+            console.log("获取活动失败", res);
+            resolve(500);
+          }
         } else {
           console.log("获取活动失败", res);
           resolve(500);
