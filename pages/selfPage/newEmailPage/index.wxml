@@ -1,9 +1,9 @@
 <!--index.wxml-->
 <scroll-view class="scrollview" scroll-y type="list">
   <view class="container">
-    <van-cell-group inset title="绑定邮箱">
-      <van-field required error-message="{{ validEmail ? '' : '邮箱格式错误' }}" center name="email" label="邮箱"
-        placeholder="请输入电子邮箱" clearable value="{{ newEmail }}" border="{{ false }}" bind:change="onEmailChange"
+    <van-cell-group inset title="输入新的邮箱">
+      <van-field required error-message="{{ validEmail ? '' : '邮箱格式错误' }}" center name="email" label="邮箱地址"
+        placeholder="请输入邮箱地址" clearable value="{{ newEmail }}" border="{{ false }}" bind:change="onEmailChange"
         error="{{ !hasEmail }}">
         <view slot="right-icon" class="material-icons"> mail </view>
       </van-field>
