@@ -1,6 +1,10 @@
 // index.js
 import Toast from "@vant/weapp/toast/toast";
-import { getEvent, regevent } from "../../utils/req";
+import {
+  getEvent,
+  regevent,
+  getLuckynum
+} from "../../utils/req";
 
 var app = getApp();
 
@@ -13,6 +17,9 @@ Page({
     activitiesShowing: {},
   },
   onShow() {
+    this.initialize();
+  },
+  initialize() {
     // 初始化 activity
     getEvent().then((ret) => {
       if (ret === 401) {
@@ -50,6 +57,22 @@ Page({
       activities: activities
     });
   },
+  navigateToNumberPage(event) {
+    const activity = event.currentTarget.dataset.activity;
+    getLuckynum(activity.id).then((ret) => {
+      if (ret === 401) {
+        Toast("鉴权失败，请刷新重试");
+      } else if (ret === 500) {
+        Toast("获取号码失败");
+      } else if (ret === 404) {
+        Toast("找不到号码");
+      } else {
+        wx.navigateTo({
+          url: `/pages/activityPage/numberPage/index?luckynum=${ret.luckynum}&isWinner=${ret.is_winner}`,
+        });
+      }
+    });
+  },
   handleSignup(event) {
     const activity = event.currentTarget.dataset.activity;
     if (activity.status === 0) {
@@ -61,7 +84,6 @@ Page({
       return;
     }
     // 处理报名逻辑
-    console.log(`报名活动: ${activity.name}`);
     if (!app.globalData.isloggedin) {
       Toast("请先登录");
       return;
@@ -71,12 +93,15 @@ Page({
       Toast("抱歉，该功能仍在开发中");
       return;
     }
-    regevent(activity.name).then((returnCode) => {
-      if (returnCode === 401) {
+    regevent(activity.id).then((ret) => {
+      if (ret === 401) {
         Toast("鉴权失败，请刷新重试");
-      } else if (returnCode === 200) {
+      } else if (ret === 200) {
         Toast("报名成功");
-      } else if (returnCode === 403) {
+      } else if (ret === 300) {
+        Toast("您已报名");
+        this.initialize();
+      } else if (ret === 403) {
         Toast("请使用大修报名通道");
       } else {
         Toast("报名失败");

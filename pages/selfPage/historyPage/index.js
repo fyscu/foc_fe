@@ -6,7 +6,7 @@ var app = getApp();
 
 Page({
   data: {
-    loading: false,
+    // loading: false,
     statusList: {
       Pending: "待分配",
       Repairing: "维修中",
@@ -30,7 +30,7 @@ Page({
     }
   },
   initialize() {
-    this.setData({ loading: true });
+    // this.setData({ loading: true });
     if (!checkUserInfo(this.data.userInfo)) {
       // 如果没有完善 userInfo，跳转到用户信息设置页面
       wx.navigateTo({
@@ -41,7 +41,7 @@ Page({
       getTicket({
         uid: this.data.userInfo.uid,
       }).then((returnCode) => {
-        this.setData({ loading: false });
+        // this.setData({ loading: false });
         if (returnCode === 401) {
           Toast("鉴权失败，请刷新重试");
         } else if (returnCode === 200) {
@@ -58,7 +58,7 @@ Page({
       getTicket({
         tid: this.data.userInfo.uid,
       }).then((returnCode) => {
-        this.setData({ loading: false });
+        // this.setData({ loading: false });
         if (returnCode === 401) {
           Toast("鉴权失败，请刷新重试");
         } else if (returnCode === 200) {
@@ -71,7 +71,7 @@ Page({
         }
       });
     } else {
-      this.setData({ loading: false });
+    //   this.setData({ loading: false });
     }
   },
   reloadData() {

@@ -1,7 +1,9 @@
+let countParticles = 0;
+
 Page({
   data: {
-    number_status: 0, // 默认状态，可以通过onLoad或其他方式设置
-    your_number: '0', // 默认号码，可以通过onLoad或其他方式设置
+    isWinner: false,
+    luckynum: '0',
     ctx: null,
     width: 0,
     height: 0,
@@ -23,16 +25,15 @@ Page({
       }
     });
 
-    // 假设你通过options传递number_status和your_number
-    if (options.status !== undefined) {
+    if (options.isWinner !== undefined && options.luckynum !== undefined) {
+      console.log(options);
       this.setData({
-        number_status: parseInt(options.status),
-        your_number: options.number || this.data.your_number
-      }, () => {
-        // 撒花效果
-        console.log("撒花");
-        this.startConfetti();
+        isWinner: options.isWinner === "true",
+        luckynum: options.luckynum
       });
+      if (this.data.isWinner) {
+        this.startConfetti();
+      }
     }
   },
 
@@ -42,8 +43,14 @@ Page({
     if (this.data.isAnimating) return; // 防止重复启动
     this.setData({ isAnimating: true });
 
-    // 初始化粒子
-    this.initParticles(100); // 生成100个彩纸粒子
+    let genParticles = setInterval(() => {
+      countParticles++;
+      this.initParticles(10); // 生成10个彩纸粒子
+      if (countParticles >= 20) {
+        countParticles = 0;
+        clearInterval(genParticles);
+      }
+    }, 50);
 
     // 开始动画循环
     this.animate();
@@ -51,17 +58,22 @@ Page({
 
   // 初始化粒子数组
   initParticles: function (count) {
-    const particles = [];
-    const colors = ['#FFC107', '#FF4081', '#3F51B5', '#4CAF50', '#00BCD4', '#E91E63'];
+    let particles = this.data.particles;
+    let colors = ['#FFC107', '#FF4081', '#3F51B5', '#4CAF50', '#00BCD4', '#E91E63'];
 
     for (let i = 0; i < count; i++) {
+      let onright = Math.random() > 0.5;
+      let x = onright ? this.data.width * 0.75 : this.data.width * 0.25;
+      let y = this.data.height / 4;
+      let angle = Math.random() * Math.PI / 3 + Math.PI / 4;
+      let speed = Math.random() * 12 + 4;
       particles.push({
-        x: Math.random() * this.data.width, // 随机 x 坐标
-        y: Math.random() * this.data.height - this.data.height, // 初始位置在屏幕上方
+        x: x,
+        y: y,
         width: Math.random() * 5 + 3, // 随机宽度
         height: Math.random() * 15 + 5, // 随机高度
-        speedX: Math.random() * 2 - 1, // 水平速度
-        speedY: Math.random() * 2 + 1, // 垂直速度
+        speedX: onright ? - Math.cos(angle) * speed : Math.cos(angle) * speed, // 水平速度
+        speedY: - Math.sin(angle) * speed, // 垂直速度
         rotation: Math.random() * 360, // 初始旋转角度
         rotationSpeed: Math.random() * 10 - 5, // 旋转速度
         color: colors[Math.floor(Math.random() * colors.length)] // 随机颜色
@@ -84,9 +96,9 @@ Page({
     // 更新和绘制每个粒子
     particles.forEach((particle, index) => {
       // 更新速度
-      particle.speedY += 0.08; // 应用重力
-      particle.speedX *= 0.99; // 应用空气阻力
-      particle.speedY *= 0.99;
+      particle.speedY += 0.2; // 应用重力
+      particle.speedX *= 0.98; // 应用空气阻力
+      particle.speedY *= 0.98; // 应用空气阻力
 
       // 更新位置
       particle.x += particle.speedX;

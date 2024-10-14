@@ -33,13 +33,10 @@
         value="{{ deviceProblemValue  === '' ? '请选择' : deviceProblemValue }}" arrow-direction="down" />
       <van-cell required title="购买日期" value="{{ purchaseDate  === '' ? '请选择' : purchaseDate }}" is-link
         bind:click="showPopup" data-index="6" arrow-direction="down" />
-      <!-- 说出设备型号门槛过高 -->
-      <!--
-    <van-field center name="model" label="设备型号" placeholder="请填写设备型号" clearable value="{{ model }}"
-      border="{{ false }}">
-      <view class="material-icons" slot="right-icon"> devices </view>
-    </van-field>
-    -->
+      <van-field center name="model" label="设备型号" placeholder="设备型号（选填）" clearable bind:change="onModelChange"
+        value="{{ model }}" border="{{ false }}">
+        <view class="material-icons" slot="right-icon"> devices </view>
+      </van-field>
       <van-field required center autosize type="textarea" name="problem" label="问题描述" placeholder="请详细描述设备问题" clearable
         bind:change="onProblemDescChange" value="{{ problemDesc }}" border="{{ false }}">
         <view class="material-icons" slot="right-icon"> bug_report </view>

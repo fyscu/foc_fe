@@ -6,6 +6,9 @@
     </view>
     <view wx:if="{{ ticket !== null }}" class="table-container">
       <van-cell-group wx:if="{{ role === 'technician' }}" inset title="机主联系方式">
+        <van-cell center title="昵称" value="{{ ticket.user_nick }}">
+          <copy-button text-to-copy="{{ ticket.user_nick }}" slot="right-icon" />
+        </van-cell>
         <van-cell center title="QQ/微信号" value="{{ ticket.qq_number }}">
           <copy-button text-to-copy="{{ ticket.qq_number }}" slot="right-icon" />
         </van-cell>
@@ -59,7 +62,9 @@
         <van-cell center title="购买日期" value="{{ ticket.machine_purchase_date }}">
           <copy-button text-to-copy="{{ ticket.machine_purchase_date }}" slot="right-icon" />
         </van-cell>
-        <!-- 说出设备型号门槛过高 省略...-->
+        <van-cell center title="设备型号" value="{{ ticket.model }}">
+          <copy-button text-to-copy="{{ ticket.model }}" slot="right-icon" />
+        </van-cell>
         <van-cell center title="问题描述" value="{{ ticket.repair_description }}">
           <copy-button text-to-copy="{{ ticket.repair_description }}" slot="right-icon" />
         </van-cell>

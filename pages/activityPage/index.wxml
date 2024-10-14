@@ -5,9 +5,15 @@
     <van-empty image="search" description="找不到活动" />
   </view>
   <view wx:for="{{ activitiesShowing }}" wx:key="index">
-    <van-card class="status-{{ item.status }}" tag="{{ statusList[item.status] }}" title="{{ item.name }}" desc="{{ item.description }}" thumb="{{ item.poster }}">
+    <van-card class="status-{{ item.status }}" tag="{{ statusList[item.status] }}" title="{{ item.name }}"
+      desc="{{ item.description }}" thumb="{{ item.poster }}">
       <view slot="footer">
-        <van-button round size="small" type="info" disabled="{{ item.status !== 1 }}" bindtap="handleSignup" data-activity="{{ item }}">
+        <van-button wx:if="{{ item.registered }}" round icon="casino" class-prefix="material-icons" size="small"
+          type="primary" bindtap="navigateToNumberPage" data-activity="{{ item }}">
+          查看抽奖号
+        </van-button>
+        <van-button wx:else round size="small" type="info" disabled="{{ item.status !== 1 }}" bindtap="handleSignup"
+          data-activity="{{ item }}">
           立即报名
         </van-button>
       </view>

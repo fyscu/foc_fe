@@ -397,14 +397,15 @@ function putFeedback(contact, text) {
 // https://fyapidocs.wjlo.cc/ticket/add
 function addTicket(
   purchase_date, phone, device_type,
-  brand, description, image,
-  fault_type, qq, campus, warranty_status
+  brand, description, image, fault_type,
+  qq, campus, warranty_status, model
 ) {
   return new Promise((resolve, reject) => {
     if (!image) {
       image = "https://focapp.feiyang.ac.cn/public/ticketdefault.svg";
       console.log("use default url:", image);
     }
+    console.log("Requesting /ticket/add...", purchase_date, phone, device_type, brand, description, image, fault_type, qq, campus, warranty_status, model);
     wx.request({
       url: app.globalData.rootApiUrl + "/v1/ticket/create",
       data: {
@@ -419,6 +420,8 @@ function addTicket(
         qq: qq, // 用户预留qq号 int
         campus: campus, // 用户所在校区 string
         warranty_status: warranty_status, // 保修状态
+        model: model, // 设备型号
+        user_nick: app.globalData.userInfo.nickname,
       },
       header: {
         'content-type': 'application/json',
@@ -437,6 +440,12 @@ function addTicket(
           if (res.data.message === "order_exists") {
             console.log("工单已存在", res);
             resolve(300);
+          } else if (res.data.message === "已达用户每周限额") {
+            console.log("已达用户每周限额", res);
+            resolve(403);
+          } else {
+            console.log("创建工单失败:", res);
+            resolve(500);
           }
         } else {
           console.log("创建工单失败:", res);
@@ -743,8 +752,13 @@ function regevent(activity_id, uid = app.globalData.userInfo.uid) {
           userLogin();
           resolve(401);
         } else if (res.data.success === false) {
-          console.log('报名失败:', res);
-          resolve(403);
+          if (res.data.message === "Registered") {
+            console.log("已报名", res);
+            resolve(300);
+          } else {
+            console.log('报名失败:', res);
+            resolve(403);
+          }
         } else if (res.data.success === true) {
           console.log('报名成功:', res);
           resolve(200);
@@ -948,6 +962,41 @@ function getEvent() {
   });
 }
 
+// https://fyapidocs.wjlo.cc/get/getLuckynum
+function getLuckynum(activity_id, uid = app.globalData.userInfo.uid) {
+  return new Promise((resolve, reject) => {
+    console.log("Requesting /status/getLuckynum...", activity_id, uid);
+    wx.request({
+      url: app.globalData.rootApiUrl + "/v1/status/getLuckynum",
+      method: "GET",
+      header: {
+        'content-type': 'application/json',
+        'Authorization': `Bearer ${app.globalData.accessToken}`,
+      },
+      data: {
+        activity_id: activity_id,
+        user_id: uid,
+      },
+      success(res) {
+        if (res.statusCode === 401) {
+          console.log('鉴权失败，重新登录中...', res);
+          userLogin();
+          resolve(401);
+        } else if (res.data.success === true) {
+          console.log("获取抽奖号成功", res);
+          resolve(res.data);
+        } else if (res.data.success === false) {
+          console.log("获取抽奖号失败", res);
+          resolve(500);
+        } else {
+          console.log("获取抽奖号失败", res);
+          resolve(500);
+        }
+      }
+    });
+  });
+}
+
 // https://fyapidocs.wjlo.cc/get/getuser
 function getUserInfo() {
   return new Promise((resolve, reject) => {
@@ -1015,6 +1064,7 @@ module.exports = {
   newEmail,
   getRootApi,
   getEvent,
+  getLuckynum,
   getUserInfo,
   phoneChangeVerify
 }

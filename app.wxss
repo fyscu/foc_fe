@@ -33,6 +33,8 @@
     --divider-border-color: #8b8b8b;
     --step-finish-text-color: #8b8b8b;
     --button-disabled-opacity: 0.9;
+    --divider-border-color: #272727;
+    --image-placeholder-background-color: #272727;
   }
 
   .van-step__circle-container {
@@ -63,8 +65,10 @@
   .van-hairline--bottom:after,
   .van-hairline--top-bottom:after,
   .van-hairline--top:after,
+  .van-hairline--right:after,
+  .van-hairline--left:after,
   .van-hairline:after {
-    border: 0 solid #1f1f1f !important;
+    border: 0px solid #1f1f1f !important;
   }
 
   .van-cell:after {
