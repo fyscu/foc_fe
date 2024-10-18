@@ -8,14 +8,27 @@
     <van-card class="status-{{ item.status }}" tag="{{ statusList[item.status] }}" title="{{ item.name }}"
       desc="{{ item.description }}" thumb="{{ item.poster }}">
       <view slot="footer">
-        <van-button wx:if="{{ item.registered }}" round icon="casino" class-prefix="material-icons" size="small"
-          type="primary" bindtap="navigateToNumberPage" data-activity="{{ item }}">
-          查看抽奖号
-        </van-button>
-        <van-button wx:else round size="small" type="info" disabled="{{ item.status !== 1 }}" bindtap="handleSignup"
-          data-activity="{{ item }}">
-          立即报名
-        </van-button>
+        <view wx:if="{{ item.registered }}">
+          <van-button wx:if="{{ item.isLucky === '1' }}" round icon="casino" class-prefix="material-icons" size="small"
+            type="primary" bindtap="navigateToNumberPage" data-activity="{{ item }}">
+            查看抽奖号
+          </van-button>
+          <van-button wx:else round icon="done" class-prefix="material-icons" size="small" type="primary" disabled>
+            报名成功
+          </van-button>
+        </view>
+        <view wx:else>
+          <van-button wx:if="{{ item.status === 0 }}" round size="small" type="info" disabled>
+            活动未开始
+          </van-button>
+          <van-button wx:elif="{{ item.status === 1 }}" round size="small" type="success" bindtap="handleSignup"
+            data-activity="{{ item }}">
+            立即报名
+          </van-button>
+          <van-button wx:elif="{{ item.status >= 2 }}" round size="small" type="info" disabled>
+            报名已结束
+          </van-button>
+        </view>
       </view>
     </van-card>
   </view>

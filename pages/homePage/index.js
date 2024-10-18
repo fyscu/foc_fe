@@ -20,6 +20,8 @@ Page({
     article: {},
     showDialog: false,
     announcementAgreed: false,
+    // 技术员榜 Tab
+    activeTab: "总榜",
     // 显示骨架屏
     loading: false,
     statusList: {
@@ -60,6 +62,10 @@ Page({
               this.initialize();
             } else if (returnCode === 403) {
               Toast("抱歉，你来晚了。工单已经被接走了！");
+            } else if (returnCode === 300) {
+              Toast("工单已关闭");
+            } else if (returnCode === 404) {
+              Toast("找不到工单");
             } else {
               Toast("接单失败，未知错误");
             }
@@ -148,6 +154,26 @@ Page({
       Toast("保存成功");
     }
   },
+  onTabChange(event) {
+    let campus = {
+      "总榜": "总榜",
+      "江安榜": "江安",
+      "望江榜": "望江",
+      "华西榜": "华西",
+      "磨子桥榜": "望江",
+    }[event.detail.name];
+    getTopTech(campus).then((res) => {
+      if (res === 401) {
+        Toast("鉴权失败，请刷新重试");
+      } else if (res === 500) {
+        Toast("获取技术员排行榜失败");
+      } else {
+        // 按照item.rank排序
+        res.sort((a, b) => a.rank - b.rank);
+        this.setData({ topTech: res });
+      }
+    });
+  },
   initialize() {
     // 获取全局配置
     getConfig().then((returnCode) => {
@@ -169,7 +195,7 @@ Page({
       }
     });
     // 获取技术员排行榜
-    getTopTech().then((res) => {
+    getTopTech(this.data.activeTab).then((res) => {
       if (res === 401) {
         Toast("鉴权失败，请刷新重试");
       } else if (res === 500) {
@@ -242,6 +268,10 @@ Page({
                 that.initialize();
               } else if (returnCode === 403) {
                 Toast("接单失败，权限不足");
+              } else if (returnCode === 300) {
+                Toast("工单已关闭");
+              } else if (returnCode === 404) {
+                Toast("找不到工单");
               } else {
                 Toast("接单失败，未知错误");
               }

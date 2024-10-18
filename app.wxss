@@ -35,6 +35,8 @@
     --button-disabled-opacity: 0.9;
     --divider-border-color: #272727;
     --image-placeholder-background-color: #272727;
+    --tabs-nav-background-color: #2e2e2e;
+    --tab-active-text-color: #dedede;
   }
 
   .van-step__circle-container {
@@ -146,11 +148,11 @@
 }
 
 .class-status-Closed .van-tag--mark {
-  background-color: #cfbe06;
+  background-color: #da3231;
 }
 
 .class-status-UserConfirming .van-tag--mark {
-  background-color: #bf1d9c;
+  background-color: #cfbe06;
 }
 
 .class-status-TechConfirming .van-tag--mark {

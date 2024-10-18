@@ -25,6 +25,18 @@
   background-color: #da3231;
 }
 
+.status-3 .van-tag--mark {
+    background-color: #349b47;
+}
+
+.status-4 .van-tag--mark {
+    background-color: #da3231;
+}
+
+.status-5 .van-tag--mark {
+    background-color: #f19c73;
+}
+
 @media (prefers-color-scheme: dark) {
   .van-card {
     background: #2e2e2e !important;

@@ -3,11 +3,7 @@
 <scroll-view class="scrollview" scroll-y type="list">
   <view class="container">
     <van-cell-group inset title="手动接单">
-      <van-field required center name="order_id" type="digit" label="工单号" placeholder="请输入工单号" value="{{ orderID }}"
-        border="{{ false }}" bind:change="onOrderIDChange" error="{{ !hasOrderID }}">
-        <view class="material-icons" slot="right-icon"> phone </view>
-      </van-field>
-      <van-field required center name="transcode" type="digit" label="转单验证码" placeholder="请输入验证码"
+      <van-field required center name="transcode" type="digit" label="转单码" placeholder="请输入转单码"
         value="{{ transcode }}" border="{{ false }}" bind:change="onTranscodeChange" error="{{ !hasTranscode }}">
         <view class="material-icons" slot="right-icon"> lock </view>
       </van-field>

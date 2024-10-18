@@ -40,7 +40,7 @@ function getUUid() {
 
 function checkUserInfo(userInfo) {
   // 检查用户信息是否填写完整
-  console.log(userInfo);
+  // console.log(userInfo);
   // if (userInfo.qq === "") { return false; }
   // if (userInfo.uid === "") { return false; }
   // if (userInfo.role === "") { return false; }

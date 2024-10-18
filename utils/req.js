@@ -480,6 +480,12 @@ function giveTicket(data) {
           if (res.data.message === "Transfer vcode mismatch") {
             console.log("验证码不匹配:", res);
             resolve(403);
+          } else if (res.data.message === "Ticket not found") {
+            console.log("工单未找到:", res);
+            resolve(404);
+          } else if (res.data.message === "Order has closed") {
+            console.log("工单已关闭:", res);
+            resolve(300);
           } else {
             console.log("分配工单失败:", res);
             resolve(500);
@@ -664,7 +670,13 @@ function getConfig() {
   });
 }
 
-function getTopTech() {
+function getTopTech(campus = app.globalData.userInfo.campus) {
+  let data = {}; // 总榜
+  if (campus === "江安") {
+    data = { campus: "j" }; // 江安榜
+  } else if (campus === "望江" || campus === "华西") {
+    data = { campus: "m" }; // 磨子桥榜
+  }
   return new Promise((resolve, reject) => {
     console.log("Requesting /status/getLaomo...");
     wx.request({
@@ -674,9 +686,7 @@ function getTopTech() {
         'Authorization': `Bearer ${app.globalData.accessToken}`,
       },
       method: 'GET',
-      data: {
-        campus: app.globalData.userInfo.campus === "江安" ? "j" : "m",
-      },
+      data: data,
       success(res) {
         if (res.statusCode === 401) {
           console.log('鉴权失败，重新登录中...', res);
@@ -1019,6 +1029,8 @@ function getUserInfo() {
         } else if (res.data.success === true) {
           let tmpData = res.data.data;
           console.log("获取用户数据成功", res);
+          app.globalData.accessToken = tmpData.access_token;
+          // 设置用户信息
           app.globalData.userInfo.uid = tmpData.id;
           app.globalData.userInfo.role = tmpData.role;
           app.globalData.userInfo.email = tmpData.email;
@@ -1027,6 +1039,11 @@ function getUserInfo() {
           app.globalData.userInfo.nickname = tmpData.nickname;
           app.globalData.userInfo.avatarUrl = tmpData.avatar;
           app.globalData.userInfo.tempEmail = tmpData.temp_email;
+          // 设置技术员信息
+          if (tmpData.role === "technician") {
+            app.globalData.userInfo.wants = tmpData.wants;
+            app.globalData.userInfo.available = tmpData.available;
+          }
           resolve(200);
         } else if (res.data.success === false && res.data.data === "权限不足") {
           console.log("权限不足", res);

@@ -10,7 +10,7 @@ var app = getApp();
 
 Page({
   data: {
-    statusList: ["未开始", "进行中", "已结束"],
+    statusList: ["未开始", "报名中", "报名结束", "进行中", "已结束", "未知"],
     searchText: "",
     searchEmpty: true, // 没有搜索结果
     activities: [],
@@ -42,15 +42,23 @@ Page({
       // yyyy-MM-dd HH:mm:ss -> yyyy/MM/dd HH:mm:ss
       const signup_start_time = activity.signup_start_time.replace(/-/g, "/");
       const signup_end_time = activity.signup_end_time.replace(/-/g, "/");
+      const end_time = activity.end_time.replace(/-/g, "/");
       const signupStartTime = new Date(signup_start_time).getTime();
       const signupEndTime = new Date(signup_end_time).getTime();
+      const endTime = new Date(end_time).getTime();
       // console.log(activity);
       if (now < signupStartTime) {
-        activity.status = 0;
-      } else if (now > signupEndTime) {
-        activity.status = 2;
+        activity.status = 0; // 报名未开始
+      } else if (signupStartTime <= now && now <= signupEndTime) {
+        activity.status = 1; // 报名进行中
+      } else if (now >= signupEndTime) {
+        activity.status = 2; // 报名已结束
+      } else if (signupEndTime <= now && now <= endTime) {
+        activity.status = 3; // 活动进行中
+      } else if (now >= endTime) {
+        activity.status = 4; // 活动已结束
       } else {
-        activity.status = 1;
+        activity.status = 5; // 未知状态
       }
     });
     this.setData({
@@ -76,10 +84,14 @@ Page({
   handleSignup(event) {
     const activity = event.currentTarget.dataset.activity;
     if (activity.status === 0) {
-      Toast("活动尚未开始");
+      Toast("报名尚未开始");
       return;
     }
     if (activity.status === 2) {
+      Toast("报名已结束");
+      return;
+    }
+    if (activity.status === 4) {
       Toast("活动已结束");
       return;
     }

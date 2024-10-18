@@ -43,35 +43,39 @@
       </view>
       <view wx:elif='{{ userInfo.role === "technician" }}'>
         <view wx:if="{{ !hasUnfinishedStatus }}">
-          <view wx:if="{{ topTech.length === 3 }}" class="ranking-container">
-            <view class="ranking-box second">
-              <view class="badge">第2名</view>
-              <view class="circle">
-                <view class="number">{{ topTech[1].count }}</view>
-                <view class="unit">台</view>
+          <van-tabs type="line" active="{{ activeTab }}" bind:change="onTabChange">
+            <van-tab wx:for="{{ ['总榜', '江安榜', '磨子桥榜'] }}" wx:key="id" title="{{ item }}" name="{{ item }}">
+              <view wx:if="{{ topTech.length === 3 }}" class="ranking-container">
+                <view class="ranking-box second">
+                  <view class="badge">第2名</view>
+                  <view class="circle">
+                    <view class="number">{{ topTech[1].count }}</view>
+                    <view class="unit">台</view>
+                  </view>
+                  <view class="tech-name">🥈{{ topTech[1].nickname }}</view>
+                  <view class="div-line"></view>
+                </view>
+                <view class="ranking-box first">
+                  <view class="badge">第1名</view>
+                  <view class="circle">
+                    <view class="number">{{ topTech[0].count }}</view>
+                    <view class="unit">台</view>
+                  </view>
+                  <view class="tech-name">🥇{{ topTech[0].nickname }}</view>
+                  <view class="div-line"></view>
+                </view>
+                <view class="ranking-box third">
+                  <view class="badge">第3名</view>
+                  <view class="circle">
+                    <view class="number">{{ topTech[2].count }}</view>
+                    <view class="unit">台</view>
+                  </view>
+                  <view class="tech-name">🥉{{ topTech[2].nickname }}</view>
+                  <view class="div-line"></view>
+                </view>
               </view>
-              <view class="tech-name">🥈{{ topTech[1].nickname }}</view>
-              <view class="div-line"></view>
-            </view>
-            <view class="ranking-box first">
-              <view class="badge">第1名</view>
-              <view class="circle">
-                <view class="number">{{ topTech[0].count }}</view>
-                <view class="unit">台</view>
-              </view>
-              <view class="tech-name">🥇{{ topTech[0].nickname }}</view>
-              <view class="div-line"></view>
-            </view>
-            <view class="ranking-box third">
-              <view class="badge">第3名</view>
-              <view class="circle">
-                <view class="number">{{ topTech[2].count }}</view>
-                <view class="unit">台</view>
-              </view>
-              <view class="tech-name">🥉{{ topTech[2].nickname }}</view>
-              <view class="div-line"></view>
-            </view>
-          </view>
+            </van-tab>
+          </van-tabs>
           <van-empty description="您还没有接到的工单哦" />
         </view>
         <view wx:else>
@@ -95,7 +99,8 @@
           </view>
         </view>
         <view class="btn-container">
-          <van-button round class="give-order-btn" icon="center_focus_weak" class-prefix="material-icons" type="info" bind:click="onScanCode">
+          <van-button round class="give-order-btn" icon="center_focus_weak" class-prefix="material-icons" type="info"
+            bind:click="onScanCode">
             扫码接单
           </van-button>
           <van-button round class="give-order-btn" icon="drag_indicator" class-prefix="material-icons" type="primary"

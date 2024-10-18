@@ -68,13 +68,8 @@
         <van-cell center title="问题描述" value="{{ ticket.repair_description }}">
           <copy-button text-to-copy="{{ ticket.repair_description }}" slot="right-icon" />
         </van-cell>
-      </van-cell-group>
-      <van-cell-group inset title="转单信息">
-        <van-cell center title="工单号" value="{{ ticket.id }}">
-          <copy-button text-to-copy="{{ ticket.id }}" slot="right-icon" />
-        </van-cell>
-        <van-cell center title="转单验证码" value="{{ ticket.transcode }}">
-          <copy-button text-to-copy="{{ ticket.transcode }}" slot="right-icon" />
+        <van-cell wx:if="{{ ticket.transcode }}" center title="转单码" value="{{ ticket.id + ticket.transcode }}">
+          <copy-button text-to-copy="{{ ticket.id + ticket.transcode }}" slot="right-icon" />
         </van-cell>
       </van-cell-group>
     </view>

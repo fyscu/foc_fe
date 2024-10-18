@@ -4,9 +4,7 @@ import { giveTicket } from "../../../utils/req";
 
 Page({
   data: {
-    orderID: "",
     transcode: "",
-    hasOrderID: true,
     hasTranscode: true,
   },
   onLoad() { },
@@ -14,26 +12,17 @@ Page({
     this.setData({ transcode: e.detail });
     this.setData({ hasTranscode: e.detail !== "" });
   },
-  onOrderIDChange(e) {
-    this.setData({ orderID: e.detail });
-    this.setData({ hasOrderID: e.detail !== "" });
-  },
   onTransfer() {
-    if (this.data.orderID === "") {
-      this.setData({ hasOrderID: false });
-      Toast("请填写工单号");
-      return;
-    }
     if (this.data.transcode === "") {
       this.setData({ hasTranscode: false });
-      Toast("请填写验证码");
+      Toast("请填写转单码");
       return;
     }
     // 转单，启动
     wx.showLoading({ title: '接单中', mask: true });
     giveTicket({
-      order_id: this.data.orderID,
-      tvcode: this.data.transcode
+      order_id: this.data.transcode.slice(0, -6),
+      tvcode: this.data.transcode.slice(-6)
     }).then((returnCode) => {
       wx.hideLoading();
       if (returnCode === 401) {
@@ -45,6 +34,10 @@ Page({
         }, 500);
       } else if (returnCode === 403) {
         Toast("抱歉，你来晚了。工单已经被接走了！");
+      } else if (returnCode === 300) {
+          Toast("工单已关闭");
+      } else if (returnCode === 404) {
+          Toast("找不到工单");
       } else {
         Toast("接单失败，未知错误");
       }
