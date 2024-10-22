@@ -1,8 +1,10 @@
 // index.js
+import Dialog from "@vant/weapp/dialog/dialog";
 import Toast from "@vant/weapp/toast/toast";
 import {
   getEvent,
   regevent,
+  regrepair,
   getLuckynum
 } from "../../utils/req";
 
@@ -11,10 +13,19 @@ var app = getApp();
 Page({
   data: {
     statusList: ["未开始", "报名中", "报名结束", "进行中", "已结束", "未知"],
+    departmentList: ["维修部", "研发部", "行政部", "设计部", "流媒部"],
+    freeTimeList: ['08:00-10:00', '10:00-12:00', '14:00-16:00', '16:00-18:00'],
     searchText: "",
     searchEmpty: true, // 没有搜索结果
     activities: [],
     activitiesShowing: {},
+    activityId: 0,
+    name: '',
+    gender: '',
+    hasName: true,
+    departments: [],
+    freeTimes: [],
+    showPopup: false,
   },
   onShow() {
     this.initialize();
@@ -51,8 +62,7 @@ Page({
         activity.status = 0; // 报名未开始
       } else if (signupStartTime <= now && now <= signupEndTime) {
         activity.status = 1; // 报名进行中
-      } else if (now >= signupEndTime) {
-        activity.status = 2; // 报名已结束
+        // activity.status = 2; // 报名已结束
       } else if (signupEndTime <= now && now <= endTime) {
         activity.status = 3; // 活动进行中
       } else if (now >= endTime) {
@@ -81,6 +91,54 @@ Page({
       }
     });
   },
+  closePopup() {
+    this.setData({
+      showPopup: false
+    });
+  },
+  onGenderChange(event) {
+    this.setData({
+      gender: event.detail,
+    });
+  },
+  onNameChange(event) {
+    this.setData({
+      name: event.detail,
+      hasName: event.detail !== ""
+    });
+  },
+  toggleDepartmentsCheck(event) {
+    const departments = this.data.departmentList[
+      event.currentTarget.dataset.index
+    ];
+    const index = this.data.departments.indexOf(departments);
+    if (index === -1) {
+      this.setData({
+        departments: [...this.data.departments, departments],
+      });
+    } else {
+      this.data.departments.splice(index, 1);
+      this.setData({
+        departments: this.data.departments,
+      });
+    }
+  },
+  toggleFreeTimesCheck(event) {
+    const freeTimes = this.data.freeTimeList[
+      event.currentTarget.dataset.index
+    ];
+    const index = this.data.freeTimes.indexOf(freeTimes);
+    if (index === -1) {
+      this.setData({
+        freeTimes: [...this.data.freeTimes, freeTimes],
+      });
+    } else {
+      this.data.freeTimes.splice(index, 1);
+      this.setData({
+        freeTimes: this.data.freeTimes,
+      });
+    }
+  },
   handleSignup(event) {
     const activity = event.currentTarget.dataset.activity;
     if (activity.status === 0) {
@@ -100,24 +158,77 @@ Page({
       Toast("请先登录");
       return;
     }
-    if (activity.type === 1) {
+    if (activity.type === '大修') {
       // 大修报名
-      Toast("抱歉，该功能仍在开发中");
+      this.setData({
+        showPopup: true,
+        activityId: activity.id,
+      });
+    } else {
+      Dialog.confirm({
+        title: '报名确认',
+        message: `确认报名活动${activity.name}吗？`,
+      }).then(() => {
+        regevent(activity.id).then((ret) => {
+          if (ret === 401) {
+            Toast("鉴权失败，请刷新重试");
+          } else if (ret === 200) {
+            Toast("报名成功");
+            this.initialize();
+          } else if (ret === 300) {
+            Toast("您已报名");
+          } else if (ret === 403) {
+            Toast("请使用大修报名通道");
+          } else {
+            Toast("报名失败");
+          }
+        });
+      }).catch(() => {
+        console.log("取消报名");
+      });
+    }
+  },
+  handleRepairSignup() {
+    if (this.data.name.trim() === "") {
+      this.setData({ hasName: false });
+      Toast("请输入姓名");
       return;
     }
-    regevent(activity.id).then((ret) => {
-      if (ret === 401) {
-        Toast("鉴权失败，请刷新重试");
-      } else if (ret === 200) {
-        Toast("报名成功");
-      } else if (ret === 300) {
-        Toast("您已报名");
-        this.initialize();
-      } else if (ret === 403) {
-        Toast("请使用大修报名通道");
-      } else {
-        Toast("报名失败");
-      }
+    if (this.data.gender.trim() === "") {
+      Toast("请选择性别");
+      return;
+    }
+    this.setData({
+      showPopup: false,
+      activityId: 0,
+    });
+    Dialog.confirm({
+      title: '报名确认',
+      message: `确认报名本次大修吗？`,
+    }).then(() => {
+      regrepair(
+        this.data.activityId,
+        this.data.name,
+        this.data.gender,
+        this.data.departments,
+        this.data.freeTimes,
+        app.globalData.userInfo.uid,
+      ).then((ret) => {
+        if (ret === 401) {
+          Toast("鉴权失败，请刷新重试");
+        } else if (ret === 200) {
+          Toast("报名成功");
+          this.initialize();
+        } else if (ret === 300) {
+          Toast("您已报名");
+        } else if (ret === 403) {
+          Toast("此活动不是大修活动");
+        } else {
+          Toast("报名失败");
+        }
+      });
+    }).catch(() => {
+      console.log("取消报名");
     });
   },
   onSearchChange(event) {

@@ -765,9 +765,63 @@ function regevent(activity_id, uid = app.globalData.userInfo.uid) {
           if (res.data.message === "Registered") {
             console.log("已报名", res);
             resolve(300);
+          } else if (res.data.message === "请使用大修活动报名接口") {
+            console.log('请使用大修活动报名接口:', res);
+            resolve(403);
           } else {
             console.log('报名失败:', res);
+            resolve(500);
+          }
+        } else if (res.data.success === true) {
+          console.log('报名成功:', res);
+          resolve(200);
+        } else {
+          console.log('请求失败:', res);
+          resolve(500);
+        }
+      }
+    })
+  });
+}
+
+// https://fyapidocs.wjlo.cc/event/regrepair
+function regrepair(
+  activity_id, name, gender,
+  departments, free_times,
+  uid = app.globalData.userInfo.uid
+) {
+  return new Promise((resolve, reject) => {
+    console.log("Requesting /event/regrepair...", activity_id, name, gender, departments, free_times, uid);
+    wx.request({
+      url: app.globalData.rootApiUrl + "/v1/event/regrepair",
+      header: {
+        'content-type': 'application/json',
+        'Authorization': `Bearer ${app.globalData.accessToken}`,
+      },
+      data: {
+        activity_id: activity_id,
+        name: name,
+        gender: gender,
+        departments: departments, // ["研发部", "行政部"]
+        free_times: free_times,  // ["08:00-10:00", "12:00-14:00", "16:00-18:00"]
+        uid: uid,
+      },
+      method: 'POST',
+      success(res) {
+        if (res.statusCode === 401) {
+          console.log('鉴权失败，重新登录中...', res);
+          userLogin();
+          resolve(401);
+        } else if (res.data.success === false) {
+          if (res.data.message === "Registered") {
+            console.log("已报名", res);
+            resolve(300);
+          } else if (res.data.message === "此活动不是大修活动") {
+            console.log("此活动不是大修活动", res);
             resolve(403);
+          } else {
+            console.log('报名失败:', res);
+            resolve(500);
           }
         } else if (res.data.success === true) {
           console.log('报名成功:', res);
@@ -1076,6 +1130,7 @@ module.exports = {
   setConfig,
   getTopTech,
   regevent,
+  regrepair,
   userMigration,
   newPhone,
   newEmail,

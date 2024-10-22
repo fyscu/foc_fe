@@ -13,6 +13,13 @@ import {
 
 var app = getApp();
 let sysConfigOriginal = null;
+let map = {
+    "总榜": "总榜",
+    "江安榜": "江安",
+    "望江榜": "望江",
+    "华西榜": "华西",
+    "磨子桥榜": "望江",
+}
 
 Page({
   data: {
@@ -155,14 +162,8 @@ Page({
     }
   },
   onTabChange(event) {
-    let campus = {
-      "总榜": "总榜",
-      "江安榜": "江安",
-      "望江榜": "望江",
-      "华西榜": "华西",
-      "磨子桥榜": "望江",
-    }[event.detail.name];
-    getTopTech(campus).then((res) => {
+    this.setData({ activeTab: event.detail.name });
+    getTopTech(map[this.data.activeTab]).then((res) => {
       if (res === 401) {
         Toast("鉴权失败，请刷新重试");
       } else if (res === 500) {
@@ -195,7 +196,7 @@ Page({
       }
     });
     // 获取技术员排行榜
-    getTopTech(this.data.activeTab).then((res) => {
+    getTopTech(map[this.data.activeTab]).then((res) => {
       if (res === 401) {
         Toast("鉴权失败，请刷新重试");
       } else if (res === 500) {

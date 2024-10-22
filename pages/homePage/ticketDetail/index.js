@@ -17,6 +17,8 @@ Page({
     needCompleteImage: true, // 是否未上传图片
     activeColor: "#38f",
     ticket: null,
+    contactValue: "",
+    contactNumber: "",
     warrantyMap: {
       "expired": "过保",
       "under": "在保",
@@ -44,6 +46,18 @@ Page({
     this.setData({
       needCompleteImage: !this.data.ticket.complete_image_url
     });
+    let qq_number = this.data.ticket.qq_number;
+    if (qq_number.includes("|")) {
+      this.setData({
+        contactValue: qq_number.split("|")[0],
+        contactNumber: qq_number.split("|")[1]
+      });
+    } else {
+      this.setData({
+        contactValue: "QQ/微信号",
+        contactNumber: qq_number
+      });
+    }
   },
   calcSteps(repair_status) {
     let statusMap = {

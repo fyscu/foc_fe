@@ -21,7 +21,7 @@
           <van-button wx:if="{{ item.status === 0 }}" round size="small" type="info" disabled>
             活动未开始
           </van-button>
-          <van-button wx:elif="{{ item.status === 1 }}" round size="small" type="success" bindtap="handleSignup"
+          <van-button wx:elif="{{ item.status === 1 }}" round size="small" type="info" bindtap="handleSignup"
             data-activity="{{ item }}">
             立即报名
           </van-button>
@@ -32,5 +32,40 @@
       </view>
     </van-card>
   </view>
+  <van-popup show="{{ showPopup }}" round closeable lock-scroll root-portal position="bottom"
+    custom-style="padding-top:20px;padding-bottom:50px;height: 90%" bind:close="closePopup">
+    <van-cell-group inset title="姓名">
+      <van-field required label="姓名" value="{{ name }}" error="{{ !hasName }}" placeholder="请输入真实姓名" border="{{ false }}" bind:change="onNameChange" />
+      <van-cell required title="性别">
+        <van-radio-group value="{{ gender }}" bind:change="onGenderChange">
+          <van-radio class="select-box" name="女">女</van-radio>
+          <van-radio class="select-box" name="男">男</van-radio>
+        </van-radio-group>
+      </van-cell>
+    </van-cell-group>
+    <van-checkbox-group value="{{ departments }}">
+      <van-cell-group inset title="所在部门（多选）">
+        <van-cell wx:for="{{ departmentList }}" wx:key="index" title="{{ item }}" value-class="value-class" clickable
+          data-index="{{ index }}" bind:click="toggleDepartmentsCheck">
+          <van-checkbox class="checkboxes-{{ index }}" name="{{ item }}" />
+        </van-cell>
+      </van-cell-group>
+    </van-checkbox-group>
+    <van-checkbox-group value="{{ freeTimes }}">
+      <van-cell-group inset title="空闲时间（多选）">
+        <van-cell wx:for="{{ freeTimeList }}" wx:key="index" title="{{ item }}" value-class="value-class" clickable
+          data-index="{{ index }}" bind:click="toggleFreeTimesCheck">
+          <van-checkbox class="checkboxes-{{ index }}" name="{{ item }}" />
+        </van-cell>
+      </van-cell-group>
+    </van-checkbox-group>
+    <view class="btn-container">
+      <van-button round icon="assignment_turned_in" class-prefix="material-icons" type="info"
+        bind:click="handleRepairSignup">
+        报名
+      </van-button>
+    </view>
+  </van-popup>
+  <van-dialog id="van-dialog" />
   <van-toast id="van-toast" />
 </scroll-view>

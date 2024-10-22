@@ -7,9 +7,15 @@
     </navigator>
     <van-notice-bar scrollable mode="closeable" text="如果您的问题可以线上解决，推荐直接加入2024飞扬俱乐部会员群咨询：972863858" />
     <van-cell-group wx:if="{{ loggedin !== 1 }}" inset title="个人联系信息">
-      <van-field required center name="qq" type="digit" label="QQ/微信" placeholder="请填写你的QQ号/微信号" clearable
-        value="{{ qq }}" bind:change="onQQChange" border="{{ false }}">
+      <van-field required center name="qq" type="digit" placeholder="请填写您的联系方式" clearable value="{{ qq }}"
+        use-label-slot bind:change="onQQChange" border="{{ false }}">
         <view class="material-icons" slot="right-icon"> mail </view>
+        <van-button slot="label" size="small" type="info" hairline round bind:click="showPopup" data-index="7">
+          <view style="display:inline-block;"> {{ contactValue }} </view>
+          <view class="material-icons" style="font-size:12px;display:inline-block;vertical-align:middle;">
+            keyboard_arrow_down
+          </view>
+        </van-button>
       </van-field>
       <van-field required center name="phone" type="digit" label="手机号" placeholder="请填写手机号" clearable
         value="{{ phone }}" bind:change="onPhoneChange" border="{{ false }}">
@@ -33,8 +39,8 @@
         value="{{ deviceProblemValue  === '' ? '请选择' : deviceProblemValue }}" arrow-direction="down" />
       <van-cell required title="购买日期" value="{{ purchaseDate  === '' ? '请选择' : purchaseDate }}" is-link
         bind:click="showPopup" data-index="6" arrow-direction="down" />
-      <van-field center name="model" label="设备型号" placeholder="设备型号（选填）" clearable bind:change="onModelChange"
-        value="{{ model }}" border="{{ false }}">
+      <van-field center name="model" label="设备型号" placeholder="用来识别同一品牌不同电脑的附加名称，如华硕天选3的天选3" clearable
+        bind:change="onModelChange" value="{{ model }}" border="{{ false }}">
         <view class="material-icons" slot="right-icon"> devices </view>
       </van-field>
       <van-field required center autosize type="textarea" name="problem" label="问题描述" placeholder="请详细描述设备问题" clearable
@@ -56,7 +62,7 @@
       <van-button round type="primary" icon="done_all" class-prefix="material-icons" bind:click="submitTicket">提交工单
       </van-button>
     </view>
-    <van-popup show="{{ showPopup >= 1 && showPopup <= 6 }}" round position="bottom" custom-style="height: 44"
+    <van-popup show="{{ showPopup >= 1 && showPopup <= 7 }}" round position="bottom" custom-style="height: 44"
       bind:close="onClose">
       <block wx:if="{{ showPopup === 1 }}">
         <van-picker title="选择校区" show-toolbar columns="{{ campusList }}" bind:confirm="onConfirmCampus"
@@ -82,6 +88,10 @@
         <van-datetime-picker show="{{ showPopup === 6 }}" type="date" value="{{ currentDate }}" min-date="{{ minDate }}"
           max-date="{{ maxDate }}" formatter="{{ formatter }}" bind:confirm="onConfirmPurchaseDate"
           bind:close="onClose" />
+      </block>
+      <block wx:if="{{ showPopup === 7 }}">
+        <van-picker title="选择联系方式" show-toolbar columns="{{ contactList }}" bind:confirm="onConfirmContact"
+          bind:cancel="onClose" />
       </block>
     </van-popup>
     <van-dialog id="van-dialog" />

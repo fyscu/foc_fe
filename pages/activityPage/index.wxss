@@ -26,15 +26,15 @@
 }
 
 .status-3 .van-tag--mark {
-    background-color: #349b47;
+  background-color: #349b47;
 }
 
 .status-4 .van-tag--mark {
-    background-color: #da3231;
+  background-color: #da3231;
 }
 
 .status-5 .van-tag--mark {
-    background-color: #f19c73;
+  background-color: #f19c73;
 }
 
 @media (prefers-color-scheme: dark) {
@@ -52,5 +52,28 @@
 
   .van-card__title {
     color: white !important;
+  }
+}
+
+.select-box {
+  display: flex;
+  padding: 10rpx;
+  float: right;
+}
+
+.van-checkbox {
+  display: flex;
+  float: right;
+}
+
+@media (prefers-color-scheme: light) {
+  .van-popup {
+    --popup-background-color: #f7f8fa;
+  }
+}
+
+@media (prefers-color-scheme: dark) {
+  .van-popup {
+    --popup-background-color: #2e2e2e;
   }
 }

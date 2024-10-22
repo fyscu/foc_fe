@@ -9,6 +9,7 @@
   .container {
     --button-disabled-opacity: 0.9;
   }
+
   /* 设置全局背景颜色 */
   page {
     background-color: #f7f8fa;
@@ -49,6 +50,15 @@
   }
 
   .van-popup {
+    --radio-label-color: #dedede;
+    --cell-text-color: #dedede;
+    --cell-active-color: #272727;
+    --cell-background-color: #1f1f1f;
+    --field-label-color: #dedede;
+    --field-input-text-color: white;
+    --card-text-color: #dedede;
+    --cell-background-color: #1f1f1f;
+    --card-background-color: #2e2e2e;
     --checkbox-label-color: #dedede;
     --dialog-background-color: #2e2e2e;
     --button-default-background-color: #2e2e2e;
@@ -101,6 +111,12 @@
   display: block;
   justify-content: center;
   text-align: center;
+  /* 鼠标点击穿透 */
+  pointer-events: none;
+}
+
+.van-button {
+  pointer-events: visible;
 }
 
 .avatar-wrapper {

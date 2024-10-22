@@ -22,7 +22,7 @@
               <van-card class="class-status-{{ item.repair_status }}" desc="{{ item.repair_description }}"
                 title="{{ item.device_type }} {{ item.fault_type }}" thumb="{{ item.repair_image_url }}"
                 tag="{{ statusList[item.repair_status] }}">
-                <view slot="bottom">购买日期：{{ item.machine_purchase_date }}</view>
+                <view slot="bottom">创建时间：{{ item.create_time }}</view>
                 <view slot="tags">
                   <van-tag plain type="primary">{{ item.campus }}</van-tag>
                   <van-tag plain type="warning">{{ item.computer_brand }}</van-tag>
@@ -47,7 +47,7 @@
               <van-card class="class-status-{{ item.repair_status }}" desc="{{ item.repair_description }}"
                 title="{{ item.device_type }} {{ item.fault_type }}" thumb="{{ item.repair_image_url }}"
                 tag="{{ statusList[item.repair_status] }}">
-                <view slot="bottom">购买日期：{{ item.machine_purchase_date }}</view>
+                <view slot="bottom">创建时间：{{ item.create_time }}</view>
                 <view slot="tags">
                   <van-tag plain type="primary">{{ item.campus }}</van-tag>
                   <van-tag plain type="warning">{{ item.computer_brand }}</van-tag>

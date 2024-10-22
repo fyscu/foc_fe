@@ -9,11 +9,14 @@
         <van-cell center title="昵称" value="{{ ticket.user_nick }}">
           <copy-button text-to-copy="{{ ticket.user_nick }}" slot="right-icon" />
         </van-cell>
-        <van-cell center title="QQ/微信号" value="{{ ticket.qq_number }}">
-          <copy-button text-to-copy="{{ ticket.qq_number }}" slot="right-icon" />
+        <van-cell center title="{{ contactValue }}" value="{{ contactNumber }}">
+          <copy-button text-to-copy="{{ contactNumber }}" slot="right-icon" />
         </van-cell>
         <van-cell center title="手机号" value="{{ ticket.user_phone }}">
           <copy-button text-to-copy="{{ ticket.user_phone }}" slot="right-icon" />
+        </van-cell>
+        <van-cell wx:if="{{ ticket.create_time !== null }}" l center title="创建时间" value="{{ ticket.create_time }}">
+            <copy-button text-to-copy="{{ ticket.create_time }}" slot="right-icon" />
         </van-cell>
         <van-cell wx:if="{{ ticket.assigned_time !== null }}" l center title="分配时间" value="{{ ticket.assigned_time }}">
           <copy-button text-to-copy="{{ ticket.assigned_time }}" slot="right-icon" />
@@ -27,6 +30,9 @@
         <van-cell wx:if="{{ ticket.assigned_technician_id !== null }}" center title="技工号"
           value="{{ ticket.assigned_technician_id }}">
           <copy-button text-to-copy="{{ ticket.assigned_technician_id }}" slot="right-icon" />
+        </van-cell>
+        <van-cell wx:if="{{ ticket.create_time !== null }}" l center title="创建时间" value="{{ ticket.create_time }}">
+            <copy-button text-to-copy="{{ ticket.create_time }}" slot="right-icon" />
         </van-cell>
         <van-cell wx:if="{{ ticket.assigned_time !== null }}" l center title="分配时间" value="{{ ticket.assigned_time }}">
           <copy-button text-to-copy="{{ ticket.assigned_time }}" slot="right-icon" />

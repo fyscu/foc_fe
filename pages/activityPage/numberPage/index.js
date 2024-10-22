@@ -4,6 +4,7 @@ Page({
   data: {
     isWinner: false,
     luckynum: '0',
+    winText: '您的号码被抽中',
     ctx: null,
     width: 0,
     height: 0,
@@ -29,6 +30,7 @@ Page({
       console.log(options);
       this.setData({
         isWinner: options.isWinner === "true",
+        winText: options.winText || '您的号码被抽中',
         luckynum: options.luckynum
       });
       if (this.data.isWinner) {
@@ -36,7 +38,6 @@ Page({
       }
     }
   },
-
 
   // 启动撒彩纸动画
   startConfetti: function () {
