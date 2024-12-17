@@ -194,7 +194,7 @@ Page({
     let thisUserInfo = this.data.userInfo;
     if (thisUserInfo.role === "technician") {
       // 保存技术员信息
-      // setTechInfo(thisUserInfo);
+      setTechInfo(thisUserInfo);
     }
     // 保存用户信息
     if (JSON.stringify(thisUserInfo) === JSON.stringify(userInfoOriginal)) {
@@ -271,12 +271,7 @@ Page({
       app.globalData.code = null;
       app.globalData.openid = null;
       app.globalData.accessToken = null;
-      app.globalData.ticketList = [];
-      app.globalData.isloggedin = false;
-      app.globalData.code = null;
-      app.globalData.openid = null;
-      app.globalData.accessToken = null;
-      // console.log(app.globalData);
+      console.log("已清空所有数据");
       this.reloadData();
       wx.navigateBack();
     }).catch(() => {

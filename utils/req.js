@@ -1083,7 +1083,7 @@ function getUserInfo() {
         } else if (res.data.success === true) {
           let tmpData = res.data.data;
           console.log("获取用户数据成功", res);
-          app.globalData.accessToken = tmpData.access_token;
+          // app.globalData.accessToken = tmpData.access_token;
           // 设置用户信息
           app.globalData.userInfo.uid = tmpData.id;
           app.globalData.userInfo.role = tmpData.role;
