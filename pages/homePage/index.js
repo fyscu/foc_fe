@@ -187,6 +187,10 @@ Page({
           repairFlag: findDataByName(
             app.globalData.sysConfig,
             'Global_Flag'
+          ),
+          restMsg: findDataByName(
+            app.globalData.sysConfig,
+            'Rest_Msg'
           )
         })
       } else if (returnCode === 403) {

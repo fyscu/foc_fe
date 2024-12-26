@@ -9,7 +9,25 @@
         <van-skeleton title avatar row="3" />
       </view>
       <view wx:elif="{{ !repairFlag }}">
-        <van-empty description="报修通道已关闭，过两天再来看吧~" />
+        <view wx:for="{{ ticketList }}" wx:key="id">
+            <view
+              wx:if="{{ item.repair_status !== 'Done' && item.repair_status !== 'Canceled' && item.repair_status !== 'Closed' }}">
+              <navigator url="/pages/homePage/ticketDetail/index?id={{ item.id }}&role={{ userInfo.role }}"
+                open-type="navigate">
+                <van-card class="class-status-{{ item.repair_status }}" desc="{{ item.repair_description }}"
+                  title="{{ item.device_type }} {{ item.fault_type }}" thumb="{{ item.repair_image_url }}"
+                  tag="{{ statusList[item.repair_status] }}">
+                  <view slot="bottom">创建时间：{{ item.create_time }}</view>
+                  <view slot="tags">
+                    <van-tag plain type="primary">{{ item.campus }}</van-tag>
+                    <van-tag plain type="warning">{{ item.computer_brand }}</van-tag>
+                  </view>
+                </van-card>
+              </navigator>
+              <van-divider />
+            </view>
+          </view>
+        <van-empty description="{{ restMsg }}" />
       </view>
       <view wx:elif='{{ userInfo.role === "user" }}'>
         <view wx:if="{{ !hasUnfinishedStatus }}">
