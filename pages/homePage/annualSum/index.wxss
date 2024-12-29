@@ -1,0 +1,17 @@
+/**index.wxss**/
+.settings-btn {
+  display: block;
+  margin-bottom: 10rpx;
+}
+
+.willing-silder {
+  margin-left: 10rpx;
+  margin-right: 10rpx;
+  margin-top: 10rpx;
+  margin-bottom: 10rpx;
+}
+
+.label-text {
+  margin-right: 10rpx;
+  display: inline-block;
+}

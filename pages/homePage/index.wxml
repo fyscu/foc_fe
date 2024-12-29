@@ -28,6 +28,14 @@
             </view>
           </view>
         <van-empty description="{{ restMsg }}" />
+        <view wx:if='{{ userInfo.role === "technician" }}'>
+          <view class="btn-container">
+          <van-button round class="give-order-btn" class-prefix="material-icons" type="danger"
+            bind:click="navigateToAnnualSumPage">
+            查看你的年度总结
+          </van-button>
+          </view>
+        </view>
       </view>
       <view wx:elif='{{ userInfo.role === "user" }}'>
         <view wx:if="{{ !hasUnfinishedStatus }}">

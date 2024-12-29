@@ -19,6 +19,14 @@ App({
       nickname: "", // 用户昵称
       avatarUrl: "https://img1.doubanio.com/view/group_topic/l/public/p560183288.webp", // 默认用户头像地址
     },
+    techSum: {
+      first_time: "",
+      last_time: "",
+      total_orders: "",
+      shortest_time: "",
+      longest_time: "",
+      total_time: "",
+    },
     code: null,
     openid: null, // 唯一用户标识
     accessToken: null, // 关于 AT: https://fyapidocs.wjlo.cc/get_started/prepare

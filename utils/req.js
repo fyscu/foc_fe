@@ -1140,6 +1140,7 @@ function getTechSum() {
           app.globalData.techSum.shortest_time = tmpData.shortest_time;
           app.globalData.techSum.longest_time = tmpData.longest_time;
           app.globalData.techSum.total_time = tmpData.total_time;
+          app.globalData.techSum.total_time_in_hour = tmpData.total_time_in_hour;
           resolve(200);
         } else if (res.data.success === false && res.data.data === "权限不足") {
           console.log("权限不足", res);

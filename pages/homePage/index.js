@@ -313,6 +313,11 @@ Page({
       url: "/pages/homePage/giveOrder/index",
     });
   },
+  navigateToAnnualSumPage() {
+    wx.navigateTo({
+      url: "/pages/homePage/annualSum/index",
+    });
+  },
   navigateToSubmitTicketPage() {
     wx.navigateTo({
       url: "/pages/homePage/submitTicket/index",
