@@ -174,6 +174,7 @@ function userLogin() {
                   app.globalData.accessToken = result.access_token;
                   // 设置用户信息
                   app.globalData.userInfo.uid = result.uid;
+                  app.globalData.userInfo.id = result.uid;
                   app.globalData.userInfo.role = result.role;
                   app.globalData.userInfo.email = result.email;
                   app.globalData.userInfo.phone = result.phone;
@@ -264,7 +265,7 @@ function setUserInfo(userInfo) {
     wx.request({
       url: app.globalData.rootApiUrl + '/v1/user/setuser',
       data: {
-        id: app.globalData.openid, // 必填
+        id: userInfo.id, // 必填
         campus: userInfo.campus,
         avatar: userInfo.avatarUrl,
         nickname: userInfo.nickname,
@@ -302,7 +303,7 @@ function setTechInfo(userInfo) {
     wx.request({
       url: app.globalData.rootApiUrl + '/v1/user/setuser',
       data: {
-        id: app.globalData.openid, // 必填
+        id: userInfo.id, // 必填
         wants: userInfo.wants
       },
       header: {

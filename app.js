@@ -11,6 +11,7 @@ App({
       // is_tech: false, // 是否为技术员
       qq: "", // 用户QQ号
       uid: "", // 用户id
+      id: "", // 用户id
       role: "", // 用role替代is_tech
       email: "", // 用户邮箱
       phone: "", // 用户手机号
