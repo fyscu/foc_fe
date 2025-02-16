@@ -1,6 +1,6 @@
 // Markdown转WXML页面
 const article = `
-<img src="https://about.feiyang.ac.cn/assets/logo.png" alt="logo" />
+<img src="https://feiyang.ac.cn/img/logo512.png" alt="logo" />
 
 # 关于云上飞扬
 
@@ -14,9 +14,9 @@ const article = `
 
 | | | |
 | :------------------------------------------------------: | :-----: | :--------: |
-| <img src="https://lab.feiyang.ac.cn/images/huzongyao.jpg" alt="胡宗尧" /> | 胡宗尧 | 小程序开发 |
-| <img src="https://cdn.wjlo.cc/br/picture/wjlavatar.png" alt="王嘉麟" /> | 王嘉麟 | 后端开发 |
-| <img src="https://www.ljm.im/avatar/512.png" alt="林峻茗" /> | 林峻茗 | 管理后台开发 |
+| <img src="https://lab.feiyang.ac.cn/images/huzongyao.jpg" alt="胡宗尧" /> | 胡宗尧 | 小程序前端开发 |
+| <img src="https://lab.feiyang.ac.cn/images/wangjialin.jpg" alt="王嘉麟" /> | 王嘉麟 | 小程序后端开发 |
+| <img src="https://lab.feiyang.ac.cn/images/linjunming.jpg" alt="林峻茗" /> | 林峻茗 | 管理后台开发 |
 
 Powered By 2024 四川大学飞扬俱乐部研发部
 - 飞扬俱乐部： <https://fyscu.com>

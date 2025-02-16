@@ -174,6 +174,7 @@ function userLogin() {
                   app.globalData.accessToken = result.access_token;
                   // 设置用户信息
                   app.globalData.userInfo.uid = result.uid;
+                  app.globalData.userInfo.id = result.uid;
                   app.globalData.userInfo.role = result.role;
                   app.globalData.userInfo.email = result.email;
                   app.globalData.userInfo.phone = result.phone;
@@ -264,7 +265,7 @@ function setUserInfo(userInfo) {
     wx.request({
       url: app.globalData.rootApiUrl + '/v1/user/setuser',
       data: {
-        id: app.globalData.userInfo.uid,
+        id: userInfo.id, // 必填
         campus: userInfo.campus,
         avatar: userInfo.avatarUrl,
         nickname: userInfo.nickname,
@@ -302,7 +303,7 @@ function setTechInfo(userInfo) {
     wx.request({
       url: app.globalData.rootApiUrl + '/v1/user/setuser',
       data: {
-        id: app.globalData.userInfo.uid,
+        id: userInfo.id, // 必填
         wants: userInfo.wants
       },
       header: {
@@ -1111,6 +1112,48 @@ function getUserInfo() {
   });
 }
 
+function getTechSum() {
+  return new Promise((resolve, reject) => {
+    console.log("Requesting /status/getTechSum...");
+    wx.request({
+      url: app.globalData.rootApiUrl + "/v1/status/getTechSum",
+      method: "GET",
+      header: {
+        'content-type': 'application/json',
+        'Authorization': `Bearer ${app.globalData.accessToken}`,
+      },
+      data: {
+        year: 2024,
+      },
+      success(res) {
+        if (res.statusCode === 401) {
+          console.log('鉴权失败，重新登录中...', res);
+          userLogin();
+          resolve(401);
+        } else if (res.data.success === true) {
+          let tmpData = res.data.data;
+          console.log("获取年度总结成功", res);
+          // app.globalData.accessToken = tmpData.access_token;
+          app.globalData.techSum.first_time = tmpData.first_time;
+          app.globalData.techSum.last_time = tmpData.last_time;
+          app.globalData.techSum.total_orders = tmpData.total_orders;
+          app.globalData.techSum.shortest_time = tmpData.shortest_time;
+          app.globalData.techSum.longest_time = tmpData.longest_time;
+          app.globalData.techSum.total_time = tmpData.total_time;
+          app.globalData.techSum.total_time_in_hour = tmpData.total_time_in_hour;
+          resolve(200);
+        } else if (res.data.success === false && res.data.data === "权限不足") {
+          console.log("权限不足", res);
+          resolve(403);
+        } else {
+          console.log("获取年度总结失败", res);
+          resolve(500);
+        }
+      }
+    });
+  });
+}
+
 module.exports = {
   userLogin,
   unRegister,
@@ -1138,5 +1181,6 @@ module.exports = {
   getEvent,
   getLuckynum,
   getUserInfo,
+  getTechSum,
   phoneChangeVerify
 }

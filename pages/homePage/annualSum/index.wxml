@@ -1,0 +1,32 @@
+<!--index.wxml-->
+<scroll-view class="scrollview" scroll-y type="list">
+  <view class="container">
+    <button class="avatar-wrapper">
+      <image class="avatar"
+        src="{{ userInfo.avatarUrl === '' ? '/image/icons/image_upload_failed.svg' : userInfo.avatarUrl }}">
+      </image>
+    </button>
+    <van-cell-group inset>
+      <van-cell title="技术员" value="{{ userInfo.nickname }}" border="{{ false }}" />
+    </van-cell-group>
+    <van-cell-group wx:if="{{ userInfo.role === 'technician' }}" inset title="年度接单总结">
+      <van-cell title="年度接单总数" value="{{ techSum.total_orders }}" border="{{ false }}" />
+      <van-cell title="总工时" value="{{ techSum.total_time_in_hour }}" border="{{ false }}" />
+      <van-cell title="首单完成时间" value="{{ techSum.first_time }}" border="{{ false }}" />
+      <van-cell title="末单完成时间" value="{{ techSum.last_time }}" border="{{ false }}" />
+    </van-cell-group>
+    <van-cell-group wx:if="{{ userInfo.role === 'technician' }}" inset title="接单之最">
+      <van-cell title="单时最长用时" value="{{ techSum.longest_time }}" border="{{ false }}" />
+      <van-cell title="单时最短用时" value="{{ techSum.shortest_time }}" border="{{ false }}" />
+    </van-cell-group>
+    <van-popup show="{{ showPopup === 1 }}" round position="bottom" custom-style="height: 44" bind:close="closePopup">
+      <block wx:if="{{ showPopup === 1 }}">
+        <van-picker title="选择校区" show-toolbar columns="{{ campusList }}" bind:confirm="onConfirmCampus"
+          bind:cancel="closePopup" />
+      </block>
+    </van-popup>
+    <view>{{ log }}</view>
+    <van-toast id="van-toast" />
+    <van-dialog id="van-dialog" />
+  </view>
+</scroll-view>

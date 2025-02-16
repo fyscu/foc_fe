@@ -11,12 +11,21 @@ App({
       // is_tech: false, // 是否为技术员
       qq: "", // 用户QQ号
       uid: "", // 用户id
+      id: "", // 用户id
       role: "", // 用role替代is_tech
       email: "", // 用户邮箱
       phone: "", // 用户手机号
       campus: "", // 所在校区
       nickname: "", // 用户昵称
       avatarUrl: "https://img1.doubanio.com/view/group_topic/l/public/p560183288.webp", // 默认用户头像地址
+    },
+    techSum: {
+      first_time: "",
+      last_time: "",
+      total_orders: "",
+      shortest_time: "",
+      longest_time: "",
+      total_time: "",
     },
     code: null,
     openid: null, // 唯一用户标识

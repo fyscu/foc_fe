@@ -5,7 +5,7 @@
     <navigator url="/pages/homePage/announcement/index" open-type="navigate">
       <van-notice-bar color="#1989fa" background="#ecf9ff" left-icon="info-o" mode="link" text="请务必认真阅读维修条款及隐私协议" />
     </navigator>
-    <van-notice-bar scrollable mode="closeable" text="如果您的问题可以线上解决，推荐直接加入2024飞扬俱乐部会员群咨询：972863858" />
+    <van-notice-bar scrollable mode="closeable" text="{{ submitTipMsg }}" />
     <van-cell-group wx:if="{{ loggedin !== 1 }}" inset title="个人联系信息">
       <van-field required center name="qq" type="digit" placeholder="请填写您的联系方式" clearable value="{{ qq }}"
         use-label-slot bind:change="onQQChange" border="{{ false }}">

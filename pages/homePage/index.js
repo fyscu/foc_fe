@@ -187,6 +187,10 @@ Page({
           repairFlag: findDataByName(
             app.globalData.sysConfig,
             'Global_Flag'
+          ),
+          restMsg: findDataByName(
+            app.globalData.sysConfig,
+            'Rest_Msg'
           )
         })
       } else if (returnCode === 403) {
@@ -307,6 +311,11 @@ Page({
   navigateToGiveOrderPage() {
     wx.navigateTo({
       url: "/pages/homePage/giveOrder/index",
+    });
+  },
+  navigateToAnnualSumPage() {
+    wx.navigateTo({
+      url: "/pages/homePage/annualSum/index",
     });
   },
   navigateToSubmitTicketPage() {

@@ -1,0 +1,16 @@
+{
+  "navigationBarTitleText": "年度总结",
+  "usingComponents": {
+    "van-tag": "@vant/weapp/tag/index",
+    "van-field": "@vant/weapp/field/index",
+    "van-button": "@vant/weapp/button/index",
+    "van-cell-group": "@vant/weapp/cell-group/index",
+    "van-toast": "@vant/weapp/toast/index",
+    "van-cell": "@vant/weapp/cell/index",
+    "van-picker": "@vant/weapp/picker/index",
+    "van-dialog": "@vant/weapp/dialog/index",
+    "copy-button": "/components/copyButton/index",
+    "van-slider": "@vant/weapp/slider/index",
+    "van-popup": "@vant/weapp/popup/index"
+  }
+}
