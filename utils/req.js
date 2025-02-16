@@ -264,7 +264,7 @@ function setUserInfo(userInfo) {
     wx.request({
       url: app.globalData.rootApiUrl + '/v1/user/setuser',
       data: {
-        id: app.globalData.openid, // 必填
+        id: app.globalData.userInfo.uid,
         campus: userInfo.campus,
         avatar: userInfo.avatarUrl,
         nickname: userInfo.nickname,
@@ -302,7 +302,7 @@ function setTechInfo(userInfo) {
     wx.request({
       url: app.globalData.rootApiUrl + '/v1/user/setuser',
       data: {
-        id: app.globalData.openid, // 必填
+        id: app.globalData.userInfo.uid,
         wants: userInfo.wants
       },
       header: {
