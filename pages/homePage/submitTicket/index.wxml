@@ -23,7 +23,7 @@
       </van-field>
     </van-cell-group>
     <van-cell-group inset title="工单维修信息">
-      <van-cell title="线下接单" label="开启后您的工单不会被自动分配，请在线下和技术员协商接单">
+      <van-cell title="线下接单" label="开启后您的工单不会被自动分配，请主动和技术员协商接单">
         <van-switch style="height: 24px;" slot="right-icon" checked="{{ offline }}" bind:change="onToggleOffline"
           size="40rpx" />
       </van-cell>
