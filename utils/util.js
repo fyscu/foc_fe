@@ -1,3 +1,5 @@
+const appVersion = '1.1.8.1';
+
 function formatNumber(n) {
   n = n.toString();
   return n[1] ? n : `0${n}`;
@@ -74,6 +76,7 @@ function isValidEmail(email) {
 }
 
 module.exports = {
+  appVersion,
   formatTime,
   formatDate,
   getUUid,
