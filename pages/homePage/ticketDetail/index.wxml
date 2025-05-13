@@ -91,6 +91,7 @@
       </view>
       <view wx:elif="{{ role === 'technician' }}" class="tips">
         <view>二维码用于转单给别的技术员</view>
+        <view>如果工单信息无法正常显示，请点击左上角主页按钮后再重新进入</view>
         <!-- <view>或者告诉他工单号（{{ ticket.id }}）和转单验证码（{{ ticket.transcode }}）</view> -->
       </view>
     </view>

@@ -1,4 +1,4 @@
-const appVersion = '1.1.8.1';
+const appVersion = '1.1.10';
 
 function formatNumber(n) {
   n = n.toString();
