@@ -1,7 +1,7 @@
 import Toast from "@vant/weapp/toast/toast";
 import Dialog from "@vant/weapp/dialog/dialog";
 import {
-  uploadQiniuImg,
+  uploadQiniuImgRaw,
   completeTicket,
   setTicketStatus,
   setCompleteImage,
@@ -46,6 +46,7 @@ Page({
     this.setData({
       needCompleteImage: !this.data.ticket.complete_image_url
     });
+    console.log(this.data.ticket.complete_image_url);
     let qq_number = this.data.ticket.qq_number;
     if (qq_number.includes("|")) {
       this.setData({
@@ -107,7 +108,7 @@ Page({
       success(res) {
         wx.showLoading({ title: "上传图片中", mask: true });
         let tempFilePath = res.tempFiles[0].tempFilePath;
-        uploadQiniuImg(tempFilePath).then((url) => {
+        uploadQiniuImgRaw(tempFilePath).then((url) => {
           setCompleteImage(that.data.ticket.id, url).then(returnCode => {
             wx.hideLoading();
             if (returnCode === 401) {
@@ -127,6 +128,7 @@ Page({
     });
   },
   completeTheTicket() {
+    // console.log(this.data.role);
     if (this.data.role === "technician" && this.data.needCompleteImage) {
       // 如果是技术员且未上传结束图片
       this.setData({ showDialog: true });
@@ -153,6 +155,7 @@ Page({
   },
   confirmTheTicket() {
     let confirmStatus;
+    // console.log(this.data.needCompleteImage);
     if (this.data.role === "technician" && this.data.needCompleteImage) {
       // 如果是技术员且未上传结束图片
       this.setData({ showDialog: true });
@@ -165,6 +168,16 @@ Page({
       Toast("管理员请用强制关闭功能");
       return;
     }
+    wx.requestSubscribeMessage({
+      tmplIds: ['KMe-rYXD_Js_X3oE9_t6qMoa6DMm07Dfzeq94bsMvxg','E6dwts_XeUZ8QGprGRpI-nTWPVagF9QHJ5fdh-wmot8'],
+      success(res) {
+        console.log('授权结果', res);
+      },
+      fail(err) {
+        console.error('订阅失败', err);
+        wx.showToast({ title: '授权失败', icon: 'none' });
+      }
+    });
     Dialog.confirm({
       title: "确认工单完成",
       message: "确认工单完成吗？只有用户和技术员双向确认，工单才会关闭",

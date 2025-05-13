@@ -251,6 +251,16 @@ Page({
     }
   },
   onScanCode() {
+    wx.requestSubscribeMessage({
+      tmplIds: ['KMe-rYXD_Js_X3oE9_t6qMoa6DMm07Dfzeq94bsMvxg'],
+      success(res) {
+        console.log('授权结果', res);
+      },
+      fail(err) {
+        console.error('订阅失败', err);
+        wx.showToast({ title: '授权失败', icon: 'none' });
+      }
+    });
     let that = this;
     wx.scanCode({
       success(res) {
@@ -309,6 +319,16 @@ Page({
     sysConfigOriginal = JSON.parse(JSON.stringify(this.data.sysConfig));
   },
   navigateToGiveOrderPage() {
+    wx.requestSubscribeMessage({
+      tmplIds: ['KMe-rYXD_Js_X3oE9_t6qMoa6DMm07Dfzeq94bsMvxg'],
+      success(res) {
+        console.log('授权结果', res);
+      },
+      fail(err) {
+        console.error('订阅失败', err);
+        wx.showToast({ title: '授权失败', icon: 'none' });
+      }
+    });
     wx.navigateTo({
       url: "/pages/homePage/giveOrder/index",
     });
@@ -319,6 +339,16 @@ Page({
     });
   },
   navigateToSubmitTicketPage() {
+    wx.requestSubscribeMessage({
+      tmplIds: ['0D0P7GO0j6PqSjClSLx2dX_jtWcgUbDJPhJgmTKB6y0','FGhVRnNp7C4580nyAXMOqSvSZCNG36cd6nEInS_RVCs','T2FivnxGH672SIOsRBlLzBIJGNl6CLcfS7L3gUdNwxM'],
+      success(res) {
+        console.log('授权结果', res);
+      },
+      fail(err) {
+        console.error('订阅失败', err);
+        wx.showToast({ title: '授权失败', icon: 'none' });
+      }
+    });
     wx.navigateTo({
       url: "/pages/homePage/submitTicket/index",
     });

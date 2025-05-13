@@ -366,6 +366,38 @@ function uploadQiniuImg(localFilePath) {
   });
 }
 
+function uploadQiniuImgRaw(localFilePath) {
+  return new Promise((resolve, reject) => {
+    console.log("Requesting /user/avatar...", localFilePath);
+    wx.uploadFile({
+      url: app.globalData.rootApiUrl + "/v1/user/avatar",
+      name: "file",
+      filePath: localFilePath,
+      header: {
+        "Content-Type": "multipart/form-data",
+        'Authorization': `Bearer ${app.globalData.accessToken}`,
+      },
+      formData: {
+        key: "fyMiniprogam/" + getUUid(),
+      },
+      success: function (res) {
+        let data = JSON.parse(res.data);
+        if (data.success) {
+          console.log("Upload image success!", data);
+          resolve(data.rawdata);
+        } else {
+          console.log("Error occured:", data);
+          reject(data.data);
+        }
+      },
+      fail: function (res) {
+        console.log("Failed to upload image:", res);
+        reject(res);
+      },
+    });
+  });
+}
+
 function putFeedback(contact, text) {
   return new Promise((resolve, reject) => {
     console.log("Requesting /feedback/add...", contact, text);
@@ -1162,6 +1194,7 @@ module.exports = {
   setUserInfo,
   setTechInfo,
   uploadQiniuImg,
+  uploadQiniuImgRaw,
   addTicket,
   giveTicket,
   getTicket,
