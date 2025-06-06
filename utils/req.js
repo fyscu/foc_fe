@@ -6,11 +6,12 @@ import {
 var app = getApp();
 
 // 用户注册 https://fyapidocs.wjlo.cc/user/register
+// 现在这里不是注册了，是检查是否迁移
 function userRegister(phone) {
   return new Promise((resolve, reject) => {
-    console.log("Requesting /user/register...", phone);
+    console.log("Requesting /user/checktoimm...", phone);
     wx.request({
-      url: app.globalData.rootApiUrl + '/v1/user/register',
+      url: app.globalData.rootApiUrl + '/v1/user/checktoimm',
       data: {
         phone: phone,
       },
@@ -25,15 +26,15 @@ function userRegister(phone) {
           userLogin();
           resolve(401);
         } else if (res.data.success === true) {
-          if (res.data.status === "verification_code_sent") {
-            console.log("成功发送验证码");
+          if (res.data.status === "no_imm") {
+            console.log("无需迁移");
             app.globalData.accessToken = res.data.access_token;
             resolve(200);
           } else if (res.data.status === "user_exists_verified") {
             console.log("已有用户");
             resolve(300);
-          } else if (res.data.status === "user_need_migration") {
-            console.log("用户需要迁移");
+          } else if (res.data.status === "imm") {
+            console.log("需要迁移");
             app.globalData.accessToken = res.data.access_token;
             resolve(400);
           } else {
@@ -46,7 +47,7 @@ function userRegister(phone) {
         }
       },
       complete() {
-        console.log('Requesting /user/register complete.');
+        console.log('Requesting /user/checktoimm complete.');
       },
     })
   });
@@ -102,14 +103,14 @@ function unRegister() {
 }
 
 // https://fyapidocs.wjlo.cc/user/migration
-function userMigration(phone, verifiCode) {
+function userMigration(phone, openid) {
   return new Promise((resolve, reject) => {
-    console.log("Requesting /user/migration...", phone, verifiCode);
+    console.log("Requesting /user/migration_up...", phone, openid);
     wx.request({
-      url: app.globalData.rootApiUrl + '/v1/user/migration',
+      url: app.globalData.rootApiUrl + '/v1/user/migration_up',
       data: {
         phone: phone,
-        code: verifiCode,
+        openid: openid,
       },
       header: {
         'content-type': 'application/json',
@@ -194,6 +195,9 @@ function userLogin() {
                   // 用户尚未注册
                   console.log('用户尚未注册:', result);
                   app.globalData.accessToken = result.access_token;
+                  app.globalData.userInfo.openid = result.openid;
+                  app.globalData.userInfo.codePhone = result.codePhone;
+                  app.globalData.userInfo.verCode = result.verCode;
                   resolve(300); // 返回 300 (未注册)
                 }
               } else {
@@ -216,14 +220,14 @@ function userLogin() {
 }
 
 // https://fyapidocs.wjlo.cc/user/verify
-function verify(phone, verifiCode) {
+function verify(phone, openid) {
   return new Promise((resolve, reject) => {
-    console.log("Requesting /user/verify...", phone, verifiCode);
+    console.log("Requesting /user/verify_up...", phone, openid);
     wx.request({
-      url: app.globalData.rootApiUrl + '/v1/user/verify',
+      url: app.globalData.rootApiUrl + '/v1/user/verify_up',
       data: {
         phone: phone,
-        code: verifiCode,
+        openid: openid,
       },
       header: {
         'content-type': 'application/json',
@@ -242,6 +246,9 @@ function verify(phone, verifiCode) {
           resolve(200);
         } else if (res.data.status === "verification_failed") {
           console.log('验证码核验失败:', res);
+          resolve(300);
+        } else if (res.data.status === "no_sms") {
+          console.log('未收到验证码:', res);
           resolve(300);
         } else if (res.data.status === "user_not_exists") {
           console.log('用户不存在:', res);

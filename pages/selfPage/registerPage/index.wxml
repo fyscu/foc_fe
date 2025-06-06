@@ -6,21 +6,21 @@
         src="{{ userInfo.avatarUrl === '' ? '/image/icons/image_upload_failed.svg' : userInfo.avatarUrl }}"></image>
     </button>
     <van-cell-group wx:if="{{ loggedin !== 1 }}" inset title="手机号验证">
+      <van-cell size="small" title="由于运营商限制，请您主动向我们发送短信以验证" >
+      </van-cell>
       <van-field required center name="phone" type="digit" label="手机号" placeholder="请输入手机号" value="{{ userInfo.phone }}"
         border="{{ false }}" bind:change="onPhoneChange" error="{{ !hasPhone }}">
         <view class="material-icons" slot="right-icon"> phone </view>
       </van-field>
-      <van-field required center name="phone" type="digit" label="验证码" placeholder="请输入验证码" value="{{ verifiCode }}"
-        border="{{ false }}" bind:change="onVerifiCodeChange" error="{{ !hasVerifiCode }}">
-        <block wx:if="{{ isCountingDown }}">
-          <van-button disabled type="default" slot="button" size="small" round>
-            已发送 {{ countDownNum }}s
-          </van-button>
-        </block>
-        <block wx:else>
-          <van-button slot="button" size="small" type="info" icon="verified_user" class-prefix="material-icons" round
-            bind:click="sendCode">获取</van-button>
-        </block>
+      <van-field center name="phone" type="digit" label="发送手机号" placeholder="发送手机号" value="{{ userInfo.codePhone }}"
+        border="{{ false }}" disabled>
+        <van-button slot="button" size="small" type="info" class-prefix="material-icons" round
+            bind:click="copyPhone">复制号码</van-button>
+      </van-field>
+      <van-field center name="phone" type="digit" label="发送内容" placeholder="发送内容" value="{{ userInfo.verCode }}"
+        border="{{ false }}" disabled>
+        <van-button slot="button" size="small" type="info" class-prefix="material-icons" round
+            bind:click="copyCode">复制内容</van-button>
       </van-field>
     </van-cell-group>
     <van-cell-group wx:else inset title="四川大学学生邮箱认证">

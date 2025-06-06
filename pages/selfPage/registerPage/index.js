@@ -60,6 +60,9 @@ Page({
   onPhoneChange(e) {
     this.setData({ ["userInfo.phone"]: e.detail });
     this.setData({ hasPhone: e.detail !== "" });
+    if (e.detail.length === 11) {
+      this.sendCode(e.detail);
+    }
   },
   onNicknameChange(e) {
     this.setData({ ["userInfo.nickname"]: e.detail });
@@ -113,11 +116,6 @@ Page({
     }
     let unfilled = false;
     let thisUserInfo = this.data.userInfo;
-    if (this.data.verifiCode === "") {
-      this.setData({ hasVerifiCode: false });
-      Toast("请填写验证码");
-      unfilled = true;
-    }
     if (thisUserInfo.phone === "") {
       this.setData({ hasPhone: false });
       Toast("请填写手机号");
@@ -128,7 +126,7 @@ Page({
     // 验证码校验
     wx.showLoading({ title: '核验中', mask: true });
     if (this.data.migration) {
-      userMigration(thisUserInfo.phone, this.data.verifiCode).then((returnCode) => {
+      userMigration(thisUserInfo.phone, thisUserInfo.openid).then((returnCode) => {
         wx.hideLoading();
         if (returnCode === 401) {
           Toast("鉴权失败，请刷新重试");
@@ -140,11 +138,11 @@ Page({
         } else if (returnCode === 300) {
           Toast("验证码核验失败");
         } else {
-          Toast("未知错误");
+          Toast("验证码核验失败");
         }
       });
     } else {
-      verify(thisUserInfo.phone, this.data.verifiCode).then((returnCode) => {
+      verify(thisUserInfo.phone, thisUserInfo.openid).then((returnCode) => {
         wx.hideLoading();
         if (returnCode === 401) {
           Toast("鉴权失败，请刷新重试");
@@ -213,14 +211,14 @@ Page({
       this.setData({ hasPhone: false });
       return;
     }
+    
     // 调用发送验证码接口
     userRegister(_phone).then((returnCode) => {
       if (returnCode === 401) {
         Toast("鉴权失败，请刷新重试");
       } else if (returnCode === 200) { // 成功发送
-        Toast("验证码已发送");
         this.setData({ migration: false });
-        this.startCountingDown();
+        // this.startCountingDown();
       } else if (returnCode === 300) {
         Toast("该手机号已注册");
       } else if (returnCode === 400) {
@@ -228,9 +226,9 @@ Page({
           title: "账号迁移",
           message: "云端线上大数据智能检测到您的帐号有尚未迁移的老数据，即将自动为您迁移。"
         }).then(() => {
-          Toast("验证码已发送");
+
           this.setData({ migration: true });
-          this.startCountingDown();
+          // this.startCountingDown();
         });
       } else {
         Toast("未知错误");
