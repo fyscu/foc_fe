@@ -23,10 +23,6 @@
       </van-field>
     </van-cell-group>
     <van-cell-group inset title="工单维修信息">
-      <van-cell title="线下接单" label="开启后您的工单不会被自动分配，请主动和技术员协商接单">
-        <van-switch style="height: 24px;" slot="right-icon" checked="{{ offline }}" bind:change="onToggleOffline"
-          size="40rpx" />
-      </van-cell>
       <van-cell required title="所在校区" bind:click="showPopup" data-index="1" is-link="{{ !offline }}"
         value="{{ campusValue === '' ? '请选择' : campusValue }}" arrow-direction="down" />
       <van-cell required title="设备类型" bind:click="showPopup" data-index="2" is-link
@@ -56,6 +52,16 @@
             data-src="{{ item }}"></van-image>
           <view bind:tap="deleteImage" data-src="{{ item }}" class="material-icons close-button"> highlight_off </view>
         </view>
+      </van-cell>
+    </van-cell-group>
+    <van-cell-group inset title="额外信息">
+      <van-cell title="跨校区匹配" label="开启后您的工单可能会由其他校区的技术员处理。">
+        <van-switch style="height: 24px;" slot="right-icon" checked="{{ duo }}" bind:change="onToggleDuos"
+          size="40rpx" />
+      </van-cell>
+      <van-cell title="手动指定技术员" label="开启后您的工单【不会】被自动分配，如果您没有提前联系好技术员，请不要勾选！！！请主动和技术员协商接单。">
+        <van-switch style="height: 24px;" slot="right-icon" checked="{{ offline }}" bind:change="onToggleOffline"
+          size="40rpx" />
       </van-cell>
     </van-cell-group>
     <view class="btn-container">

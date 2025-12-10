@@ -10,6 +10,7 @@
     "van-picker": "@vant/weapp/picker/index",
     "van-dialog": "@vant/weapp/dialog/index",
     "copy-button": "/components/copyButton/index",
+    "van-switch": "@vant/weapp/switch/index",
     "van-slider": "@vant/weapp/slider/index",
     "van-popup": "@vant/weapp/popup/index"
   }

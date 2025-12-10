@@ -16,6 +16,7 @@ App({
       email: "", // 用户邮箱
       phone: "", // 用户手机号
       campus: "", // 所在校区
+      canDuo: "", //是否多校区意愿
       nickname: "", // 用户昵称
       avatarUrl: "https://img1.doubanio.com/view/group_topic/l/public/p560183288.webp", // 默认用户头像地址
     },

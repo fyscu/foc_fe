@@ -47,6 +47,7 @@ Page({
     deviceProblemValue: "",
     // 联系方式
     contactValue: "QQ号",
+    DuoCampus: 0,
     // 不弹出选择框
     showPopup: 0,
     // showPopup = 1:
@@ -174,6 +175,14 @@ Page({
       deviceProblemValue: value,
       showPopup: 0,
     });
+  },
+  onToggleDuos(event) {
+    const isChecked = event.detail; // 获取开关的新状态(true/false)
+    this.setData({
+      duo: isChecked, // 更新 UI 绑定的变量
+      DuoCampus: isChecked ? 1 : 0 // 同步更新 userInfo 数据
+    });
+    console.log("多校区选项：",this.data.DuoCampus);
   },
   onConfirmContact(event) {
     // 设备问题
@@ -324,6 +333,7 @@ Page({
         this.data.deviceProblemValue, // 问题类型
         `${this.data.contactValue}|${this.data.qq}`, // 用户预留qq号
         this.data.campusValue, // 用户所在校区
+        this.data.DuoCampus,
         warrantyMap[this.data.warrantyStatusValue], // 保修状态
         this.data.model, // 设备型号
       ).then((returnCode) => {

@@ -26,6 +26,7 @@ Page({
     hasNickname: true,
     hasAvatarUrl: true,
     userInfo: app.globalData.userInfo,
+    duo: app.globalData.userInfo && app.globalData.userInfo.canDuo == 1,
     campusList: ["江安", "望江", "华西"],
     showPopup: 0, // 不弹出选择框
     // 技术员接单意愿
@@ -85,6 +86,13 @@ Page({
   onNicknameBlur(e) {
     this.setData({ ["userInfo.nickname"]: e.detail.value });
     this.setData({ hasNickname: e.detail.value !== "" });
+  },
+  onToggleDuo(event) {
+    const isChecked = event.detail; // 获取开关的新状态(true/false)
+    this.setData({
+      duo: isChecked, // 更新 UI 绑定的变量
+      ["userInfo.canDuo"]: isChecked ? 1 : 0 // 同步更新 userInfo 数据
+    });
   },
   onPhoneChange(e) {
     this.setData({ ["userInfo.phone"]: e.detail });
@@ -250,6 +258,7 @@ Page({
     function _0xce74(_0x422ad9, _0x437c41) { var _0x219971 = _0x2199(); return _0xce74 = function (_0xce74c2, _0xe5a875) { _0xce74c2 = _0xce74c2 - 0x17e; var _0x492802 = _0x219971[_0xce74c2]; return _0x492802; }, _0xce74(_0x422ad9, _0x437c41); } var _0x28e9c1 = _0xce74; function _0x2199() { var _0x336cce = ['52219341TVqAMo', 'GET', '738642fWNokL', '6394024PJbQCP', '1698244TWwtTD', 'status', 'success', 'application/json', '1353734QBrgTc', '6588470zDcVLE', 'data', '15VfyMdn', '938190DMdWex', 'setData', '/v1/status/getTicketStatus?version='+appVersion, '8iqFzdF']; _0x2199 = function () { return _0x336cce; }; return _0x2199(); } (function (_0xe1f587, _0x57051b) { var _0x31c7bc = _0xce74, _0x286767 = _0xe1f587(); while (!![]) { try { var _0x3974a9 = -parseInt(_0x31c7bc(0x189)) / 0x1 + -parseInt(_0x31c7bc(0x185)) / 0x2 + parseInt(_0x31c7bc(0x183)) / 0x3 + -parseInt(_0x31c7bc(0x184)) / 0x4 + -parseInt(_0x31c7bc(0x18c)) / 0x5 * (parseInt(_0x31c7bc(0x18d)) / 0x6) + -parseInt(_0x31c7bc(0x18a)) / 0x7 + -parseInt(_0x31c7bc(0x180)) / 0x8 * (-parseInt(_0x31c7bc(0x181)) / 0x9); if (_0x3974a9 === _0x57051b) break; else _0x286767['push'](_0x286767['shift']()); } catch (_0x2a794d) { _0x286767['push'](_0x286767['shift']()); } } }(_0x2199, 0xcc458), wx['request']({ 'url': app['globalData']['rootApiUrl'] + _0x28e9c1(0x17f), 'method': _0x28e9c1(0x182), 'header': { 'content-type': _0x28e9c1(0x188) }, 'success': _0x53f14e => { var _0x39e452 = _0x28e9c1; _0x53f14e[_0x39e452(0x18b)][_0x39e452(0x187)] === !![] && this[_0x39e452(0x17e)]({ 'loggedin': _0x53f14e[_0x39e452(0x18b)][_0x39e452(0x186)] }); } }));
     this.setData({
       userInfo: app.globalData.userInfo,
+      duo: app.globalData.userInfo.canDuo == 1,
     });
   },
   onLogout() {
@@ -265,6 +274,7 @@ Page({
       app.globalData.userInfo.phone = ""; // 用户手机号
       app.globalData.userInfo.campus = ""; // 所在校区
       app.globalData.userInfo.nickname = ""; // 用户昵称
+      
       app.globalData.userInfo.tempEmail = ""; // 临时邮箱
       app.globalData.userInfo.avatarUrl = "https://img1.doubanio.com/view/group_topic/l/public/p560183288.webp"; // 用户头像地址
       app.globalData.ticketList = [];

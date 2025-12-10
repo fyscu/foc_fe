@@ -41,6 +41,10 @@
       <van-field disabled center name="tid" type="digit" label="技术员号" value="{{ userInfo.uid }}" border="{{ false }}">
         <copy-button text-to-copy="{{ userInfo.uid }}" slot="right-icon" />
       </van-field>
+      <van-cell title="跨校区匹配" label="开启后您可以接到任意校区的工单">
+        <van-switch style="height: 24px;" slot="right-icon" checked="{{ duo }}" bind:change="onToggleDuo"
+          size="40rpx" />
+      </van-cell>
       <van-cell title="接单意愿" value="{{ wantsMap1[userInfo.wants] }}" border="{{ false }}" />
       <van-cell center>
         <van-slider slot="title" class="willing-silder" max="4" step="1" bar-height="4px" active-color="#ee0a24"

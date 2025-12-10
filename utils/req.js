@@ -187,6 +187,7 @@ function userLogin() {
                   if (result.role === "technician") {
                     app.globalData.userInfo.wants = result.wants;
                     app.globalData.userInfo.available = result.available;
+                    app.globalData.userInfo.canDuo = result.canDuo;
                   }
                   // 成功登录
                   app.globalData.isloggedin = true;
@@ -311,7 +312,8 @@ function setTechInfo(userInfo) {
       url: app.globalData.rootApiUrl + '/v1/user/setuser',
       data: {
         id: userInfo.id, // 必填
-        wants: userInfo.wants
+        wants: userInfo.wants,
+        canDuo: userInfo.canDuo
       },
       header: {
         'content-type': 'application/json',
@@ -438,7 +440,7 @@ function putFeedback(contact, text) {
 function addTicket(
   purchase_date, phone, device_type,
   brand, description, image, fault_type,
-  qq, campus, warranty_status, model
+  qq, campus, DuoCampus, warranty_status, model
 ) {
   return new Promise((resolve, reject) => {
     if (!image) {
@@ -458,6 +460,7 @@ function addTicket(
         image: image, // 报修图片地址 string
         fault_type: fault_type, // 问题类型 string
         qq: qq, // 用户预留qq号 int
+        DuoCampus: DuoCampus,
         campus: campus, // 用户所在校区 string
         warranty_status: warranty_status, // 保修状态
         model: model, // 设备型号
