@@ -5,13 +5,24 @@
       <image class="avatar"
         src="{{ userInfo.avatarUrl === '' ? '/image/icons/image_upload_failed.svg' : userInfo.avatarUrl }}"></image>
     </button>
+    <van-notice-bar left-icon="volume-o" scrollable mode="closeable" text="如果尝试多次依旧无法通过验证，请加入飞扬2025会员群寻求帮助～" />
+    <van-notice-bar color="#1989fa" background="#ecf9ff" left-icon="info-o">
+      飞扬2025会员群号：626997970
+    </van-notice-bar>
     <van-cell-group wx:if="{{ loggedin !== 1 }}" inset title="手机号验证">
-      <van-cell size="small" title="由于运营商限制，请您主动向我们发送短信以验证" >
+      <van-cell size="small" title="由于运营商限制，请您主动向我们发送短信以验证～" >
       </van-cell>
+      <van-cell size="small" title="有概率验证失败，若失败请加入会员群寻求帮助喵～" >
+      </van-cell>
+      <!-- <van-cell size="small" title="如果尝试多次依旧无法通过验证，请加入飞扬2025会员群寻求帮助～" >
+      </van-cell>
+      <van-cell size="small" title="会员群号：626997970" >
+      </van-cell> -->
       <van-field required center name="phone" type="digit" label="手机号" placeholder="请输入手机号" value="{{ userInfo.phone }}"
         border="{{ false }}" bind:change="onPhoneChange" error="{{ !hasPhone }}">
         <view class="material-icons" slot="right-icon"> phone </view>
       </van-field>
+      
       <van-field center name="phone" type="digit" label="发送手机号" placeholder="发送手机号" value="{{ userInfo.codePhone }}"
         border="{{ false }}" disabled>
         <van-button slot="button" size="small" type="info" class-prefix="material-icons" round
