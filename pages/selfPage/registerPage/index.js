@@ -302,5 +302,31 @@ Page({
     this.setData({
       userInfo: app.globalData.userInfo,
     });
+  },
+  copyPhone() {
+    const phone = this.data.userInfo.codePhone;
+    if (!phone) {
+      wx.showToast({ title: '号码为空', icon: 'none' });
+      return;
+    }
+    wx.setClipboardData({
+      data: String(phone),
+      success: () => {
+        console.log('手机号复制成功'); 
+      }
+    });
+  },
+  copyCode() {
+    const code = this.data.userInfo.verCode;
+    if (!code) {
+      wx.showToast({ title: '内容为空', icon: 'none' });
+      return;
+    }
+    wx.setClipboardData({
+      data: String(code),
+      success: () => {
+        console.log('内容复制成功');
+      }
+    });
   }
 });
