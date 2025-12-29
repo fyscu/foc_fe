@@ -116,6 +116,11 @@ Page({
     }
     let unfilled = false;
     let thisUserInfo = this.data.userInfo;
+    if (this.data.verifiCode === "") {
+      this.setData({ hasVerifiCode: false });
+      Toast("请填写验证码");
+      unfilled = true;
+    }
     if (thisUserInfo.phone === "") {
       this.setData({ hasPhone: false });
       Toast("请填写手机号");
@@ -125,8 +130,9 @@ Page({
     if (unfilled) { return; }
     // 验证码校验
     wx.showLoading({ title: '核验中', mask: true });
+    console.error(this.data.migration);
     if (this.data.migration) {
-      userMigration(thisUserInfo.phone, thisUserInfo.openid).then((returnCode) => {
+      userMigration(thisUserInfo.phone, this.data.verifiCode).then((returnCode) => {
         wx.hideLoading();
         if (returnCode === 401) {
           Toast("鉴权失败，请刷新重试");
@@ -142,7 +148,7 @@ Page({
         }
       });
     } else {
-      verify(thisUserInfo.phone, thisUserInfo.openid).then((returnCode) => {
+      verify(thisUserInfo.phone, this.data.verifiCode).then((returnCode) => {
         wx.hideLoading();
         if (returnCode === 401) {
           Toast("鉴权失败，请刷新重试");
@@ -214,21 +220,24 @@ Page({
     
     // 调用发送验证码接口
     userRegister(_phone).then((returnCode) => {
+      this.setData({ migration: false });
       if (returnCode === 401) {
         Toast("鉴权失败，请刷新重试");
       } else if (returnCode === 200) { // 成功发送
-        this.setData({ migration: false });
-        // this.startCountingDown();
+        Toast("验证码已发送");
+        
+        this.startCountingDown();
       } else if (returnCode === 300) {
         Toast("该手机号已注册");
       } else if (returnCode === 400) {
+        
         Dialog.alert({
           title: "账号迁移",
           message: "云端线上大数据智能检测到您的帐号有尚未迁移的老数据，即将自动为您迁移。"
         }).then(() => {
-
+          Toast("验证码已发送");
           this.setData({ migration: true });
-          // this.startCountingDown();
+          this.startCountingDown();
         });
       } else {
         Toast("未知错误");

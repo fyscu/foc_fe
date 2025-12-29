@@ -5,15 +5,15 @@
       <image class="avatar"
         src="{{ userInfo.avatarUrl === '' ? '/image/icons/image_upload_failed.svg' : userInfo.avatarUrl }}"></image>
     </button>
-    <van-notice-bar left-icon="volume-o" scrollable mode="closeable" text="如果尝试多次依旧无法通过验证，请加入飞扬2025会员群寻求帮助～" />
+    <van-notice-bar left-icon="volume-o" scrollable mode="closeable" text="我们使用【速通互联验证码】发送验证码，请注意甄别哦～" />
     <van-notice-bar color="#1989fa" background="#ecf9ff" left-icon="info-o">
       飞扬2025会员群号：626997970
     </van-notice-bar>
     <van-cell-group wx:if="{{ loggedin !== 1 }}" inset title="手机号验证">
-      <van-cell size="small" title="由于运营商限制，请您主动向我们发送短信以验证～" >
+      <van-cell size="small" title="请注意确认发信方为【速通互联验证码】哦～" >
       </van-cell>
-      <van-cell size="small" title="有概率验证失败，若失败请加入会员群寻求帮助喵～" >
-      </van-cell>
+      <!-- <van-cell size="small" title="有概率验证失败，若失败请加入会员群寻求帮助喵～" >
+      </van-cell> -->
       <!-- <van-cell size="small" title="如果尝试多次依旧无法通过验证，请加入飞扬2025会员群寻求帮助～" >
       </van-cell>
       <van-cell size="small" title="会员群号：626997970" >
@@ -23,7 +23,7 @@
         <view class="material-icons" slot="right-icon"> phone </view>
       </van-field>
       
-      <van-field center name="phone" type="digit" label="发送手机号" placeholder="发送手机号" value="{{ userInfo.codePhone }}"
+      <!-- <van-field center name="phone" type="digit" label="发送手机号" placeholder="发送手机号" value="{{ userInfo.codePhone }}"
         border="{{ false }}" disabled>
         <van-button slot="button" size="small" type="info" class-prefix="material-icons" round
             bind:click="copyPhone">复制号码</van-button>
@@ -32,6 +32,19 @@
         border="{{ false }}" disabled>
         <van-button slot="button" size="small" type="info" class-prefix="material-icons" round
             bind:click="copyCode">复制内容</van-button>
+      </van-field>
+    </van-cell-group> -->
+    <van-field required center name="phone" type="digit" label="验证码" placeholder="请输入验证码" value="{{ verifiCode }}"
+        border="{{ false }}" bind:change="onVerifiCodeChange" error="{{ !hasVerifiCode }}">
+        <block wx:if="{{ isCountingDown }}">
+          <van-button disabled type="default" slot="button" size="small" round>
+            已发送 {{ countDownNum }}s
+          </van-button>
+        </block>
+        <block wx:else>
+          <van-button slot="button" size="small" type="info" icon="verified_user" class-prefix="material-icons" round
+            bind:click="sendCode">获取</van-button>
+        </block>
       </van-field>
     </van-cell-group>
     <van-cell-group wx:else inset title="四川大学学生邮箱认证">

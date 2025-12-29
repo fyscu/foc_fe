@@ -6,12 +6,11 @@ import {
 var app = getApp();
 
 // 用户注册 https://fyapidocs.wjlo.cc/user/register
-// 现在这里不是注册了，是检查是否迁移
 function userRegister(phone) {
   return new Promise((resolve, reject) => {
-    console.log("Requesting /user/checktoimm...", phone);
+    console.log("Requesting /user/register...", phone);
     wx.request({
-      url: app.globalData.rootApiUrl + '/v1/user/checktoimm',
+      url: app.globalData.rootApiUrl + '/v1/user/register',
       data: {
         phone: phone,
       },
@@ -29,13 +28,15 @@ function userRegister(phone) {
           if (res.data.status === "no_imm") {
             console.log("无需迁移");
             app.globalData.accessToken = res.data.access_token;
+            resolve(900);
+          } else if (res.data.status === "verification_code_sent") {
+            console.log("验证码已发送");
             resolve(200);
           } else if (res.data.status === "user_exists_verified") {
             console.log("已有用户");
             resolve(300);
-          } else if (res.data.status === "imm") {
-            console.log("需要迁移");
-            app.globalData.accessToken = res.data.access_token;
+          } else if (res.data.status === "user_need_migration") {
+            console.log("用户需要迁移");
             resolve(400);
           } else {
             console.log('注册失败:', res);
@@ -103,14 +104,14 @@ function unRegister() {
 }
 
 // https://fyapidocs.wjlo.cc/user/migration
-function userMigration(phone, openid) {
+function userMigration(phone, verifiCode) {
   return new Promise((resolve, reject) => {
-    console.log("Requesting /user/migration_up...", phone, openid);
+    console.log("Requesting /user/migration...", phone, verifiCode);
     wx.request({
-      url: app.globalData.rootApiUrl + '/v1/user/migration_up',
+      url: app.globalData.rootApiUrl + '/v1/user/migration',
       data: {
         phone: phone,
-        openid: openid,
+        code: verifiCode,
       },
       header: {
         'content-type': 'application/json',
@@ -221,14 +222,14 @@ function userLogin() {
 }
 
 // https://fyapidocs.wjlo.cc/user/verify
-function verify(phone, openid) {
+function verify(phone, verfiCode) {
   return new Promise((resolve, reject) => {
-    console.log("Requesting /user/verify_up...", phone, openid);
+    console.log("Requesting /user/verify...", phone, verfiCode);
     wx.request({
-      url: app.globalData.rootApiUrl + '/v1/user/verify_up',
+      url: app.globalData.rootApiUrl + '/v1/user/verify',
       data: {
         phone: phone,
-        openid: openid,
+        code: verfiCode,
       },
       header: {
         'content-type': 'application/json',
