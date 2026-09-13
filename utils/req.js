@@ -640,11 +640,20 @@ function getTicketDetail(orderId, allowAuthRetry = true) {
   const failed = (code) => ({ code: code, ticket: null });
   function send(canRetry) {
     const sentToken = app.globalData.accessToken;
+    const userInfo = app.globalData.userInfo || {};
+    const userId = userInfo.uid !== undefined && userInfo.uid !== null && userInfo.uid !== '' ?
+      userInfo.uid : userInfo.id;
+    const data = { orderid: id };
+    if (userId !== undefined && userId !== null && /^\d+$/.test(String(userId))) {
+      if (userInfo.role === 'user') data.uid = String(userId);
+      if (userInfo.role === 'technician') data.tid = String(userId);
+    }
     return new Promise((resolve) => {
       wx.request({
         url: app.globalData.rootApiUrl + '/v1/status/getTicket',
         method: 'GET',
-        data: { orderid: id },
+        // orderid remains authoritative; role context controls response enrichment.
+        data: data,
         timeout: 20000,
         header: {
           'content-type': 'application/json',

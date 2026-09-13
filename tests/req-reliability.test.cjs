@@ -418,6 +418,36 @@ for (const id of [41, '41']) {
   });
 }
 
+test('detail GET includes user context so refreshed technician contact is retained', async () => {
+  const h = harness();
+  h.app.globalData.userInfo = { uid: 21, role: 'user' };
+  h.app.globalData.ticketList = [detailTicket({
+    id: '41', assigned_technician_id: 'Cached Technician - 13000000000',
+  })];
+  const result = h.api.getTicketDetail(41);
+  assert.equal(h.requests[0].data.orderid, '41');
+  assert.equal(h.requests[0].data.uid, '21');
+  assert.equal(h.requests[0].data.tid, undefined);
+  detailSuccess(h.requests[0], detailTicket({
+    id: '41', assigned_technician_id: 'Current Technician - 13100000000',
+  }));
+  assert.equal((await result).ticket.assigned_technician_id,
+    'Current Technician - 13100000000');
+  assert.equal(h.app.globalData.ticketList[0].assigned_technician_id,
+    'Current Technician - 13100000000');
+});
+
+test('detail GET includes technician context without requesting user-only contact data', async () => {
+  const h = harness();
+  h.app.globalData.userInfo = { id: 22, role: 'technician' };
+  const result = h.api.getTicketDetail(41);
+  assert.equal(h.requests[0].data.orderid, '41');
+  assert.equal(h.requests[0].data.tid, '22');
+  assert.equal(h.requests[0].data.uid, undefined);
+  detailSuccess(h.requests[0]);
+  assert.equal((await result).code, 200);
+});
+
 test('detail GET retries one 401 and shares the login used by other operations', async () => {
   const h = harness();
   const read = h.api.getTicketDetail(41);
@@ -430,6 +460,8 @@ test('detail GET retries one 401 and shares the login used by other operations',
   const retriedWrite = h.requests.find(r => r.url.endsWith('/ticket/set') && r.header.Authorization === 'Bearer fresh-token');
   assert.ok(retriedRead);
   assert.equal(retriedRead.data.orderid, '41');
+  assert.equal(retriedRead.data.tid, '21');
+  assert.equal(retriedRead.data.uid, undefined);
   detailSuccess(retriedRead);
   success(retriedWrite);
   assert.equal((await read).code, 200);
@@ -521,6 +553,8 @@ for (const id of [41, '41']) {
     const shown = page.onShow();
     assert.equal(page.onShow(), shown, 'overlapping shows share one read');
     assert.equal(h.requests.length, 1);
+    assert.equal(h.requests[0].data.uid, '21');
+    assert.equal(h.requests[0].data.tid, undefined);
     page.cancelTheTicket();
     await tick();
     assert.equal(h.requests.length, 1, 'mutation waits for authoritative refresh');
