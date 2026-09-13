@@ -199,3 +199,15 @@
     color: #181818;
   }
 }
+
+/* 存档订单 banner（首页入口） */
+.archive-banner {
+  background: linear-gradient(90deg, #ffefef 0%, #ffe1e1 100%);
+  color: #b02a37;
+  border-left: 6rpx solid #dc3545;
+  border-radius: 8rpx;
+  padding: 18rpx 24rpx;
+  margin: 12rpx 16rpx 20rpx;
+  font-size: 26rpx;
+  font-weight: 500;
+}

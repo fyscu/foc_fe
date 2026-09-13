@@ -94,6 +94,13 @@ Page({
       ["userInfo.canDuo"]: isChecked ? 1 : 0 // 同步更新 userInfo 数据
     });
   },
+  onMaxConcurrentChange(event) {
+    const v = parseInt(event.detail, 10);
+    if (isNaN(v) || v < 1) return;
+    this.setData({
+      ["userInfo.max_concurrent"]: Math.min(10, Math.max(1, v)),
+    });
+  },
   onPhoneChange(e) {
     this.setData({ ["userInfo.phone"]: e.detail });
     this.setData({ hasPhone: e.detail !== "" });

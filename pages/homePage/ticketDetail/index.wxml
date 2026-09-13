@@ -1,6 +1,12 @@
 <!--index.wxml-->
 <scroll-view class="scrollview" scroll-y type="list">
   <view class="container">
+    <view wx:if="{{ ticket.urgent }}" class="detail-banner">
+      ⚡ 加急订单（由存档订单重新提交而来，排在普通报修队列前方）
+    </view>
+    <view wx:if="{{ ticket.archived }}" class="detail-banner archived-banner">
+      📁 此为存档订单。若需重新报修，请回到首页点击"我的存档订单"提交。
+    </view>
     <view class="step-container">
       <van-steps steps="{{ steps }}" active="{{ active }}" active-icon="success" active-color="{{ activeColor }}" />
     </view>

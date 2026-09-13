@@ -12,6 +12,7 @@
     "copy-button": "/components/copyButton/index",
     "van-switch": "@vant/weapp/switch/index",
     "van-slider": "@vant/weapp/slider/index",
+    "van-stepper": "@vant/weapp/stepper/index",
     "van-popup": "@vant/weapp/popup/index"
   }
 }

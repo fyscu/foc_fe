@@ -51,6 +51,12 @@
           value="{{ wantsMap2[userInfo.wants] }}" bind:change="onChange" bind:drag="onDrag">
         </van-slider>
       </van-cell>
+      <van-cell title="同时接单上限" label="您最多同时持有的维修中工单数量（1-10）" border="{{ false }}"
+        value="{{ userInfo.max_concurrent || 1 }} 单" />
+      <van-cell center>
+        <van-stepper slot="title" value="{{ userInfo.max_concurrent || 1 }}" min="1" max="10"
+          bind:change="onMaxConcurrentChange" />
+      </van-cell>
     </van-cell-group>
     <view class="btn-container">
       <van-button round class="settings-btn" type="danger" icon="logout" class-prefix="material-icons"

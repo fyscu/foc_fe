@@ -48,6 +48,8 @@ Page({
     repairFlag: true, // 全局报修开关（是否可以报修）
     // 技术员排行
     topTech: [],
+    // 存档订单（未恢复过的）数量，用于首页 banner
+    archivedRecoverableCount: 0,
   },
   onLoad(options) {
     if (options.operator === "give") {
@@ -304,19 +306,28 @@ Page({
     });
   },
   reloadData() {
+    const tickets = app.globalData.ticketList || [];
     this.setData({
       userInfo: app.globalData.userInfo,
-      ticketList: app.globalData.ticketList,
+      ticketList: tickets,
       isloggedin: app.globalData.isloggedin,
       sysConfig: app.globalData.sysConfig,
-      hasUnfinishedStatus: app.globalData.ticketList.some(ticket =>
+      hasUnfinishedStatus: tickets.some(ticket =>
         ticket.repair_status !== 'Done' &&
         ticket.repair_status !== 'Canceled' &&
         ticket.repair_status !== 'Closed'
-      )
+      ),
+      archivedRecoverableCount: tickets.filter(
+        t => Number(t.archived) === 1 && !t.restored_from
+      ).length,
     });
     // 更新 sysConfig
     sysConfigOriginal = JSON.parse(JSON.stringify(this.data.sysConfig));
+  },
+  navigateToArchivedTickets() {
+    wx.navigateTo({
+      url: "/pages/homePage/archivedTickets/index",
+    });
   },
   navigateToGiveOrderPage() {
     wx.requestSubscribeMessage({

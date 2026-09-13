@@ -1,0 +1,54 @@
+/* archivedTickets/index.wxss */
+.scrollview {
+  height: 100vh;
+}
+.container {
+  padding: 16rpx;
+}
+.intro {
+  background: #fffbe6;
+  border: 1rpx solid #ffe58f;
+  border-radius: 12rpx;
+  padding: 20rpx 24rpx;
+  margin: 12rpx 8rpx 20rpx;
+  font-size: 26rpx;
+  color: #614700;
+  line-height: 1.7;
+}
+.intro-title {
+  font-size: 30rpx;
+  font-weight: 600;
+  margin-bottom: 10rpx;
+  color: #8c6d00;
+}
+.intro-body {
+  white-space: pre-line;
+}
+.hl {
+  color: #b02a37;
+  font-weight: 600;
+}
+.urgent-word {
+  color: #fff;
+  background: #dc3545;
+  padding: 2rpx 10rpx;
+  border-radius: 6rpx;
+  font-weight: 600;
+}
+.archive-card {
+  margin: 8rpx 0;
+}
+.meta {
+  font-size: 22rpx;
+  color: #999;
+}
+.restored-tip {
+  font-size: 24rpx;
+  color: #b02a37;
+  padding: 8rpx 0;
+}
+.loading-tip {
+  text-align: center;
+  color: #999;
+  padding: 60rpx 0;
+}
