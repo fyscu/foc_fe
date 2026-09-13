@@ -8,7 +8,7 @@ const path = require('node:path');
 // Only wx transport is mocked; the actual production candidate is evaluated unchanged
 // except for its unrelated ES-module util import, which Node's CJS vm cannot parse.
 const reqPath = process.env.FOC_REQ_FILE ||
-  path.resolve(__dirname, '../../feiyang-maintenance-20260913/foc_fe/utils/req.js');
+  path.resolve(__dirname, '../utils/req.js');
 const source = fs.readFileSync(reqPath, 'utf8').replace(
   /^import\s*\{\s*getUUid\s*\}\s*from\s*["']\.\/util["'];?\s*/, '');
 function harness() {
@@ -296,13 +296,16 @@ function mountTicketDetail(h) {
   const pageSource = fs.readFileSync(pagePath, 'utf8')
     .replace(/^import[\s\S]*?;\s*/gm, '');
   let definition;
+  h.toasts = [];
+  h.timers = [];
   Object.assign(h.wx, {
     showLoading() {}, hideLoading() {}, requestSubscribeMessage() {}, showToast() {},
+    navigateBack() {},
   });
   vm.runInNewContext(pageSource, {
     getApp: () => h.app, Page: page => { definition = page; },
-    ...h.api, wx: h.wx, Toast() {}, Dialog: { confirm: () => Promise.resolve() },
-    console: { log() {}, error() {} }, setTimeout,
+    ...h.api, wx: h.wx, Toast: message => h.toasts.push(message), Dialog: { confirm: () => Promise.resolve() },
+    console: { log() {}, error() {} }, setTimeout: callback => h.timers.push(callback),
   }, { filename: pagePath });
   const page = {
     ...definition,
@@ -388,3 +391,304 @@ test('late transfer conflict never replays the operation', async () => {
   assert.equal(h.requests.length, 1);
   assert.equal(h.logins.length, 0);
 });
+
+const detailTicket = (changes = {}) => ({
+  id: 41, repair_status: 'Pending', qq_number: 'QQ|synthetic-user',
+  complete_image_url: null, ...changes,
+});
+const detailSuccess = (req, ticket = detailTicket()) => success(req, {
+  success: true, requesttype: 'by_workorder_id', data: [ticket], page: 1, limit: 20,
+});
+
+for (const id of [41, '41']) {
+  test('detail GET matches JSON ID type ' + typeof id + ' without replacing other tickets', async () => {
+    const h = harness();
+    const other = detailTicket({ id: '42' });
+    h.app.globalData.ticketList = [detailTicket({ id: '41' }), other];
+    const result = h.api.getTicketDetail('41');
+    const request = h.requests[0];
+    assert.equal(request.method, 'GET');
+    assert.equal(request.url, 'https://foc.example.test/v1/status/getTicket');
+    assert.equal(request.data.orderid, '41');
+    assert.equal(request.timeout, 20000);
+    detailSuccess(request, detailTicket({ id, repair_status: 'Repairing' }));
+    assert.equal((await result).ticket.repair_status, 'Repairing');
+    assert.equal(h.app.globalData.ticketList.length, 2);
+    assert.equal(h.app.globalData.ticketList[1], other);
+  });
+}
+
+test('detail GET retries one 401 and shares the login used by other operations', async () => {
+  const h = harness();
+  const read = h.api.getTicketDetail(41);
+  const write = h.api.setTicketStatus(42, 'Canceled');
+  unauthorized(h.requests[0]);
+  unauthorized(h.requests[1]);
+  assert.equal(h.logins.length, 1);
+  await finishLogin(h);
+  const retriedRead = h.requests.find(r => r.method === 'GET' && r.header.Authorization === 'Bearer fresh-token');
+  const retriedWrite = h.requests.find(r => r.url.endsWith('/ticket/set') && r.header.Authorization === 'Bearer fresh-token');
+  assert.ok(retriedRead);
+  assert.equal(retriedRead.data.orderid, '41');
+  detailSuccess(retriedRead);
+  success(retriedWrite);
+  assert.equal((await read).code, 200);
+  assert.equal(await write, 200);
+  assert.equal(h.logins.length, 1);
+});
+
+test('detail GET stops at a second 401 and can recover on a later explicit refresh', async () => {
+  const h = harness();
+  const first = h.api.getTicketDetail(41);
+  unauthorized(h.requests[0]);
+  await finishLogin(h);
+  unauthorized(h.requests[2]);
+  assert.equal((await first).code, 401);
+  assert.equal(h.requests.length, 3);
+  assert.equal(h.logins.length, 1);
+  const next = h.api.getTicketDetail(41);
+  detailSuccess(h.requests[3]);
+  assert.equal((await next).code, 200);
+});
+
+test('detail GET respects disabled auth retry and failed login settles', async () => {
+  const noRetry = harness();
+  const disabled = noRetry.api.getTicketDetail(41, false);
+  unauthorized(noRetry.requests[0]);
+  assert.equal((await disabled).code, 401);
+  assert.equal(noRetry.logins.length, 0);
+  const failedLogin = harness();
+  const failed = failedLogin.api.getTicketDetail(41);
+  unauthorized(failedLogin.requests[0]);
+  failedLogin.logins[0].fail({ errMsg: 'login:fail' });
+  assert.equal((await failed).code, 401);
+  assert.equal(failedLogin.requests.length, 1);
+});
+
+test('detail GET handles late 401 with an already refreshed token', async () => {
+  const h = harness();
+  const read = h.api.getTicketDetail(41);
+  h.app.globalData.accessToken = 'newer-token';
+  unauthorized(h.requests[0]);
+  await tick();
+  assert.equal(h.logins.length, 0);
+  assert.equal(h.requests[1].header.Authorization, 'Bearer newer-token');
+  detailSuccess(h.requests[1]);
+  assert.equal((await read).code, 200);
+});
+
+for (const [label, reply, expected] of [
+  ['HTTP404', req => success(req, { success: false }, 404), 404],
+  ['HTTP403', req => success(req, { success: false }, 403), 403],
+  ['empty', req => success(req, { success: true, data: [] }), 404],
+  ['wrong ticket', req => detailSuccess(req, detailTicket({ id: 42 })), 404],
+  ['network timeout', req => req.fail({ errMsg: 'request:fail timeout' }), 500],
+  ['invalid JSON', req => success(req, '<html>error</html>'), 500],
+  ['false success', req => success(req, { success: true, data: [detailTicket()] }, 500), 500],
+]) {
+  test('detail GET settles without damaging cached list: ' + label, async () => {
+    const h = harness();
+    const cached = [detailTicket()];
+    h.app.globalData.ticketList = cached;
+    const result = h.api.getTicketDetail(41);
+    reply(h.requests[0]);
+    assert.equal((await result).code, expected);
+    assert.equal((await result).ticket, null);
+    assert.equal(h.app.globalData.ticketList, cached);
+    assert.equal(h.requests.length, 1);
+  });
+}
+
+test('detail GET handles missing ID and synchronous native transport failure', async () => {
+  const h = harness();
+  assert.equal((await h.api.getTicketDetail(undefined)).code, 404);
+  assert.equal(h.requests.length, 0);
+  h.wx.request = () => { throw new Error('native unavailable'); };
+  assert.equal((await h.api.getTicketDetail(41)).code, 500);
+});
+
+for (const id of [41, '41']) {
+  test('detail page loads cached ' + typeof id + ' ID and refreshes Pending to Repairing once', async () => {
+    const h = harness();
+    h.app.globalData.userInfo = { uid: 21, role: 'user' };
+    h.app.globalData.ticketList = [detailTicket({ id })];
+    const page = mountTicketDetail(h);
+    page.onLoad({ id: '41', role: 'technician' });
+    assert.equal(page.data.ticket.id, id);
+    assert.equal(page.data.role, 'user', 'session role takes precedence over route hint');
+    assert.equal(page.data.active, 0);
+    assert.equal(h.requests.length, 0, 'onLoad displays cache only');
+    const shown = page.onShow();
+    assert.equal(page.onShow(), shown, 'overlapping shows share one read');
+    assert.equal(h.requests.length, 1);
+    page.cancelTheTicket();
+    await tick();
+    assert.equal(h.requests.length, 1, 'mutation waits for authoritative refresh');
+    detailSuccess(h.requests[0], detailTicket({ id, repair_status: 'Repairing',
+      qq_number: '微信|new-contact', complete_image_url: 'https://example.test/done.png' }));
+    assert.equal(await shown, 200);
+    assert.equal(page.data.active, 1);
+    assert.equal(page.data.needCompleteImage, false);
+    assert.equal(page.data.contactValue, '微信');
+    assert.equal(page.data.contactNumber, 'new-contact');
+    assert.equal(page.data.detailsRefreshing, false);
+    assert.equal(page.data.detailUnavailable, false);
+  });
+}
+
+test('detail page cache miss and absent contact do not crash or allow premature writes', async () => {
+  const h = harness();
+  h.app.globalData.ticketList = undefined;
+  const page = mountTicketDetail(h);
+  page.data.ticket = null;
+  page.onLoad({ id: '41', role: 'user' });
+  assert.equal(page.data.ticket, null);
+  page.cancelTheTicket();
+  page.confirmTheTicket();
+  page.completeTheTicket();
+  page.completeImage();
+  page.closeTheTicket();
+  assert.equal(h.requests.length, 0);
+  assert.equal(page.onShareAppMessage().path, '/pages/homePage/index');
+  const shown = page.onShow();
+  detailSuccess(h.requests[0], detailTicket({ qq_number: null, repair_status: 'Repairing' }));
+  assert.equal(await shown, 200);
+  assert.equal(page.data.active, 1);
+  assert.equal(page.data.contactNumber, '');
+});
+
+test('detail page cancellation sends the right ID and synchronizes final state to cache', async () => {
+  const h = harness();
+  h.app.globalData.ticketList = [detailTicket({ repair_status: 'Repairing' })];
+  const page = mountTicketDetail(h);
+  page.onLoad({ id: '41', role: 'user' });
+  page.cancelTheTicket();
+  await tick();
+  assert.equal(h.requests[0].data.tid, 41);
+  assert.equal(h.requests[0].data.repair_status, 'Canceled');
+  page.cancelTheTicket();
+  await tick();
+  assert.equal(h.requests.length, 1, 'repeat taps do not race the same mutation');
+  success(h.requests[0], { success: true, repair_status: 'Canceled' });
+  await tick();
+  assert.equal(page.data.active, 3);
+  assert.equal(page.data.activeColor, '#ff0000');
+  assert.equal(page.data.ticket.repair_status, 'Canceled');
+  assert.equal(h.app.globalData.ticketList[0].repair_status, 'Canceled');
+  assert.equal(page._mutationPending, false);
+});
+
+for (const [label, reply, expected] of [
+  ['404', req => success(req, { success: false }, 404), 404],
+  ['network failure', req => req.fail({ errMsg: 'request:fail timeout' }), 500],
+]) {
+  test('detail page remains recoverable after ' + label, async () => {
+    const h = harness();
+    h.app.globalData.ticketList = [detailTicket()];
+    const page = mountTicketDetail(h);
+    page.onLoad({ id: '41', role: 'user' });
+    const first = page.onShow();
+    reply(h.requests[0]);
+    assert.equal(await first, expected);
+    assert.equal(page.data.detailsRefreshing, false);
+    assert.equal(page.data.detailUnavailable, true);
+    page.cancelTheTicket();
+    await tick();
+    assert.equal(h.requests.length, 1);
+    const recovered = page.onShow();
+    detailSuccess(h.requests[1], detailTicket({ repair_status: 'Repairing' }));
+    assert.equal(await recovered, 200);
+    assert.equal(page.data.detailUnavailable, false);
+    assert.equal(page.data.active, 1);
+  });
+}
+
+test('detail page recovers after 401 login failure on next show', async () => {
+  const h = harness();
+  const page = mountTicketDetail(h);
+  page.data.ticket = null;
+  page.onLoad({ id: '41', role: 'user' });
+  const first = page.onShow();
+  unauthorized(h.requests[0]);
+  h.logins[0].fail({ errMsg: 'login:fail' });
+  assert.equal(await first, 401);
+  assert.equal(page.data.detailsRefreshing, false);
+  assert.equal(page.data.detailUnavailable, true);
+  const retry = page.onShow();
+  detailSuccess(h.requests[1], detailTicket({ repair_status: 'Repairing' }));
+  assert.equal(await retry, 200);
+  assert.equal(page.data.active, 1);
+});
+
+test('detail refresh resets old terminal and confirmation step decorations', () => {
+  const h = harness();
+  const page = mountTicketDetail(h);
+  page.applyTicket(detailTicket({ repair_status: 'Canceled' }));
+  assert.equal(page.data.steps[3].activeIcon, 'close');
+  page.applyTicket(detailTicket({ repair_status: 'UserConfirming' }));
+  assert.equal(page.data.steps[2].text, '技术员确认');
+  page.applyTicket(detailTicket({ repair_status: 'Repairing' }));
+  assert.equal(page.data.active, 1);
+  assert.equal(page.data.activeColor, '#38f');
+  assert.equal(page.data.steps[2].text, '维修完成');
+  assert.equal(page.data.steps[3].activeIcon, undefined);
+});
+
+test('returning from media picker does not refresh over an in-flight image update', async () => {
+  const h = harness();
+  h.app.globalData.ticketList = [detailTicket({ repair_status: 'Repairing' })];
+  const page = mountTicketDetail(h);
+  page.onLoad({ id: '41', role: 'technician' });
+  let picker, upload;
+  h.wx.chooseMedia = options => { picker = options; };
+  h.wx.uploadFile = options => { upload = options; };
+  page.completeImage();
+  await page.onShow();
+  assert.equal(h.requests.length, 0);
+  picker.success({ tempFiles: [{ tempFilePath: '/synthetic/photo.jpg' }] });
+  await page.onShow();
+  assert.equal(h.requests.length, 0);
+  assert.equal(upload.timeout, 20000);
+  upload.success({ statusCode: 200, data: JSON.stringify({ success: true, rawdata: 'https://example.test/photo.jpg' }) });
+  await tick();
+  assert.equal(h.requests[0].data.complete_image_url, 'https://example.test/photo.jpg');
+  success(h.requests[0]);
+  await tick();
+  assert.equal(page.data.needCompleteImage, false);
+  assert.equal(page.data.ticket.complete_image_url, 'https://example.test/photo.jpg');
+  assert.equal(h.app.globalData.ticketList[0].complete_image_url, 'https://example.test/photo.jpg');
+  assert.equal(page._mutationPending, false);
+});
+
+test('cancelled media picker allows the next detail refresh', async () => {
+  const h = harness();
+  const page = mountTicketDetail(h);
+  page.onLoad({ id: '41', role: 'technician' });
+  let picker;
+  h.wx.chooseMedia = options => { picker = options; };
+  page.completeImage();
+  picker.fail({ errMsg: 'chooseMedia:fail cancel' });
+  const refreshed = page.onShow();
+  detailSuccess(h.requests[0]);
+  assert.equal(await refreshed, 200);
+});
+
+for (const mode of ['network', 'malformed JSON']) {
+  test('failed completion image upload releases page mutation state: ' + mode, async () => {
+    const h = harness();
+    const page = mountTicketDetail(h);
+    page.onLoad({ id: '41', role: 'technician' });
+    let picker, upload;
+    h.wx.chooseMedia = options => { picker = options; };
+    h.wx.uploadFile = options => { upload = options; };
+    page.completeImage();
+    picker.success({ tempFiles: [{ tempFilePath: '/synthetic/photo.jpg' }] });
+    if (mode === 'network') upload.fail({ errMsg: 'uploadFile:fail' });
+    else upload.success({ statusCode: 200, data: '<invalid>' });
+    await tick();
+    assert.equal(page._mutationPending, false);
+    assert.equal(page.data.needCompleteImage, true);
+    assert.equal(h.requests.length, 0);
+    assert.ok(h.toasts.includes('上传图片失败，请重试'));
+  });
+}

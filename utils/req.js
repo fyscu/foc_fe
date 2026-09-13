@@ -394,6 +394,7 @@ function uploadQiniuImgRaw(localFilePath) {
       url: app.globalData.rootApiUrl + "/v1/user/avatar",
       name: "file",
       filePath: localFilePath,
+      timeout: 20000,
       header: {
         "Content-Type": "multipart/form-data",
         'Authorization': `Bearer ${app.globalData.accessToken}`,
@@ -402,13 +403,15 @@ function uploadQiniuImgRaw(localFilePath) {
         key: "fyMiniprogam/" + getUUid(),
       },
       success: function (res) {
-        let data = JSON.parse(res.data);
-        if (data.success) {
-          console.log("Upload image success!", data);
-          resolve(data.rawdata);
-        } else {
-          console.log("Error occured:", data);
-          reject(data.data);
+        try {
+          const data = JSON.parse(res.data);
+          if (res.statusCode >= 200 && res.statusCode < 300 && data.success && data.rawdata) {
+            resolve(data.rawdata);
+          } else {
+            reject(data.data);
+          }
+        } catch (error) {
+          reject(error);
         }
       },
       fail: function (res) {
@@ -619,10 +622,75 @@ function getTicket(data) {
   });
 }
 
+// 详情读取不覆盖首页的整张列表；路由参数与 JSON 的 ID 类型都按字符串比较。
+function getTicketDetail(orderId, allowAuthRetry = true) {
+  const id = orderId === undefined || orderId === null ? '' : String(orderId);
+  if (!/^\d+$/.test(id)) return Promise.resolve({ code: 404, ticket: null });
+  const failed = (code) => ({ code: code, ticket: null });
+  function send(canRetry) {
+    const sentToken = app.globalData.accessToken;
+    return new Promise((resolve) => {
+      wx.request({
+        url: app.globalData.rootApiUrl + '/v1/status/getTicket',
+        method: 'GET',
+        data: { orderid: id },
+        timeout: 20000,
+        header: {
+          'content-type': 'application/json',
+          'Authorization': `Bearer ${sentToken}`,
+        },
+        success(res) {
+          if (res.statusCode === 401) {
+            if (!canRetry) { resolve(failed(401)); return; }
+            const refreshed = app.globalData.isloggedin &&
+              app.globalData.accessToken && app.globalData.accessToken !== sentToken;
+            const login = refreshed ? Promise.resolve(200) : userLogin();
+            login.then((code) => {
+              if (code !== 200 || !app.globalData.accessToken) {
+                resolve(failed(401)); return;
+              }
+              send(false).then(resolve);
+            }).catch(() => resolve(failed(401)));
+            return;
+          }
+          if (res.statusCode === 404 || res.statusCode === 403) {
+            resolve(failed(res.statusCode)); return;
+          }
+          try {
+            const body = res.data;
+            if (res.statusCode < 200 || res.statusCode >= 300 ||
+                !body || body.success !== true || !Array.isArray(body.data)) {
+              resolve(failed(500)); return;
+            }
+            const ticket = body.data.find(item => item && String(item.id) === id);
+            if (!ticket) { resolve(failed(404)); return; }
+            const list = Array.isArray(app.globalData.ticketList) ? app.globalData.ticketList : [];
+            const index = list.findIndex(item => item && String(item.id) === id);
+            if (index === -1) list.push(ticket);
+            else list[index] = ticket;
+            app.globalData.ticketList = list;
+            resolve({ code: 200, ticket: ticket });
+          } catch (error) {
+            resolve(failed(500));
+          }
+        },
+        fail() { resolve(failed(500)); },
+      });
+    }).catch(() => failed(500));
+  }
+  return send(allowAuthRetry);
+}
+
 // https://fyapidocs.wjlo.cc/ticket/complete
 function completeTicket(orderId, allowAuthRetry = true) {
   return ticketMutation('/v1/ticket/complete', { order_id: orderId }, (result) => {
-    if (result.success === true) return 200;
+    if (result.success === true) {
+      const ticket = (app.globalData.ticketList || []).find(
+        item => String(item.id) === String(orderId)
+      );
+      if (ticket) ticket.repair_status = result.repair_status || 'Done';
+      return 200;
+    }
     if (result.success === false) {
       if (result.status === 'ticket not found') return 404;
       if (result.status === 'technician does not match the ticket') return 403;
@@ -658,7 +726,14 @@ function setCompleteImage(orderId, url) {
   return ticketMutation('/v1/ticket/set', {
     tid: orderId,
     complete_image_url: url,
-  }, (result) => result.success === true ? 200 : 500);
+  }, (result) => {
+    if (result.success !== true) return 500;
+    const ticket = (app.globalData.ticketList || []).find(
+      item => String(item.id) === String(orderId)
+    );
+    if (ticket) ticket.complete_image_url = url;
+    return 200;
+  });
 }
 
 // https://fyapidocs.wjlo.cc/get/getconfig
@@ -1188,6 +1263,7 @@ module.exports = {
   addTicket,
   giveTicket,
   getTicket,
+  getTicketDetail,
   putFeedback,
   getConfig,
   completeTicket,
