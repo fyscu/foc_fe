@@ -189,7 +189,10 @@ Page({
           Toast("鉴权失败，请刷新重试");
         } else if (returnCode === 200) {
           Toast("确认工单成功");
-          this.calcSteps(confirmStatus);
+          const currentTicket = (app.globalData.ticketList || []).find(
+            (item) => String(item.id) === String(this.data.ticket.id)
+          );
+          this.calcSteps(currentTicket && currentTicket.repair_status || confirmStatus);
         } else {
           Toast("确认工单失败");
         }

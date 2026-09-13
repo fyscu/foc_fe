@@ -147,34 +147,41 @@ function userMigration(phone, verifiCode) {
 }
 
 // 微信登录 https://fyapidocs.wjlo.cc/admin/login
+// 并发请求共享一次微信登录，避免多个临时 code 互相覆盖。
+let loginInFlight = null;
 function userLogin() {
-  return new Promise((resolve, reject) => {
+  if (loginInFlight) {
+    return loginInFlight;
+  }
+  const attempt = new Promise((resolve, reject) => {
     wx.login({
-      success: (res) => {
-        if (res.code) {
-          app.globalData.code = res.code;
-          console.log("Requesting /user/login...", app.globalData.code);
+      timeout: 15000,
+      success(res) {
+        if (!res.code) {
+          reject(-1);
+          return;
+        }
+        app.globalData.code = res.code;
+        try {
           wx.request({
             url: app.globalData.rootApiUrl + '/v1/user/login',
-            method: "POST",
-            header: {
-              'content-type': 'application/json',
-            },
-            data: {
-              'code': app.globalData.code,
-            },
+            method: 'POST',
+            timeout: 20000,
+            header: { 'content-type': 'application/json' },
+            data: { code: res.code },
             success(apiRes) {
-              let result = apiRes.data;
-              if (result.success) {
+              try {
+                const result = apiRes.data;
+                if (apiRes.statusCode < 200 || apiRes.statusCode >= 300 ||
+                    !result || result.success !== true || !result.access_token) {
+                  resolve(500);
+                  return;
+                }
                 if (result.openid) {
-                  // 成功获取用户OpenId
                   app.globalData.openid = result.openid;
                 }
+                app.globalData.accessToken = result.access_token;
                 if (result.registered) {
-                  // 用户已经注册
-                  console.log('用户已注册:', result);
-                  app.globalData.accessToken = result.access_token;
-                  // 设置用户信息
                   app.globalData.userInfo.uid = result.uid;
                   app.globalData.userInfo.id = result.uid;
                   app.globalData.userInfo.role = result.role;
@@ -184,41 +191,45 @@ function userLogin() {
                   app.globalData.userInfo.nickname = result.nickname;
                   app.globalData.userInfo.avatarUrl = result.avatar;
                   app.globalData.userInfo.tempEmail = result.temp_email;
-                  // 设置技术员信息
-                  if (result.role === "technician") {
+                  if (result.role === 'technician') {
                     app.globalData.userInfo.wants = result.wants;
                     app.globalData.userInfo.available = result.available;
                     app.globalData.userInfo.canDuo = result.canDuo;
                   }
-                  // 成功登录
                   app.globalData.isloggedin = true;
-                  resolve(200); // 返回 200 (成功登录)
+                  resolve(200);
                 } else {
-                  // 用户尚未注册
-                  console.log('用户尚未注册:', result);
-                  app.globalData.accessToken = result.access_token;
+                  app.globalData.isloggedin = false;
                   app.globalData.userInfo.openid = result.openid;
                   app.globalData.userInfo.codePhone = result.codePhone;
                   app.globalData.userInfo.verCode = result.verCode;
-                  resolve(300); // 返回 300 (未注册)
+                  resolve(300);
                 }
-              } else {
-                console.log('请求失败:', result);
-                resolve(500); // 返回 500 (服务器错误)
+              } catch (error) {
+                resolve(500);
               }
             },
-            complete() {
-              console.log('Requesting /user/login complete.');
+            fail() {
+              resolve(500);
             },
-          })
-        } else {
-          // 获取code失败，使用 reject 返回 -1
-          console.log('获取code失败:', res);
-          reject(-1);
+          });
+        } catch (error) {
+          resolve(500);
         }
+      },
+      fail() {
+        resolve(500);
       },
     });
   });
+  loginInFlight = attempt.then((code) => {
+    loginInFlight = null;
+    return code;
+  }, (error) => {
+    loginInFlight = null;
+    throw error;
+  });
+  return loginInFlight;
 }
 
 // https://fyapidocs.wjlo.cc/user/verify
@@ -500,46 +511,78 @@ function addTicket(
   });
 }
 
-// https://fyapidocs.wjlo.cc/ticket/give
-function giveTicket(data) {
-  return new Promise((resolve, reject) => {
-    console.log("Requesting /ticket/give...", data);
-    wx.request({
-      url: app.globalData.rootApiUrl + "/v1/ticket/give",
-      data: data,
-      header: {
-        'content-type': 'application/json',
-        'Authorization': `Bearer ${app.globalData.accessToken}`,
-      },
-      method: 'POST',
-      success(res) {
-        if (res.statusCode === 401) {
-          console.log('鉴权失败，重新登录中...', res);
-          userLogin();
-          resolve(401);
-        } else if (res.data.success === true) {
-          console.log("分配工单成功", res);
-          resolve(200);
-        } else if (res.data.success === false) {
-          if (res.data.message === "Transfer vcode mismatch") {
-            console.log("验证码不匹配:", res);
-            resolve(403);
-          } else if (res.data.message === "Ticket not found") {
-            console.log("工单未找到:", res);
-            resolve(404);
-          } else if (res.data.message === "Order has closed") {
-            console.log("工单已关闭:", res);
-            resolve(300);
-          } else {
-            console.log("分配工单失败:", res);
+// 只有明确的 401 才重放一次；断网/超时无法确定写入结果，交给页面刷新确认。
+function ticketMutation(path, data, resultCode, allowAuthRetry = true) {
+  const payload = Object.assign({}, data);
+  const url = app.globalData.rootApiUrl + path;
+  function send(canRetry) {
+    const sentToken = app.globalData.accessToken;
+    return new Promise((resolve) => {
+      wx.request({
+        url: url,
+        data: payload,
+        header: {
+          'content-type': 'application/json',
+          'Authorization': `Bearer ${sentToken}`,
+        },
+        method: 'POST',
+        timeout: 20000,
+        success(res) {
+          if (res.statusCode === 401) {
+            if (!canRetry) {
+              resolve(401);
+              return;
+            }
+            // 较慢的旧请求可能在其他请求已经刷新 token 后才返回 401。
+            const refreshed = app.globalData.isloggedin &&
+              app.globalData.accessToken && app.globalData.accessToken !== sentToken;
+            const login = refreshed ? Promise.resolve(200) : userLogin();
+            login.then((code) => {
+              if (code !== 200 || !app.globalData.accessToken) {
+                resolve(401);
+                return;
+              }
+              send(false).then(resolve);
+            }).catch(() => resolve(401));
+            return;
+          }
+          try {
+            if (!res.data || typeof res.data !== 'object' ||
+                (res.data.success === true && (res.statusCode < 200 || res.statusCode >= 300))) {
+              resolve(500);
+              return;
+            }
+            resolve(resultCode(res.data));
+          } catch (error) {
             resolve(500);
           }
-        } else {
-          console.log("分配工单失败:", res);
+        },
+        fail() {
           resolve(500);
-        }
-      }
-    });
+        },
+      });
+    }).catch(() => 500);
+  }
+  return send(allowAuthRetry);
+}
+
+// https://fyapidocs.wjlo.cc/ticket/give
+function giveTicket(data) {
+  const payload = Object.assign({}, data);
+  if (typeof payload.request_id !== 'string' || !/^[A-Za-z0-9_-]{1,64}$/.test(payload.request_id)) {
+    // 仅用于识别一次转单操作；不是凭据。401 重放复用下方同一 payload。
+    payload.request_id = Date.now().toString(36) + '_' +
+      Math.random().toString(36).slice(2, 12) + '_' +
+      Math.random().toString(36).slice(2, 12);
+  }
+  return ticketMutation('/v1/ticket/give', payload, (result) => {
+    if (result.success === true) return 200;
+    if (result.success === false) {
+      if (result.message === 'Transfer vcode mismatch') return 403;
+      if (result.message === 'Ticket not found') return 404;
+      if (result.message === 'Order has closed') return 300;
+    }
+    return 500;
   });
 }
 
@@ -578,134 +621,44 @@ function getTicket(data) {
 
 // https://fyapidocs.wjlo.cc/ticket/complete
 function completeTicket(orderId, allowAuthRetry = true) {
-  return new Promise((resolve, reject) => {
-    console.log("Requesting /ticket/complete...", orderId);
-    wx.request({
-      url: app.globalData.rootApiUrl + "/v1/ticket/complete",
-      header: {
-        'content-type': 'application/json',
-        'Authorization': `Bearer ${app.globalData.accessToken}`,
-      },
-      method: 'POST',
-      data: {
-        order_id: orderId
-      },
-      success(res) {
-        if (res.statusCode === 401) {
-          console.log('鉴权失败，重新登录中...', res);
-          if (!allowAuthRetry) {
-            resolve(401);
-            return;
-          }
-          userLogin().then((loginCode) => {
-            if (loginCode !== 200) {
-              resolve(401);
-              return;
-            }
-            completeTicket(orderId, false).then(resolve).catch(reject);
-          }).catch(() => resolve(401));
-        } else if (res.data.success === false) {
-          if (res.data.status === "ticket not found") {
-            console.log('工单未找到:', res);
-            resolve(404);
-          } else if (res.data.status === "technician does not match the ticket") {
-            console.log('技术员与工单分配不对应:', res);
-            resolve(403);
-          } else {
-            console.log('未知错误:', res);
-            resolve(500);
-          }
-        } else if (res.data.success === true) {
-          console.log('结束工单成功:', res);
-          resolve(200);
-        } else {
-          console.log('请求失败:', res);
-          resolve(500);
-        }
-      },
-      fail(error) {
-        console.log('结束工单请求失败:', error);
-        resolve(500);
-      }
-    })
-  });
+  return ticketMutation('/v1/ticket/complete', { order_id: orderId }, (result) => {
+    if (result.success === true) return 200;
+    if (result.success === false) {
+      if (result.status === 'ticket not found') return 404;
+      if (result.status === 'technician does not match the ticket') return 403;
+    }
+    return 500;
+  }, allowAuthRetry);
 }
 
 // https://fyapidocs.wjlo.cc/ticket/set
 function setTicketStatus(orderId, status, allowAuthRetry = true) {
-  return new Promise((resolve, reject) => {
-    console.log("Requesting /ticket/set...", orderId, status);
-    wx.request({
-      url: app.globalData.rootApiUrl + "/v1/ticket/set",
-      header: {
-        'content-type': 'application/json',
-        'Authorization': `Bearer ${app.globalData.accessToken}`,
-      },
-      method: 'POST',
-      data: {
-        tid: orderId,
-        repair_status: status,
-      },
-      success(res) {
-        if (res.statusCode === 401) {
-          console.log('鉴权失败，重新登录中...', res);
-          if (!allowAuthRetry) {
-            resolve(401);
-            return;
-          }
-          userLogin().then((loginCode) => {
-            if (loginCode !== 200) {
-              resolve(401);
-              return;
-            }
-            setTicketStatus(orderId, status, false).then(resolve).catch(reject);
-          }).catch(() => resolve(401));
-        } else if (res.data.success === true) {
-          console.log('更改成功:', res);
-          resolve(200);
-        } else {
-          console.log('更改失败:', res);
-          resolve(500);
-        }
-      },
-      fail(error) {
-        console.log('更改工单请求失败:', error);
-        resolve(500);
-      }
-    })
-  });
+  return ticketMutation('/v1/ticket/set', {
+    tid: orderId,
+    repair_status: status,
+  }, (result) => {
+    if (result.success !== true) return 500;
+    // 双方确认可能直接变成 Done，以服务器最终状态更新列表。
+    const returnedStatus = result.repair_status ||
+      (result.changedFields && result.changedFields.repair_status);
+    const actualStatus = typeof returnedStatus === 'string' && returnedStatus ?
+      returnedStatus : status; // 兼容未回传最终状态的旧接口。
+    const ticket = (app.globalData.ticketList || []).find(
+      (item) => String(item.id) === String(orderId)
+    );
+    if (ticket) {
+      ticket.repair_status = actualStatus;
+    }
+    return 200;
+  }, allowAuthRetry);
 }
 
 // https://fyapidocs.wjlo.cc/ticket/set
 function setCompleteImage(orderId, url) {
-  return new Promise((resolve, reject) => {
-    console.log("Requesting /ticket/set...", orderId, url);
-    wx.request({
-      url: app.globalData.rootApiUrl + "/v1/ticket/set",
-      header: {
-        'content-type': 'application/json',
-        'Authorization': `Bearer ${app.globalData.accessToken}`,
-      },
-      method: 'POST',
-      data: {
-        tid: orderId,
-        complete_image_url: url,
-      },
-      success(res) {
-        if (res.statusCode === 401) {
-          console.log('鉴权失败，重新登录中...', res);
-          userLogin();
-          resolve(401);
-        } else if (res.data.success === true) {
-          console.log('更改成功:', res);
-          resolve(200);
-        } else {
-          console.log('更改失败:', res);
-          resolve(500);
-        }
-      }
-    })
-  });
+  return ticketMutation('/v1/ticket/set', {
+    tid: orderId,
+    complete_image_url: url,
+  }, (result) => result.success === true ? 200 : 500);
 }
 
 // https://fyapidocs.wjlo.cc/get/getconfig
