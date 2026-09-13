@@ -577,7 +577,7 @@ function getTicket(data) {
 }
 
 // https://fyapidocs.wjlo.cc/ticket/complete
-function completeTicket(orderId) {
+function completeTicket(orderId, allowAuthRetry = true) {
   return new Promise((resolve, reject) => {
     console.log("Requesting /ticket/complete...", orderId);
     wx.request({
@@ -593,8 +593,17 @@ function completeTicket(orderId) {
       success(res) {
         if (res.statusCode === 401) {
           console.log('鉴权失败，重新登录中...', res);
-          userLogin();
-          resolve(401);
+          if (!allowAuthRetry) {
+            resolve(401);
+            return;
+          }
+          userLogin().then((loginCode) => {
+            if (loginCode !== 200) {
+              resolve(401);
+              return;
+            }
+            completeTicket(orderId, false).then(resolve).catch(reject);
+          }).catch(() => resolve(401));
         } else if (res.data.success === false) {
           if (res.data.status === "ticket not found") {
             console.log('工单未找到:', res);
@@ -613,13 +622,17 @@ function completeTicket(orderId) {
           console.log('请求失败:', res);
           resolve(500);
         }
+      },
+      fail(error) {
+        console.log('结束工单请求失败:', error);
+        resolve(500);
       }
     })
   });
 }
 
 // https://fyapidocs.wjlo.cc/ticket/set
-function setTicketStatus(orderId, status) {
+function setTicketStatus(orderId, status, allowAuthRetry = true) {
   return new Promise((resolve, reject) => {
     console.log("Requesting /ticket/set...", orderId, status);
     wx.request({
@@ -636,8 +649,17 @@ function setTicketStatus(orderId, status) {
       success(res) {
         if (res.statusCode === 401) {
           console.log('鉴权失败，重新登录中...', res);
-          userLogin();
-          resolve(401);
+          if (!allowAuthRetry) {
+            resolve(401);
+            return;
+          }
+          userLogin().then((loginCode) => {
+            if (loginCode !== 200) {
+              resolve(401);
+              return;
+            }
+            setTicketStatus(orderId, status, false).then(resolve).catch(reject);
+          }).catch(() => resolve(401));
         } else if (res.data.success === true) {
           console.log('更改成功:', res);
           resolve(200);
@@ -645,6 +667,10 @@ function setTicketStatus(orderId, status) {
           console.log('更改失败:', res);
           resolve(500);
         }
+      },
+      fail(error) {
+        console.log('更改工单请求失败:', error);
+        resolve(500);
       }
     })
   });
