@@ -21,6 +21,7 @@
                   <view slot="tags">
                     <van-tag plain type="primary">{{ item.campus }}</van-tag>
                     <van-tag plain type="warning">{{ item.computer_brand }}</van-tag>
+                    <van-tag wx:if="{{ item.urgent }}" type="danger">加急</van-tag>
                   </view>
                 </van-card>
               </navigator>
@@ -38,6 +39,9 @@
         </view>
       </view>
       <view wx:elif='{{ userInfo.role === "user" }}'>
+        <view wx:if="{{ archivedRecoverableCount > 0 }}" class="archive-banner" bindtap="navigateToArchivedTickets">
+          您有 {{ archivedRecoverableCount }} 张存档订单，可一键重新提交（加急）→
+        </view>
         <view wx:if="{{ !hasUnfinishedStatus }}">
           <van-empty description="您还没有维修中的工单哦" />
         </view>
@@ -54,6 +58,7 @@
                   <view slot="tags">
                     <van-tag plain type="primary">{{ item.campus }}</van-tag>
                     <van-tag plain type="warning">{{ item.computer_brand }}</van-tag>
+                    <van-tag wx:if="{{ item.urgent }}" type="danger">加急</van-tag>
                   </view>
                 </van-card>
               </navigator>
@@ -117,6 +122,7 @@
                   <view slot="tags">
                     <van-tag plain type="primary">{{ item.campus }}</van-tag>
                     <van-tag plain type="warning">{{ item.computer_brand }}</van-tag>
+                    <van-tag wx:if="{{ item.urgent }}" type="danger">加急</van-tag>
                   </view>
                 </van-card>
               </navigator>

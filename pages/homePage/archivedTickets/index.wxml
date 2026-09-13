@@ -1,0 +1,52 @@
+<!--archivedTickets/index.wxml-->
+<scroll-view class="scrollview" scroll-y type="list">
+  <view class="container">
+
+    <view class="intro">
+      <view class="intro-title">什么是「存档订单」？</view>
+      <view class="intro-body">
+        由于我们的运营失误，<text class="hl">您的订单等待时间过长，暂时无法继续处理</text>，我们已将其转为「存档订单」。\n\n
+        您可以选择 <text class="hl">将存档订单重新提交</text>。重新提交将<text class="hl">复用原订单信息</text>，并以「<text class="urgent-word">加急订单</text>」形式排在普通报修队列<text class="hl">最前方</text>。\n\n
+        多张加急订单之间，按重新提交的<text class="hl">先后顺序</text>排队。
+      </view>
+    </view>
+
+    <view wx:if="{{ loading }}" class="loading-tip">加载中…</view>
+
+    <view wx:elif="{{ archivedList.length === 0 }}">
+      <van-empty description="您没有可恢复的存档订单" />
+    </view>
+
+    <view wx:else>
+      <view wx:for="{{ archivedList }}" wx:key="id" class="archive-card">
+        <van-card desc="{{ item.repair_description }}"
+                  title="{{ item.device_type }} {{ item.fault_type }}"
+                  thumb="{{ item.repair_image_url }}"
+                  tag="存档">
+          <view slot="tags">
+            <van-tag plain type="primary">{{ item.campus }}</van-tag>
+            <van-tag plain type="warning">{{ item.computer_brand }}</van-tag>
+            <van-tag wx:if="{{ item.restored_from }}" type="danger">已恢复</van-tag>
+          </view>
+          <view slot="bottom">
+            <view class="meta">原创建时间：{{ item.create_time }}</view>
+            <view class="meta">存档时间：{{ item.archived_at }}</view>
+          </view>
+          <view slot="footer">
+            <van-button wx:if="{{ !item.restored_from }}"
+                        size="small" type="danger" round
+                        data-id="{{ item.id }}"
+                        bind:click="onRestore">
+              重新提交（加急）
+            </van-button>
+            <view wx:else class="restored-tip">已恢复为新工单 #{{ item.restored_from }}</view>
+          </view>
+        </van-card>
+        <van-divider />
+      </view>
+    </view>
+  </view>
+
+  <van-dialog id="van-dialog" />
+  <van-toast id="van-toast" />
+</scroll-view>

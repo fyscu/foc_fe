@@ -17,6 +17,7 @@
     "pages/homePage/annualSum/index",
     "pages/homePage/submitTicket/index",
     "pages/homePage/giveOrder/index",
+    "pages/homePage/archivedTickets/index",
     "pages/forumPage/index",
     "pages/forumPage/sharePage/index"
   ],

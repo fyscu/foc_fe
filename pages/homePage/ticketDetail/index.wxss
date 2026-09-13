@@ -40,3 +40,20 @@
   margin: 40rpx;
   font-size: small;
 }
+
+/* 加急/存档 banner */
+.detail-banner {
+  background: linear-gradient(90deg, #ffefef 0%, #ffe1e1 100%);
+  color: #b02a37;
+  border-left: 6rpx solid #dc3545;
+  border-radius: 8rpx;
+  padding: 16rpx 24rpx;
+  margin: 12rpx 16rpx;
+  font-size: 26rpx;
+  font-weight: 500;
+}
+.archived-banner {
+  background: linear-gradient(90deg, #f0f0f0 0%, #e8e8e8 100%);
+  color: #555;
+  border-left-color: #999;
+}

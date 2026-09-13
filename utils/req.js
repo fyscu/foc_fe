@@ -195,6 +195,7 @@ function userLogin() {
                     app.globalData.userInfo.wants = result.wants;
                     app.globalData.userInfo.available = result.available;
                     app.globalData.userInfo.canDuo = result.canDuo;
+                    app.globalData.userInfo.max_concurrent = result.max_concurrent || 1;
                   }
                   app.globalData.isloggedin = true;
                   resolve(200);
@@ -325,7 +326,8 @@ function setTechInfo(userInfo) {
       data: {
         id: userInfo.id, // 必填
         wants: userInfo.wants,
-        canDuo: userInfo.canDuo
+        canDuo: userInfo.canDuo,
+        max_concurrent: userInfo.max_concurrent,
       },
       header: {
         'content-type': 'application/json',
@@ -495,12 +497,21 @@ function addTicket(
           console.log("创建工单成功，工单号:", res.data.ticketid);
           resolve(200);
         } else if (res.data.success === false) {
-          if (res.data.message === "order_exists") {
+          // 后端可能返回 status 或 message；都处理一下
+          const status = res.data.status || '';
+          const message = res.data.message || '';
+          if (message === "order_exists") {
             console.log("工单已存在", res);
             resolve(300);
-          } else if (res.data.message === "已达用户每周限额") {
+          } else if (message === "已达用户每周限额") {
             console.log("已达用户每周限额", res);
             resolve(403);
+          } else if (status === "user_pending_limit") {
+            console.log("用户未完结上限", res);
+            resolve(409);
+          } else if (status === "global_pending_limit") {
+            console.log("全局 Pending 上限", res);
+            resolve(410);
           } else {
             console.log("创建工单失败:", res);
             resolve(500);
@@ -1195,6 +1206,8 @@ function getUserInfo() {
           if (tmpData.role === "technician") {
             app.globalData.userInfo.wants = tmpData.wants;
             app.globalData.userInfo.available = tmpData.available;
+            app.globalData.userInfo.canDuo = tmpData.canDuo;
+            app.globalData.userInfo.max_concurrent = tmpData.max_concurrent || 1;
           }
           resolve(200);
         } else if (res.data.success === false && res.data.data === "权限不足") {
@@ -1251,6 +1264,39 @@ function getTechSum() {
   });
 }
 
+// 把一张存档订单恢复为加急订单（urgent=1）
+// https://focapi.feiyang.ac.cn/v1/ticket/restore_archive
+function restoreArchive(archiveId) {
+  return new Promise((resolve) => {
+    console.log("Requesting /ticket/restore_archive...", archiveId);
+    wx.request({
+      url: app.globalData.rootApiUrl + "/v1/ticket/restore_archive",
+      header: {
+        'content-type': 'application/json',
+        'Authorization': `Bearer ${app.globalData.accessToken}`,
+      },
+      method: 'POST',
+      data: { archive_id: archiveId },
+      success(res) {
+        if (res.statusCode === 401) {
+          console.log('鉴权失败，重新登录中...', res);
+          userLogin();
+          resolve({ code: 401 });
+        } else if (res.data && res.data.success === true) {
+          resolve({ code: 200, orderid: res.data.orderid });
+        } else if (res.data && res.data.status === 'user_pending_limit') {
+          resolve({ code: 409, message: res.data.message });
+        } else {
+          resolve({ code: 500, message: (res.data && res.data.message) || '恢复失败' });
+        }
+      },
+      fail() {
+        resolve({ code: -1, message: '网络异常' });
+      }
+    });
+  });
+}
+
 module.exports = {
   userLogin,
   unRegister,
@@ -1281,5 +1327,6 @@ module.exports = {
   getLuckynum,
   getUserInfo,
   getTechSum,
-  phoneChangeVerify
+  phoneChangeVerify,
+  restoreArchive
 }
