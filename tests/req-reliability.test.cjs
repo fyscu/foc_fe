@@ -128,6 +128,124 @@ for (const [name, invoke, route, payload] of operations) {
   });
 }
 
+function captureUploads(h) {
+  const uploads = [];
+  h.wx.uploadFile = options => uploads.push(options);
+  return uploads;
+}
+
+const uploadSuccess = (upload, body, statusCode = 200) => upload.success({
+  statusCode,
+  data: typeof body === 'string' ? body : JSON.stringify(body),
+});
+
+test('raw image upload accepts pure JSON and leaves multipart boundary to wx', async () => {
+  const h = harness();
+  const uploads = captureUploads(h);
+  const result = h.api.uploadQiniuImgRaw('/synthetic/photo.jpg');
+  assert.equal(uploads.length, 1);
+  const upload = uploads[0];
+  assert.equal(upload.url, 'https://foc.example.test/v1/user/avatar');
+  assert.equal(upload.name, 'file');
+  assert.equal(upload.filePath, '/synthetic/photo.jpg');
+  assert.equal(upload.timeout, 20000);
+  assert.equal(upload.header.Authorization, 'Bearer expired-token');
+  assert.equal(Object.keys(upload.header).some(key => key.toLowerCase() === 'content-type'), false);
+  assert.equal(upload.formData.key, 'fyMiniprogam/unused');
+  uploadSuccess(upload, { success: true, data: 'signed-preview', rawdata: 'https://example.test/raw.jpg' });
+  assert.equal(await result, 'https://example.test/raw.jpg');
+});
+
+test('regular image upload uses the signed preview field without setting Content-Type', async () => {
+  const h = harness();
+  const uploads = captureUploads(h);
+  const result = h.api.uploadQiniuImg('/synthetic/avatar.jpg');
+  assert.equal(Object.keys(uploads[0].header).some(key => key.toLowerCase() === 'content-type'), false);
+  uploadSuccess(uploads[0], { success: true, data: 'https://example.test/signed.jpg', rawdata: 'raw' });
+  assert.equal(await result, 'https://example.test/signed.jpg');
+});
+
+test('raw image upload retries exactly once after 401 with the refreshed token and same payload', async () => {
+  const h = harness();
+  const uploads = captureUploads(h);
+  const result = h.api.uploadQiniuImgRaw('/synthetic/photo.jpg');
+  uploadSuccess(uploads[0], { success: false }, 401);
+  await tick();
+  assert.equal(uploads.length, 1, 'no upload replay before login completes');
+  await finishLogin(h);
+  assert.equal(uploads.length, 2);
+  assert.equal(uploads[1].header.Authorization, 'Bearer fresh-token');
+  assert.equal(uploads[1].filePath, uploads[0].filePath);
+  assert.deepEqual(uploads[1].formData, uploads[0].formData);
+  uploadSuccess(uploads[1], { success: true, rawdata: 'https://example.test/retried.jpg' });
+  assert.equal(await result, 'https://example.test/retried.jpg');
+  assert.equal(h.logins.length, 1);
+});
+
+test('raw image upload rejects a second 401 without a third upload', async () => {
+  const h = harness();
+  const uploads = captureUploads(h);
+  const result = h.api.uploadQiniuImgRaw('/synthetic/photo.jpg');
+  const rejected = assert.rejects(result, error => error && error.code === 401);
+  uploadSuccess(uploads[0], { success: false }, 401);
+  await finishLogin(h);
+  uploadSuccess(uploads[1], { success: false }, 401);
+  await rejected;
+  assert.equal(uploads.length, 2);
+  assert.equal(h.logins.length, 1);
+});
+
+test('raw image upload settles as 401 when reauthentication fails', async () => {
+  const h = harness();
+  const uploads = captureUploads(h);
+  const result = h.api.uploadQiniuImgRaw('/synthetic/photo.jpg');
+  const rejected = assert.rejects(result, error => error && error.code === 401);
+  uploadSuccess(uploads[0], { success: false }, 401);
+  h.logins[0].fail({ errMsg: 'login:fail' });
+  await rejected;
+  assert.equal(uploads.length, 1);
+  assert.equal(h.logins.length, 1);
+});
+
+for (const [label, complete] of [
+  ['PHP warning prefix', upload => uploadSuccess(upload,
+    'Deprecated: Creation of dynamic property Qiniu\\Config::$zone is deprecated\n' +
+    JSON.stringify({ success: true, rawdata: 'https://example.test/orphan.jpg' }))],
+  ['malformed JSON', upload => uploadSuccess(upload, '<invalid>')],
+  ['missing rawdata', upload => uploadSuccess(upload, { success: true, data: 'signed-only' })],
+  ['non-2xx success body', upload => uploadSuccess(upload,
+    { success: true, rawdata: 'https://example.test/not-accepted.jpg' }, 503)],
+  ['API failure body', upload => uploadSuccess(upload, { success: false, data: '七牛云上传错误' })],
+  ['network failure', upload => upload.fail({ errMsg: 'uploadFile:fail timeout' })],
+  ['missing native response', upload => upload.success()],
+]) {
+  test('raw image upload always rejects and settles: ' + label, async () => {
+    const h = harness();
+    const uploads = captureUploads(h);
+    const result = h.api.uploadQiniuImgRaw('/synthetic/photo.jpg');
+    const rejected = assert.rejects(result);
+    complete(uploads[0]);
+    await rejected;
+    assert.equal(uploads.length, 1);
+    assert.equal(h.requests.length, 0);
+    assert.equal(h.logins.length, 0);
+  });
+}
+
+test('raw image upload settles when native uploadFile throws synchronously', async () => {
+  const h = harness();
+  h.wx.uploadFile = () => { throw new Error('synthetic native failure'); };
+  await assert.rejects(h.api.uploadQiniuImgRaw('/synthetic/photo.jpg'), /synthetic native failure/);
+});
+
+test('raw image upload rejects an empty local path without calling native transport', async () => {
+  const h = harness();
+  let calls = 0;
+  h.wx.uploadFile = () => { calls += 1; };
+  await assert.rejects(h.api.uploadQiniuImgRaw(''));
+  assert.equal(calls, 0);
+});
+
 test('concurrent 401s share one login and each write resumes once', async () => {
   const h = harness();
   const promises = operations.map(([, invoke]) => invoke(h.api));
@@ -298,8 +416,11 @@ function mountTicketDetail(h) {
   let definition;
   h.toasts = [];
   h.timers = [];
+  h.loadingCount = 0;
   Object.assign(h.wx, {
-    showLoading() {}, hideLoading() {}, requestSubscribeMessage() {}, showToast() {},
+    showLoading() { h.loadingCount += 1; },
+    hideLoading() { h.loadingCount -= 1; },
+    requestSubscribeMessage() {}, showToast() {},
     navigateBack() {},
   });
   vm.runInNewContext(pageSource, {
@@ -679,7 +800,7 @@ test('returning from media picker does not refresh over an in-flight image updat
   page.completeImage();
   await page.onShow();
   assert.equal(h.requests.length, 0);
-  picker.success({ tempFiles: [{ tempFilePath: '/synthetic/photo.jpg' }] });
+  picker.success({ tempFiles: [{ tempFilePath: '/synthetic/photo.jpg', size: 1024 }] });
   await page.onShow();
   assert.equal(h.requests.length, 0);
   assert.equal(upload.timeout, 20000);
@@ -692,6 +813,7 @@ test('returning from media picker does not refresh over an in-flight image updat
   assert.equal(page.data.ticket.complete_image_url, 'https://example.test/photo.jpg');
   assert.equal(h.app.globalData.ticketList[0].complete_image_url, 'https://example.test/photo.jpg');
   assert.equal(page._mutationPending, false);
+  assert.equal(h.loadingCount, 0);
 });
 
 test('cancelled media picker allows the next detail refresh', async () => {
@@ -707,7 +829,16 @@ test('cancelled media picker allows the next detail refresh', async () => {
   assert.equal(await refreshed, 200);
 });
 
-for (const mode of ['network', 'malformed JSON']) {
+for (const [mode, failUpload] of [
+  ['network', upload => upload.fail({ errMsg: 'uploadFile:fail' })],
+  ['malformed JSON', upload => upload.success({ statusCode: 200, data: '<invalid>' })],
+  ['PHP warning prefix', upload => upload.success({ statusCode: 200,
+    data: 'Deprecated: Qiniu warning\n' + JSON.stringify({ success: true, rawdata: 'orphan' }) })],
+  ['missing rawdata', upload => upload.success({ statusCode: 200,
+    data: JSON.stringify({ success: true, data: 'signed-only' }) })],
+  ['non-2xx', upload => upload.success({ statusCode: 503,
+    data: JSON.stringify({ success: true, rawdata: 'not-accepted' }) })],
+]) {
   test('failed completion image upload releases page mutation state: ' + mode, async () => {
     const h = harness();
     const page = mountTicketDetail(h);
@@ -716,13 +847,66 @@ for (const mode of ['network', 'malformed JSON']) {
     h.wx.chooseMedia = options => { picker = options; };
     h.wx.uploadFile = options => { upload = options; };
     page.completeImage();
-    picker.success({ tempFiles: [{ tempFilePath: '/synthetic/photo.jpg' }] });
-    if (mode === 'network') upload.fail({ errMsg: 'uploadFile:fail' });
-    else upload.success({ statusCode: 200, data: '<invalid>' });
+    picker.success({ tempFiles: [{ tempFilePath: '/synthetic/photo.jpg', size: 1024 }] });
+    await tick();
+    failUpload(upload);
     await tick();
     assert.equal(page._mutationPending, false);
     assert.equal(page.data.needCompleteImage, true);
+    assert.equal(page.data.showDialog, true);
+    assert.equal(h.loadingCount, 0);
     assert.equal(h.requests.length, 0);
     assert.ok(h.toasts.includes('上传图片失败，请重试'));
   });
 }
+
+test('oversized completion evidence is compressed and size-checked before upload', async () => {
+  const h = harness();
+  h.app.globalData.ticketList = [detailTicket({ repair_status: 'Repairing' })];
+  const page = mountTicketDetail(h);
+  page.onLoad({ id: '41', role: 'technician' });
+  let picker, compression, stat, upload;
+  h.wx.chooseMedia = options => { picker = options; };
+  h.wx.compressImage = options => { compression = options; };
+  h.wx.getFileSystemManager = () => ({ stat: options => { stat = options; } });
+  h.wx.uploadFile = options => { upload = options; };
+  page.completeImage();
+  assert.deepEqual(Array.from(picker.sizeType), ['compressed']);
+  picker.success({ tempFiles: [{ tempFilePath: '/synthetic/large.jpg', size: 3 * 1024 * 1024 }] });
+  await tick();
+  assert.equal(compression.src, '/synthetic/large.jpg');
+  assert.equal(compression.quality, 75);
+  compression.success({ tempFilePath: '/synthetic/compressed.jpg' });
+  await tick();
+  stat.success({ stats: { size: 1024 * 1024 } });
+  await tick();
+  assert.equal(upload.filePath, '/synthetic/compressed.jpg');
+  uploadSuccess(upload, { success: true, rawdata: 'https://example.test/compressed.jpg' });
+  await tick();
+  success(h.requests[0]);
+  await tick();
+  assert.equal(page.data.needCompleteImage, false);
+  assert.equal(page.data.ticket.complete_image_url, 'https://example.test/compressed.jpg');
+  assert.equal(page._mutationPending, false);
+  assert.equal(h.loadingCount, 0);
+});
+
+test('completion evidence compression failure is visible and releases page state', async () => {
+  const h = harness();
+  h.app.globalData.ticketList = [detailTicket({ repair_status: 'Repairing' })];
+  const page = mountTicketDetail(h);
+  page.onLoad({ id: '41', role: 'technician' });
+  let picker;
+  h.wx.chooseMedia = options => { picker = options; };
+  h.wx.compressImage = options => options.fail({ errMsg: 'compressImage:fail' });
+  h.wx.uploadFile = () => assert.fail('oversized image must not upload after compression failure');
+  page.completeImage();
+  picker.success({ tempFiles: [{ tempFilePath: '/synthetic/large.jpg', size: 3 * 1024 * 1024 }] });
+  await tick();
+  await tick();
+  assert.equal(page._mutationPending, false);
+  assert.equal(page.data.needCompleteImage, true);
+  assert.equal(page.data.showDialog, true);
+  assert.equal(h.loadingCount, 0);
+  assert.ok(h.toasts.includes('图片处理失败，请换一张图片重试'));
+});

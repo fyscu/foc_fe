@@ -10,6 +10,80 @@ import {
 
 var app = getApp();
 
+const COMPLETE_IMAGE_MAX_BYTES = 2 * 1024 * 1024 - 1024;
+const COMPLETE_IMAGE_COMPRESS_PLANS = [
+  { quality: 75, compressedWidth: 1600, compressedHeight: 1600 },
+  { quality: 55, compressedWidth: 1280, compressedHeight: 1280 },
+  { quality: 35, compressedWidth: 960, compressedHeight: 960 },
+];
+
+function completionImageError(message, code) {
+  const error = new Error(message);
+  error.code = code;
+  return error;
+}
+
+function localFileSize(filePath, knownSize) {
+  const size = Number(knownSize);
+  if (Number.isFinite(size) && size > 0) return Promise.resolve(size);
+  return new Promise((resolve, reject) => {
+    try {
+      const fs = wx.getFileSystemManager();
+      fs.stat({
+        path: filePath,
+        success(res) {
+          const actualSize = Number(res && res.stats && res.stats.size);
+          if (Number.isFinite(actualSize) && actualSize > 0) resolve(actualSize);
+          else reject(completionImageError('无法读取图片大小', 'IMAGE_READ_FAILED'));
+        },
+        fail() {
+          reject(completionImageError('无法读取图片大小', 'IMAGE_READ_FAILED'));
+        },
+      });
+    } catch (error) {
+      reject(completionImageError('无法读取图片大小', 'IMAGE_READ_FAILED'));
+    }
+  });
+}
+
+function compressCompletionImage(sourcePath, planIndex = 0) {
+  if (planIndex >= COMPLETE_IMAGE_COMPRESS_PLANS.length || typeof wx.compressImage !== 'function') {
+    return Promise.reject(completionImageError('图片压缩后仍超过 2MB', 'IMAGE_TOO_LARGE'));
+  }
+  const plan = COMPLETE_IMAGE_COMPRESS_PLANS[planIndex];
+  return new Promise((resolve, reject) => {
+    try {
+      wx.compressImage({
+        src: sourcePath,
+        ...plan,
+        success(res) {
+          const compressedPath = res && res.tempFilePath;
+          if (!compressedPath) {
+            reject(completionImageError('图片压缩失败', 'IMAGE_COMPRESS_FAILED'));
+            return;
+          }
+          localFileSize(compressedPath, res.size).then((size) => {
+            if (size <= COMPLETE_IMAGE_MAX_BYTES) resolve(compressedPath);
+            else compressCompletionImage(sourcePath, planIndex + 1).then(resolve, reject);
+          }, reject);
+        },
+        fail() {
+          reject(completionImageError('图片压缩失败', 'IMAGE_COMPRESS_FAILED'));
+        },
+      });
+    } catch (error) {
+      reject(completionImageError('图片压缩失败', 'IMAGE_COMPRESS_FAILED'));
+    }
+  });
+}
+
+function prepareCompletionImage(file) {
+  const filePath = file && file.tempFilePath;
+  if (!filePath) return Promise.reject(completionImageError('未选择有效图片', 'IMAGE_READ_FAILED'));
+  return localFileSize(filePath, file.size).then((size) =>
+    size <= COMPLETE_IMAGE_MAX_BYTES ? filePath : compressCompletionImage(filePath));
+}
+
 Page({
   data: {
     active: 0,
@@ -165,6 +239,7 @@ Page({
     wx.chooseMedia({
       count: 1, // 可选择的图片数量
       mediaType: ["image"],
+      sizeType: ["compressed"],
       sourceType: ["album", "camera"], // 来源：相册或相机
       camera: "back",
       success(res) {
@@ -173,8 +248,11 @@ Page({
         // 从相册返回也会触发 onShow，避免旧读取覆盖刚上传的图片状态。
         that._mutationPending = true;
         wx.showLoading({ title: "上传图片中", mask: true });
-        let tempFilePath = res.tempFiles[0].tempFilePath;
-        uploadQiniuImgRaw(tempFilePath).then((url) => {
+        const finishUpload = () => {
+          that._mutationPending = false;
+          wx.hideLoading();
+        };
+        prepareCompletionImage(res.tempFiles[0]).then(uploadQiniuImgRaw).then((url) => {
           return setCompleteImage(that.data.ticket.id, url).then(returnCode => {
             if (that._unloaded) return;
             if (returnCode === 401) {
@@ -189,12 +267,15 @@ Page({
               that.setData({ needCompleteImage: true });
             }
           });
-        }).catch(() => {
-          if (!that._unloaded) Toast('上传图片失败，请重试');
-        }).then(() => {
-          that._mutationPending = false;
-          wx.hideLoading();
-        });
+        }).catch((error) => {
+          if (that._unloaded) return;
+          const message = error && error.code === 401 ? '鉴权失败，请刷新重试' :
+            error && error.code === 'IMAGE_TOO_LARGE' ? '图片超过 2MB 且压缩失败，请换一张图片' :
+            error && (error.code === 'IMAGE_READ_FAILED' || error.code === 'IMAGE_COMPRESS_FAILED') ?
+              '图片处理失败，请换一张图片重试' : '上传图片失败，请重试';
+          Toast(message);
+          that.setData({ showDialog: true, needCompleteImage: true });
+        }).then(finishUpload, finishUpload);
       },
       fail() { that._choosingMedia = false; },
     });

@@ -356,72 +356,104 @@ function setTechInfo(userInfo) {
   });
 }
 
-// https://fyapidocs.wjlo.cc/user/avatar
-function uploadQiniuImg(localFilePath) {
-  return new Promise((resolve, reject) => {
-    console.log("Requesting /user/avatar...", localFilePath);
-    wx.uploadFile({
-      url: app.globalData.rootApiUrl + "/v1/user/avatar",
-      name: "file",
-      filePath: localFilePath,
-      header: {
-        "Content-Type": "multipart/form-data",
-        'Authorization': `Bearer ${app.globalData.accessToken}`,
-      },
-      formData: {
-        key: "fyMiniprogam/" + getUUid(),
-      },
-      success: function (res) {
-        let data = JSON.parse(res.data);
-        if (data.success) {
-          console.log("Upload image success!", data);
-          resolve(data.data);
-        } else {
-          console.log("Error occured:", data);
-          reject(data.data);
-        }
-      },
-      fail: function (res) {
-        console.log("Failed to upload image:", res);
-        reject(res);
-      },
-    });
-  });
+function uploadImageError(message, code) {
+  const error = new Error(message || '图片上传失败');
+  if (code !== undefined) error.code = code;
+  return error;
 }
 
-function uploadQiniuImgRaw(localFilePath) {
-  return new Promise((resolve, reject) => {
-    console.log("Requesting /user/avatar...", localFilePath);
-    wx.uploadFile({
-      url: app.globalData.rootApiUrl + "/v1/user/avatar",
-      name: "file",
-      filePath: localFilePath,
-      timeout: 20000,
-      header: {
-        "Content-Type": "multipart/form-data",
-        'Authorization': `Bearer ${app.globalData.accessToken}`,
-      },
-      formData: {
-        key: "fyMiniprogam/" + getUUid(),
-      },
-      success: function (res) {
-        try {
-          const data = JSON.parse(res.data);
-          if (res.statusCode >= 200 && res.statusCode < 300 && data.success && data.rawdata) {
-            resolve(data.rawdata);
-          } else {
-            reject(data.data);
-          }
-        } catch (error) {
-          reject(error);
-        }
-      },
-      fail: function (res) {
-        console.log("Failed to upload image:", res);
-        reject(res);
-      },
+function uploadQiniuImage(localFilePath, responseField, allowAuthRetry = true) {
+  if (typeof localFilePath !== 'string' || !localFilePath) {
+    return Promise.reject(uploadImageError('未选择有效图片'));
+  }
+  let uploadKey;
+  try {
+    uploadKey = "fyMiniprogam/" + getUUid();
+  } catch (error) {
+    return Promise.reject(error);
+  }
+
+  function send(canRetry) {
+    const sentToken = app.globalData.accessToken;
+    return new Promise((resolve, reject) => {
+      try {
+        wx.uploadFile({
+          url: app.globalData.rootApiUrl + "/v1/user/avatar",
+          name: "file",
+          filePath: localFilePath,
+          timeout: 20000,
+          // wx.uploadFile must generate Content-Type together with its multipart boundary.
+          header: {
+            'Authorization': `Bearer ${sentToken}`,
+          },
+          formData: {
+            key: uploadKey,
+          },
+          success(res) {
+            const statusCode = res && res.statusCode;
+            if (statusCode === 401) {
+              if (!canRetry) {
+                reject(uploadImageError('登录已失效', 401));
+                return;
+              }
+              const refreshed = app.globalData.isloggedin &&
+                app.globalData.accessToken && app.globalData.accessToken !== sentToken;
+              let login;
+              try {
+                login = refreshed ? Promise.resolve(200) : userLogin();
+              } catch (error) {
+                reject(uploadImageError('登录已失效', 401));
+                return;
+              }
+              login.then((code) => {
+                if (code !== 200 || !app.globalData.accessToken) {
+                  reject(uploadImageError('登录已失效', 401));
+                  return;
+                }
+                send(false).then(resolve, reject);
+              }).catch(() => reject(uploadImageError('登录已失效', 401)));
+              return;
+            }
+
+            let data;
+            try {
+              const body = res && res.data;
+              data = typeof body === 'string' ?
+                JSON.parse(body.replace(/^\uFEFF/, '').trim()) : body;
+            } catch (error) {
+              reject(uploadImageError('上传接口返回了无效数据'));
+              return;
+            }
+            const value = data && data[responseField];
+            if (statusCode >= 200 && statusCode < 300 &&
+                data && data.success === true && typeof value === 'string' && value) {
+              resolve(value);
+              return;
+            }
+            const message = data && (data.message || data.data);
+            reject(uploadImageError(typeof message === 'string' ? message : '图片上传失败', statusCode));
+          },
+          fail(error) {
+            reject(uploadImageError(error && error.errMsg || '图片上传失败'));
+          },
+        });
+      } catch (error) {
+        reject(error);
+      }
     });
-  });
+  }
+
+  return send(allowAuthRetry);
+}
+
+// https://fyapidocs.wjlo.cc/user/avatar
+function uploadQiniuImg(localFilePath, allowAuthRetry = true) {
+  return uploadQiniuImage(localFilePath, 'data', allowAuthRetry);
+}
+
+function uploadQiniuImgRaw(localFilePath, allowAuthRetry = true) {
+  // Completion evidence stores the stable URL, not the expiring signed preview URL.
+  return uploadQiniuImage(localFilePath, 'rawdata', allowAuthRetry);
 }
 
 function putFeedback(contact, text) {
